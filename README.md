@@ -1,3 +1,19 @@
+Der source-code stammt ursprüngilich von [GitHub](https://github.com/walgren/Ashby-plots). 
+Um den Code ganz auf unsere Bedürfnisse anpassen zu können haben wir ihn auf unser GitLab übernommen.
+
+## Verwendung
+1. Libraries instalieren (siehe requirements): ChatGPT hat uns dafür freundlicherweise ein kleines Batchscribt (install_packages.bat) geschrieben.
+2. Exel-Tabelle in material_properties ablegen (template folgt ggf.)
+3. Einstellungen in plot_ashby.py anpassen (Zeile 48-104) (teilweise automatisierung folgt ggf.) und ausführen.
+
+</br>
+</br>
+</br>
+</br>
+
+---
+---
+
 # Ashby plots in python
  Simple script to generate Ashby plots based on generic material property data. This package allows
  * creation of custom guidelines to define material indices (e.g., $\frac{E^{1/2}}{\rho}$),
@@ -22,7 +38,7 @@ Here is a complete list of dependencies:
 ## Usage
 
 * Material properties are stored in an `.xlsx` file in the `material_properties` directory. These properties are taken from the open-source [`material_database` repository](https://github.com/nicoguaro/material_database). If you'd like to include your own material database, add a similarly formatted xlsx file to the directory and change the `file_name` variable.  Two different sheets are distributed with this package:
-   1.   `common_material_properties.xlsx` includes material property ranges for common materials. This is useful to plot ellipses. 
+   1. `common_material_properties.xlsx` includes material property ranges for common materials. This is useful to plot ellipses. 
    2. `single_material_properties.xlsx` includes average properties for each material. 
 
 * Specify the quantities for the x- and y-axes. **Note: These quantities are case-sensitive to match the .xslx file.**

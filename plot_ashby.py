@@ -45,47 +45,46 @@ if __name__ == '__main__':
             # guideline string
 
 
+# ❗ start of USER INPUT                                                                                                                                      
     # file with all of your material data (must be xlsx)
     file_name = 'common_material_properties.xlsx'
+
+    data_type = 'ranges' # type of material data ('ranges' or single 'values')
+
+    figure_type = 'presentation' #options are 'publication' or 'presentation'
+    figure_size = (16,9) #width, height, in inches
 
     # quantities you would like to plot
     x_axis_quantity = 'Density'
     y_axis_quantity = "Young Modulus"
 
-    data_type = 'ranges' # type of material data ('ranges' or single 'values')
-
-    figure_type = 'presentation' #options are 'publication' or 'presentation'
-    figure_size = (9,7) #width, height, in inches
-
-    # x- and y-axes limits
-    # x_lim = [1E-4,1E3]
-    x_lim = [10, 30000] #min, max
-    # y_lim = [0.5,1.1] #min, max
-    y_lim = [1E-4,1E3]
-
-    #Flag to plot in log-log space
+    # ~ Flag to plot in log-log space                           
     log_flag = True
 
-    # Guideline setup
-    guideline_flag = True
+    # ~ x- and y-axes limits                                    
+    x_lim = [1, 50000]
+    y_lim = [1E-4,1E3]
 
+
+    # ~ insert Guideline (linear)                               
+    guideline_flag = True
     if guideline_flag:
         guideline = {
-            'power':2, #power to plot the guideline on (e.g., 1/3, 1)
-            'x_lim':[1E1, 1E5], #x-limits of the guideline (not necessarily the figure x limits)
-            'string':r"$\frac{E^{1/2}}{\rho} \equiv k$", #string to display
+            'power':2,              # % Steigung          
+            'y_intercept': 1E-4,    # % y-Achsenabschnitt 
+            'x_lim':[1E-1, 1E8],    # x-limits of the guideline (not necessarily the figure x limits)
+            'string':r"$\frac{E^{1/2}}{\rho} \equiv k$", # % Beschriftung 
             # 'string':r"$\frac{1}{(1+\nu)\rho} \equiv k$",
-            #y-intercept of the guideline, 0.001 for poisson, 1E-10 for stiffness
-            'y_intercept': 1E-4,
-            #location of the annotation, (300,0.51) for poisson, (65, 2E-4) for stiffness
+            # location of the annotation, (300,0.51) for poisson, (65, 2E-4) for stiffness
             'string_position': (65, 3) ,
             }
+    # ToDO: insert horizontal & vertical lines
 
-    # Flag to plot individual materials as stars.
+    # ~ insert Star-Marker                                      
     individual_material_flag = False
     if individual_material_flag:
         individual_materials = [{
-            'Young Modulus':0.124E-3,
+            'Young Modulus':0.124E-2,
             'Poisson':0.45,
             'Density':400,
             'name':'Foam',
@@ -99,9 +98,10 @@ if __name__ == '__main__':
             'color':'r',
             }
         ]
+        marker_size = 400
 
-        marker_size = 500
-
+    # $ To edit hull colors & units go to plot_utilities.py line 303
+# ❗ end of USER INPUT                                                                                                                                      
 
 
     #%% General setup
@@ -137,20 +137,20 @@ a color. Please add a color to the material_colors dictionary (common_definition
         if y_axis_quantity == 'Poisson difference':
             y_label = r'Hyperbolic Poisson Ratio $\frac{1}{1+\nu}$, '+ units[y_axis_quantity]
         else:
-            y_label = y_axis_quantity + ', ' + units[y_axis_quantity]
+            y_label = y_axis_quantity + '  [' + units[y_axis_quantity] + ']'
 
         if x_axis_quantity == 'Poisson difference':
             x_label = r'Hyperbolic Poisson Ratio $\frac{1}{1+\nu}$, '+ units[x_axis_quantity]
         else:
-            x_label = x_axis_quantity + ', ' + units[x_axis_quantity]
+            x_label = x_axis_quantity + '  [' + units[x_axis_quantity]  + ']'
 
 
         ax.set_xlabel(x_label)
         ax.set_ylabel(y_label)
     except:
         raise ValueError("Could not set correct x- and y-labels. \
-Make sure your x_axis_quantity and y_axis_quantity \
-have equivalent key-value pairs in the units dictionary (common_definitions function).")
+            Make sure your x_axis_quantity and y_axis_quantity \
+            have equivalent key-value pairs in the units dictionary (common_definitions function).")
 
     #set axes limits
     ax.set(xlim=x_lim, ylim= y_lim)
@@ -210,3 +210,5 @@ have equivalent key-value pairs in the units dictionary (common_definitions func
                 marker = '*',
                 s = marker_size,
                 )
+
+    plt.show()

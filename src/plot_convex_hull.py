@@ -344,7 +344,6 @@ def draw_rounded_hull(X, padding=0.1, line_kwargs=None, ax=None):
         ax.plot(line[:,0], line[:,1], **line_kwargs) 
 
         # arc
-
         angle_next = np.rad2deg(np.arccos(np.dot(norm_next, [1,0])))
         if norm_next[1] < 0:
             angle_next = 360 - angle_next
@@ -376,7 +375,6 @@ if __name__ == '__main__':
     from matplotlib import patches
 
     np.random.seed(42)
-    
     
     
     # sample data for technical ceramics

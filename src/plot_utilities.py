@@ -150,7 +150,7 @@ def draw_plot(
 
         draw_hull(
             X,
-            scale = 1.1,
+            scale = 1.05,
             padding = 'scale',
             n_interpolate = 1000,
             interpolation = 'cubic',
@@ -321,6 +321,7 @@ def common_definitions():
         'Composites':'Brown',
         'Technical ceramics':'pink',
         'Metals':'grey',
+        'TEST':'black'
         }
 
     return units, material_colors
