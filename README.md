@@ -2,14 +2,19 @@ Der source-code stammt ursprüngilich von [GitHub](https://github.com/walgren/As
 Um den Code ganz auf unsere Bedürfnisse anpassen zu können haben wir ihn auf unser GitLab übernommen.
 
 ## Verwendung
-1. Libraries instalieren (siehe requirements): ChatGPT hat uns dafür freundlicherweise ein kleines Batchscribt (install_packages.bat) geschrieben.
-2. Exel-Tabelle in material_properties ablegen (template folgt ggf.)
+1. Libraries instalieren (siehe requirements): ChatGPT hat uns dafür freundlicherweise ein kleines (bisher noch ungetestetes❗) Batchscript "install_packages.bat" geschrieben.
+2. Exel-Tabelle in .\material_properties\ ablegen (template folgt ggf.).
+Orientiert euch dazu an den beiden gegeben .xlsx Dokumenten: <br>
+common_... erstellt seine Hüllen aus Wertebereichen <br>
+single_... aus einzelnen Punkten
 3. Einstellungen in plot_ashby.py anpassen (Zeile 48-104) (teilweise automatisierung folgt ggf.) und ausführen.
+4. Der Plot wir in einem Popup erscheinen und kann bei belieben loal gespeichert werden 
 
-</br>
-</br>
-</br>
-</br>
+
+<br>
+<br>
+<br>
+<br>
 
 ---
 ---
