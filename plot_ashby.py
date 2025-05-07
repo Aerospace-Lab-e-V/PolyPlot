@@ -30,6 +30,7 @@ from src.plot_utilities import (
     draw_plot,
     plotting_presets,
     draw_guideline,
+    draw_parallel_lines,
     common_definitions,
     )
 
@@ -47,9 +48,9 @@ if __name__ == '__main__':
 
 # ❗ start of USER INPUT                                                                                                                                      
     # file with all of your material data (must be xlsx)
-    file_name = 'common_material_properties.xlsx'
+    file_name = 'single_material_properties.xlsx'
 
-    data_type = 'ranges' # type of material data ('ranges' or single 'values')
+    data_type = 'values' # type of material data ('ranges' or single 'values')
 
     figure_type = 'presentation' #options are 'publication' or 'presentation'
     figure_size = (16,9) #width, height, in inches
@@ -59,7 +60,7 @@ if __name__ == '__main__':
     y_axis_quantity = "Young Modulus"
 
     # ~ Flag to plot in log-log space                           
-    log_flag = True
+    log_flag = True     # ToDo: semilogx() & semilogy()
 
     # ~ x- and y-axes limits                                    
     x_lim = [1, 50000]
@@ -77,8 +78,22 @@ if __name__ == '__main__':
             # 'string':r"$\frac{1}{(1+\nu)\rho} \equiv k$",
             # location of the annotation, (300,0.51) for poisson, (65, 2E-4) for stiffness
             'string_position': (65, 3) ,
+            'linetype': 'k--'
             }
-    # ToDO: insert horizontal & vertical lines
+    
+    parallel_lines_flag = True
+    if parallel_lines_flag:
+            parallel_lines = [{
+                'direction' : 'x',
+                'position' : 100,
+                'color':'green',
+                'linestyle':'--'
+            },{
+                'direction' : 'y',
+                'position' : 1000,
+                'color':'red',
+                'linestyle':':'
+            }]
 
     # ~ insert Star-Marker                                      
     individual_material_flag = False
@@ -88,19 +103,21 @@ if __name__ == '__main__':
             'Poisson':0.45,
             'Density':400,
             'name':'Foam',
-            'color':'b'
-            },
-            {
+            'color':'b',
+            'marker': '*'
+            },{
             'Young Modulus':2.009,
             'Poisson':0.3,
             'Density':1300,
             'name':'PLA',
             'color':'r',
+            'marker':'.'
             }
         ]
         marker_size = 400
 
-    # $ To edit hull colors & units go to plot_utilities.py line 303
+    # $ To edit hull colors & units go to:  plot_utilities.py line 303
+    # $ to edit legend go to:               plot_utilities.py line 203
 # ❗ end of USER INPUT                                                                                                                                      
 
 
@@ -171,13 +188,21 @@ a color. Please add a color to the material_colors dictionary (common_definition
         zorder = 0.5)
 
     #%% Data plotting
+
+    #draw guideline
     if guideline_flag:
-        #draw guideline
         draw_guideline(
                 guideline,
                 ax = ax,
                 log_flag = log_flag,
                 )
+
+    if parallel_lines_flag:
+        draw_parallel_lines(
+                parallel_lines,
+                ax = ax,
+                )
+
 
     if (x_axis_quantity == 'Poisson difference') or (y_axis_quantity == 'Poisson difference'):
 
@@ -207,8 +232,9 @@ a color. Please add a color to the material_colors dictionary (common_definition
                 individual_material[y_axis_quantity],
                 c = individual_material['color'],
                 edgecolors ='k',
-                marker = '*',
+                marker = individual_material['marker'],
                 s = marker_size,
                 )
+
 
     plt.show()

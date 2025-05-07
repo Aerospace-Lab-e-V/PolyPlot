@@ -1,8 +1,8 @@
-Der source-code stammt ursprüngilich von [GitHub](https://github.com/walgren/Ashby-plots). 
+Der source-code stammt ursprüngilich von [GitHub](https://github.com/walgren/Ashby-plots) (MIT-Lizens).
 Um den Code ganz auf unsere Bedürfnisse anpassen zu können haben wir ihn auf unser GitLab übernommen.
 
 ## Verwendung
-1. Libraries instalieren (siehe requirements): ChatGPT hat uns dafür freundlicherweise ein kleines (bisher noch ungetestetes❗) Batchscript "install_packages.bat" geschrieben.
+1. Libraries instalieren (siehe requirements): ChatGPT hat uns dafür freundlicherweise ein kleines Batchscript "install_packages.bat" geschrieben.
 2. Exel-Tabelle in .\material_properties\ ablegen (template folgt ggf.).
 Orientiert euch dazu an den beiden gegeben .xlsx Dokumenten: <br>
 common_... erstellt seine Hüllen aus Wertebereichen <br>

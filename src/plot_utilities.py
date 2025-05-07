@@ -14,30 +14,31 @@ import matplotlib.pyplot as plt
 from matplotlib import patches
 from matplotlib import colors
 
-from src.plot_convex_hull import (
+from src.plot_convex_hull import(
     draw_ellipses,
     draw_hull,
     )
+
 
 from src.rotation_aware_annotation import RotationAwareAnnotation
 
 
 def plotting_presets(figure_type:str = 'publication'):
     '''
-    Creates plotting presets for font size, marker size,
-    and other quality of life presets.
+        Creates plotting presets for font size, marker size,
+        and other quality of life presets.
 
 
-    Parameters
-    ----------
-    figure_type : str
-        Type of figure you would like to create.
-        Options are 'publication' or 'presentation'
-        Toggles different presets like font family, font size, etc.
+        Parameters
+        ----------
+        figure_type : str
+            Type of figure you would like to create.
+            Options are 'publication' or 'presentation'
+            Toggles different presets like font family, font size, etc.
 
-    Returns
-    -------
-    None.
+        Returns
+        -------
+        None.
     '''
     #Graphs in a separate window (run in Spyder)
     if 'SPY_PYTHONPATH' in os.environ:
@@ -79,34 +80,33 @@ def draw_plot(
         ax,
         material_colors,
         data_type = 'ranges'
-        ):
+    ):
     '''
-    Plots both the data points (either ellipses if material upper and lower
-    bounds are given, or a scatter plot if single points are given) and the
-    convex hull around all data points of a given category.
+        Plots both the data points (either ellipses if material upper and lower
+        bounds are given, or a scatter plot if single points are given) and the
+        convex hull around all data points of a given category.
 
-    Parameters
-    ----------
-    data : pandas dataframe
-        dataframe with all material data to be plotted.
-        Note that this dataframe must include the column 'Category;'
-        which is case sensitive!
-    x_axis_quantity : str
-        quantity you would like to plot on the x-axis.
-    y_axis_quantity : str
-        quantity you would like to plot on the y-axis.
-    ax : matplotlib.pyplot.axis
-        figure axis on which you would like to plot
-    material_colors : dict
-        key-value pairs of categories and the desired colors
-    data_type : str, optional
-        Flag for whether the data is defined as ranges (i.e., upper and lower
-        bounds) or as values (i.e., single values). The default is 'ranges'.
+        Parameters
+        ----------
+        data : pandas dataframe
+            dataframe with all material data to be plotted.
+            Note that this dataframe must include the column 'Category;'
+            which is case sensitive!
+        x_axis_quantity : str
+            quantity you would like to plot on the x-axis.
+        y_axis_quantity : str
+            quantity you would like to plot on the y-axis.
+        ax : matplotlib.pyplot.axis
+            figure axis on which you would like to plot
+        material_colors : dict
+            key-value pairs of categories and the desired colors
+        data_type : str, optional
+            Flag for whether the data is defined as ranges (i.e., upper and lower
+            bounds) or as values (i.e., single values). The default is 'ranges'.
 
-    Returns
-    -------
-    None.
-
+        Returns
+        -------
+        None.
     '''
     for category, material_data in data.groupby('Category'):
 
@@ -152,7 +152,7 @@ def draw_plot(
             X,
             scale = 1.05,
             padding = 'scale',
-            n_interpolate = 1000,
+            n_interpolate = 100,
             interpolation = 'cubic',
             ax = ax,
             plot_kwargs = {
@@ -167,28 +167,28 @@ def create_legend(
         material_colors
         ):
     '''
-    Creates a legend located outside the plot bounding box. Currently
-    set to the top of the plot.
+        Creates a legend located outside the plot bounding box. Currently
+        set to the top of the plot.
 
-    Important references:
-        Extracting an iterable from a pandas groupby:
-            https://stackoverflow.com/questions/28844535/python-pandas-groupby-get-list-of-groups
-        Manual legend creation:
-            https://stackoverflow.com/questions/39500265/how-to-manually-create-a-legend
-        Plotting legends outside the bounding box:
-            https://stackoverflow.com/questions/4700614/how-to-put-the-legend-outside-the-plot
+        Important references:
+            Extracting an iterable from a pandas groupby:
+                https://stackoverflow.com/questions/28844535/python-pandas-groupby-get-list-of-groups
+            Manual legend creation:
+                https://stackoverflow.com/questions/39500265/how-to-manually-create-a-legend
+            Plotting legends outside the bounding box:
+                https://stackoverflow.com/questions/4700614/how-to-put-the-legend-outside-the-plot
 
-    Parameters
-    ----------
-    material_classes : Iterable list or dict_keys object
-        The list of different material classes you wish to display in the
-        legend. Commonly found via data.groupby("Category").groups.keys()
-    material_colors : DICT
-        Dictionary that references the material class to the color you
-        wish to display it as.
-    Returns
-    -------
-    None.
+        Parameters
+        ----------
+        material_classes : Iterable list or dict_keys object
+            The list of different material classes you wish to display in the
+            legend. Commonly found via data.groupby("Category").groups.keys()
+        material_colors : DICT
+            Dictionary that references the material class to the color you
+            wish to display it as.
+        Returns
+        -------
+        None.
     '''
     handles = []
     # make a manual legend
@@ -199,53 +199,55 @@ def create_legend(
             )
         handles.append(patch)
 
-    # place legend outside the plot
+    # place legend outside the plot     # ToDo put Legend right of the plot
     plt.legend(
         handles=handles,
         bbox_to_anchor = (0, 1.02, 1, 0.2),
         loc = 'lower left',
         mode = 'expand',
         borderaxespad = 0,
+        fontsize = 15,
         ncol = 4)
 
 def draw_guideline(
         guideline,
         ax,
         log_flag = True,
-        ):
+    ):
     '''
-    Draws guideline for material index.
+        Draws guideline for material index.
 
-    Parameters
-    ----------
-    guideline : dict
-        power : float
-            power of the material index (and thus the guideline)
-            e.g., 1 for E/rho, 3 for E^(1/3)/rho.
-        x_lim : list
-            x-axis limits ([low, high])
-        y_intercept : float optional
-            y_intercept of the guideline.
-            This gets tricky if your x- and y-axis limits do not include 1.0.
-            The default is 1.0.
-        string : string to display and label the guideline
-        string_position : location to start the string
-    ax : matplotlib axis object
-        The current plotting axis.
-    log_flag : bool
-        Flag to determine whether the logarithmic equation for a line
-        will be used or a standard equation.
-        The default is True.
+        Parameters
+        ----------
+        guideline : dict
+            power : float
+                power of the material index (and thus the guideline)
+                e.g., 1 for E/rho, 3 for E^(1/3)/rho.
+            x_lim : list
+                x-axis limits ([low, high])
+            y_intercept : float optional
+                y_intercept of the guideline.
+                This gets tricky if your x- and y-axis limits do not include 1.0.
+                The default is 1.0.
+            string : string to display and label the guideline
+            string_position : location to start the string
+        ax : matplotlib axis object
+            The current plotting axis.
+        log_flag : bool
+            Flag to determine whether the logarithmic equation for a line
+            will be used or a standard equation.
+            The default is True.
 
-    Returns
-    -------
-    None.
+        Returns
+        -------
+        None.
     '''
-    power = guideline['power']
-    x_lim = guideline['x_lim']
-    y_intercept = guideline['y_intercept']
-    string = guideline['string']
+    power           = guideline['power']
+    x_lim           = guideline['x_lim']
+    y_intercept     = guideline['y_intercept']
+    string          = guideline['string']
     string_position = guideline['string_position']
+    linetype        = guideline['linetype']
 
 
     # Create linspace to span x-limits
@@ -263,7 +265,7 @@ def draw_guideline(
     ax.plot(
         x_values,
         y_values,
-        'k--',
+        linetype,
         )
 
     #Create an annotation on the line to denote the equation
@@ -282,22 +284,60 @@ def draw_guideline(
         )
 
 
+def draw_parallel_lines(
+        parallel_lines,
+        ax
+    ):
+    '''
+        Draw vertical & horizontal lines
+
+        Parameters:
+        -----------
+        parallel_line : dict
+            diraction: char
+                'x' or 'y' - displays to which axis the line should be parallel 
+            position: float
+                value where to cross the x-/y-Axis
+            color:  string
+                color of the line
+            linestyle: streing
+                linevisualsation  -  e.g. dotted, ...
+
+        Returns:
+        --------
+        None
+    '''
+    for parallel_line in parallel_lines:
+        position  = parallel_line['position']
+        color     = parallel_line['color']
+        linestyle = parallel_line['linestyle']
+
+        if(parallel_line['direction'] == 'x'):
+            ax.axhline(y=position, color=color, linestyle=linestyle)
+        elif(parallel_line['direction'] == 'y'):
+            ax.axvline(x=position, color=color, linestyle=linestyle)
+        else:
+            raise(ValueError, 'direktion for parallel_lines hat to be "x" or "y" ')
+
+            
+
+
 def common_definitions():
     '''
-    Creates two dictionaries for colors and units (labeling).
-    Add the units that you wish to see in the world (Ghandhi, 1913)
+        Creates two dictionaries for colors and units (labeling).
+        Add the units that you wish to see in the world (Ghandhi, 1913)
 
-    Returns
-    -------
-    units : dict
-        Dictionary with key-value pairs for each quantity and its
-        respective SI unit. Keys are case sensitive.
-        Could maybe be a way to just grab this
-        from a preexisting python package.
+        Returns
+        -------
+        units : dict
+            Dictionary with key-value pairs for each quantity and its
+            respective SI unit. Keys are case sensitive.
+            Could maybe be a way to just grab this
+            from a preexisting python package.
 
-    material_colors : dict
-        key-value pairs for each category of material and the respective
-        color in which you wish to see it plotted. Keys are case sensitive.
+        material_colors : dict
+            key-value pairs for each category of material and the respective
+            color in which you wish to see it plotted. Keys are case sensitive.
     '''
     # common units for labeling the axes. These are case sensitive.
     units = {

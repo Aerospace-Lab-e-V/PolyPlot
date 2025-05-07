@@ -223,7 +223,7 @@ def draw_hull(
         X, 
         scale=1.1, 
         padding="scale", 
-        n_interpolate=1000, 
+        n_interpolate=100, 
         interpolation="quadratic_periodic",
         plot_kwargs=None, 
         ax=None):
