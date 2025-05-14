@@ -23,10 +23,10 @@ call %ENV_DIR%\Scripts\activate.bat
 REM 4. Pip aktualisieren und Pakete installieren
 echo ==== Benötigte Pakete werden installiert... ====
 python -m pip install --upgrade pip
-pip install numpy pandas matplotlib scikit-learn scipy
+pip install numpy pandas matplotlib scikit-learn scipy openpyxl
 
 REM 5. Test-Ausgabe
 echo ==== Installierte Versionen: ====
-python -c "import numpy, pandas, matplotlib, sklearn, scipy; print('numpy:', numpy.__version__); print('pandas:', pandas.__version__); print('matplotlib:', matplotlib.__version__); print('scikit-learn:', sklearn.__version__); print('scipy:', scipy.__version__)"
+python -c "import numpy, pandas, matplotlib, sklearn, scipy, openpyxl; print('numpy:', numpy.__version__); print('pandas:', pandas.__version__); print('matplotlib:', matplotlib.__version__); print('scikit-learn:', sklearn.__version__); print('scipy:', scipy.__version__); print('openpyxl:', openpyxl.__version__)"
 
 pause

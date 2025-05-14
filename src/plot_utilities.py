@@ -311,11 +311,12 @@ def draw_parallel_lines(
         position  = parallel_line['position']
         color     = parallel_line['color']
         linestyle = parallel_line['linestyle']
+        linewidth = parallel_line['linewidth']
 
         if(parallel_line['direction'] == 'x'):
-            ax.axhline(y=position, color=color, linestyle=linestyle)
+            ax.axhline(y=position, color=color, linestyle=linestyle, linewidth=linewidth)
         elif(parallel_line['direction'] == 'y'):
-            ax.axvline(x=position, color=color, linestyle=linestyle)
+            ax.axvline(x=position, color=color, linestyle=linestyle, linewidth=linewidth)
         else:
             raise(ValueError, 'direktion for parallel_lines hat to be "x" or "y" ')
 

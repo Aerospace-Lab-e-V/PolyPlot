@@ -48,9 +48,9 @@ if __name__ == '__main__':
 
 # ❗ start of USER INPUT                                                                                                                                      
     # file with all of your material data (must be xlsx)
-    file_name = 'single_material_properties.xlsx'
+    file_name = 'common_material_properties.xlsx'
 
-    data_type = 'values' # type of material data ('ranges' or single 'values')
+    data_type = 'ranges' # type of material data ('ranges' or single 'values')
 
     figure_type = 'presentation' #options are 'publication' or 'presentation'
     figure_size = (16,9) #width, height, in inches
@@ -60,11 +60,13 @@ if __name__ == '__main__':
     y_axis_quantity = "Young Modulus"
 
     # ~ Flag to plot in log-log space                           
-    log_flag = True     # ToDo: semilogx() & semilogy()
+    log_flag = True
+    # log_y_flag = True     # ToDo
 
     # ~ x- and y-axes limits                                    
-    x_lim = [1, 50000]
-    y_lim = [1E-4,1E3]
+    automatic_Display_Area = False      # & not working yet
+    x_lim = [10, 50000]
+    y_lim = [1E-4,9E2]
 
 
     # ~ insert Guideline (linear)                               
@@ -81,22 +83,25 @@ if __name__ == '__main__':
             'linetype': 'k--'
             }
     
+    # ~ insert horizontal & vertical lines                      
     parallel_lines_flag = True
     if parallel_lines_flag:
             parallel_lines = [{
                 'direction' : 'x',
                 'position' : 100,
                 'color':'green',
-                'linestyle':'--'
+                'linestyle':'--',
+                'linewidth': 4
             },{
                 'direction' : 'y',
                 'position' : 1000,
                 'color':'red',
-                'linestyle':':'
+                'linestyle':':',
+                'linewidth': 4
             }]
 
     # ~ insert Star-Marker                                      
-    individual_material_flag = False
+    individual_material_flag = True
     if individual_material_flag:
         individual_materials = [{
             'Young Modulus':0.124E-2,
@@ -116,10 +121,10 @@ if __name__ == '__main__':
         ]
         marker_size = 400
 
-    # $ To edit hull colors & units go to:  plot_utilities.py line 303
-    # $ to edit legend go to:               plot_utilities.py line 203
+    # $ o edit hull colors & units go to:  plot_utilities.py line 303  
+    # $ to edit legend go to:               plot_utilities.py line 203  
+    # $ to edit grid go to:                 line 203                    
 # ❗ end of USER INPUT                                                                                                                                      
-
 
     #%% General setup
     # Create dictionaries with common units bases etc.
@@ -139,10 +144,10 @@ if __name__ == '__main__':
         file_path
         )
 
+
     # Error handling about the colors dictionary
     if set(data.groupby('Category').groups) > set(material_colors):
-        raise ValueError('You have material categories that have not been assigned \
-a color. Please add a color to the material_colors dictionary (common_definitions function).')
+        raise ValueError('You have material categories that have not been assigned a color. Please add a color to the material_colors dictionary (common_definitions function).')
 
     #%% Figure manipulation
 
@@ -170,14 +175,27 @@ a color. Please add a color to the material_colors dictionary (common_definition
             have equivalent key-value pairs in the units dictionary (common_definitions function).")
 
     #set axes limits
-    ax.set(xlim=x_lim, ylim= y_lim)
+    if automatic_Display_Area:      # & check for log-flag
+        if log_flag:
+            ax.set(xlim=[   min(data[x_axis_quantity]) - 0.2**abs(min(data[x_axis_quantity])), 
+                            max(data[x_axis_quantity]) + 0.2**abs(max(data[x_axis_quantity]))], 
+                   ylim=[   min(data[y_axis_quantity]) - 0.2**abs(min(data[y_axis_quantity])),
+                            max(data[y_axis_quantity]) + 0.2**abs(max(data[y_axis_quantity]))])
+        else:
+            ax.set(xlim=[   min(data[x_axis_quantity]) - 0.2*abs(min(data[x_axis_quantity])), 
+                            max(data[x_axis_quantity]) + 0.2*abs(max(data[x_axis_quantity]))], 
+                   ylim=[   min(data[y_axis_quantity]) - 0.2*abs(min(data[y_axis_quantity])),
+                            max(data[y_axis_quantity]) + 0.2*abs(max(data[y_axis_quantity]))])
+    else:
+        ax.set(xlim=x_lim, ylim= y_lim)
 
-    #toggle log-log plot
+    #toggle log in plot     # & fix log parameter for semilog 
     if log_flag:
         ax.loglog()
-
-    # set x-scale to logarithmic
-    # ax.set_xscale('log')
+    # if log_x_flag:
+    #     ax.set_xscale('log')
+    # if log_y_flag:
+    #     ax.set_yscale('log')
 
     #add grid lines
     # https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.grid.htmls
@@ -237,4 +255,4 @@ a color. Please add a color to the material_colors dictionary (common_definition
                 )
 
 
-    plt.show()
+plt.show()
