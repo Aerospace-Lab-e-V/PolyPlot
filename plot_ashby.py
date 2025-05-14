@@ -31,6 +31,7 @@ from src.plot_utilities import (
     plotting_presets,
     draw_guideline,
     draw_parallel_lines,
+    draw_colored_areas,
     common_definitions,
     )
 
@@ -100,7 +101,7 @@ if __name__ == '__main__':
                 'linewidth': 4
             }]
 
-    # ~ insert Star-Marker                                      
+    # ~ insert Marker                                           
     individual_material_flag = True
     if individual_material_flag:
         individual_materials = [{
@@ -121,7 +122,23 @@ if __name__ == '__main__':
         ]
         marker_size = 400
 
-    # $ o edit hull colors & units go to:  plot_utilities.py line 303  
+    # ~ insert colored area                                           
+    colored_area_flag = True
+    if colored_area_flag:
+        colored_areas = [{
+            'x': [1, 100, 1000, 1   ],
+            'y': [1, 1   , 1000, 1000],
+            'color': "g",
+            'alpha': 0.5        # ∈[0,1]
+            },{
+            'x': [1000, 100000, 100000, 1000],
+            'y': [1,    1,      1000,   1000],
+            'color': "r",
+            'alpha': 0.2        # ∈[0,1]
+            }
+        ]
+
+    # $ to edit hull colors & units go to:  plot_utilities.py line 303  
     # $ to edit legend go to:               plot_utilities.py line 203  
     # $ to edit grid go to:                 line 203                    
 # ❗ end of USER INPUT                                                                                                                                      
@@ -207,6 +224,14 @@ if __name__ == '__main__':
 
     #%% Data plotting
 
+    # draw background colored areas
+
+    if colored_area_flag:
+        draw_colored_areas(
+            colored_areas,
+            ax = ax
+        )
+
     #draw guideline
     if guideline_flag:
         draw_guideline(
@@ -214,6 +239,7 @@ if __name__ == '__main__':
                 ax = ax,
                 log_flag = log_flag,
                 )
+
 
     if parallel_lines_flag:
         draw_parallel_lines(
@@ -253,6 +279,5 @@ if __name__ == '__main__':
                 marker = individual_material['marker'],
                 s = marker_size,
                 )
-
 
 plt.show()

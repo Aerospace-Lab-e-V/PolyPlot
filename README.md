@@ -2,9 +2,8 @@ Der source-code stammt ursprüngilich von [GitHub](https://github.com/walgren/As
 Um den Code ganz auf unsere Bedürfnisse anpassen zu können haben wir ihn auf unser GitLab übernommen.
 
 ## Verwendung
-1. Pythoninterpreter wählen: 
-   Strg+Shift+P → Python:Select Interpreter →
-   Enter Path → Find → .\Ashby\Scrips\python.exe
+1. Python interpreter wählen: 
+   Strg+Shift+P → Python:Select Interpreter → Enter Path → Find → .\Ashby\Scrips\python.exe
 2. Exel-Tabelle in .\material_properties\ ablegen (template folgt ggf.).
 Orientiert euch dazu an den beiden gegeben .xlsx Dokumenten: <br>
 common_... erstellt seine Hüllen aus Wertebereichen <br>

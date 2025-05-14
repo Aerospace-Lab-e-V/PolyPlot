@@ -320,6 +320,46 @@ def draw_parallel_lines(
         else:
             raise(ValueError, 'direktion for parallel_lines hat to be "x" or "y" ')
 
+
+def draw_colored_areas(
+    colored_areas,
+    ax
+    ):
+    '''
+        colors the backgrounf of specific areas
+
+        Parameters
+        ----------
+        colored_areas : dict
+            x : list
+                x-coordinates of edgeponts
+            y : list
+                y-coordinates corresponding to the given x-coordinates above
+            color : char
+                specifies color of the area
+            alpha : float between 0 and 1
+                intensity of the color
+        ax : matplotlib axis object
+            The current plotting axis.
+
+        Returns
+        -------
+        None.
+    '''
+    for colored_area in colored_areas:
+        x         = colored_area['x']
+        y         = colored_area['y']
+        color     = colored_area['color']
+        alpha     = colored_area['alpha']
+
+        ax.fill(
+            x, 
+            y, 
+            color = color, 
+            alpha = alpha
+            )
+
+
             
 
 

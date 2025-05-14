@@ -295,18 +295,19 @@ def draw_hull(
 
 
 def draw_rounded_hull(X, padding=0.1, line_kwargs=None, ax=None):
-    """Plots a convex hull around points with rounded corners and a given padding.
+    """
+        Plots a convex hull around points with rounded corners and a given padding.
 
-    Parameters
-    ----------
-    X : np.array
-        2d array with two columns and n rows
-    padding : float, optional
-        padding between hull and points, by default 0.1
-    line_kwargs : dict, optional
-        line kwargs (used for `matplotlib.pyplot.plot` and `matplotlib.patches.Arc`), by default None
-    ax : matplotlib.axes.Axes, optional
-        axes to plat on, by default None
+        Parameters
+        ----------
+        X : np.array
+            2d array with two columns and n rows
+        padding : float, optional
+            padding between hull and points, by default 0.1
+        line_kwargs : dict, optional
+            line kwargs (used for `matplotlib.pyplot.plot` and `matplotlib.patches.Arc`), by default None
+        ax : matplotlib.axes.Axes, optional
+            axes to plat on, by default None
     """
 
     default_line_kwargs = dict(
