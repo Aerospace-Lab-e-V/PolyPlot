@@ -22,7 +22,6 @@ Dependencies:
 import os
 
 import pandas as pd
-
 import matplotlib.pyplot as plt
 
 from src.plot_utilities import (
@@ -50,8 +49,6 @@ if __name__ == '__main__':
 # ❗ start of USER INPUT                                                                                                                                      
     # file with all of your material data (must be xlsx)
     file_name = 'common_material_properties.xlsx'
-
-    data_type = 'ranges' # type of material data ('ranges' or single 'values')
 
     figure_type = 'presentation' #options are 'publication' or 'presentation'
     figure_size = (16,9) #width, height, in inches
@@ -129,12 +126,12 @@ if __name__ == '__main__':
             'x': [1, 100, 1000, 1   ],
             'y': [1, 1   , 1000, 1000],
             'color': "g",
-            'alpha': 0.5        # ∈[0,1]
+            'alpha': 0.5        # ∈[0;1]
             },{
             'x': [1000, 100000, 100000, 1000],
             'y': [1,    1,      1000,   1000],
             'color': "r",
-            'alpha': 0.2        # ∈[0,1]
+            'alpha': 0.2        # ∈[0;1]
             }
         ]
 
@@ -192,17 +189,17 @@ if __name__ == '__main__':
             have equivalent key-value pairs in the units dictionary (common_definitions function).")
 
     #set axes limits
-    if automatic_Display_Area:      # & check for log-flag
+    if automatic_Display_Area:
         if log_flag:
-            ax.set(xlim=[   min(data[x_axis_quantity]) - 0.2**abs(min(data[x_axis_quantity])), 
-                            max(data[x_axis_quantity]) + 0.2**abs(max(data[x_axis_quantity]))], 
-                   ylim=[   min(data[y_axis_quantity]) - 0.2**abs(min(data[y_axis_quantity])),
-                            max(data[y_axis_quantity]) + 0.2**abs(max(data[y_axis_quantity]))])
+            ax.set(xlim=[   min(data[x_axis_quantity]) - abs(min(data[x_axis_quantity]))**0.2, 
+                            max(data[x_axis_quantity]) + abs(max(data[x_axis_quantity]))**0.2], 
+                   ylim=[   min(data[y_axis_quantity]) - abs(min(data[y_axis_quantity]))**0.2,
+                            max(data[y_axis_quantity]) + abs(max(data[y_axis_quantity]))**0.2])
         else:
-            ax.set(xlim=[   min(data[x_axis_quantity]) - 0.2*abs(min(data[x_axis_quantity])), 
-                            max(data[x_axis_quantity]) + 0.2*abs(max(data[x_axis_quantity]))], 
-                   ylim=[   min(data[y_axis_quantity]) - 0.2*abs(min(data[y_axis_quantity])),
-                            max(data[y_axis_quantity]) + 0.2*abs(max(data[y_axis_quantity]))])
+            ax.set(xlim=[   min(data[x_axis_quantity]) - abs(min(data[x_axis_quantity]))*0.2, 
+                            max(data[x_axis_quantity]) + abs(max(data[x_axis_quantity]))*0.2], 
+                   ylim=[   min(data[y_axis_quantity]) - abs(min(data[y_axis_quantity]))*0.2,
+                            max(data[y_axis_quantity]) + abs(max(data[y_axis_quantity]))*0.2])
     else:
         ax.set(xlim=x_lim, ylim= y_lim)
 
@@ -259,7 +256,6 @@ if __name__ == '__main__':
             y_axis_quantity,
             ax,
             material_colors,
-            data_type = data_type,
             )
 
     create_legend(

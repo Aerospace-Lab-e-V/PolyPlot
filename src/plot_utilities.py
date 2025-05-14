@@ -9,6 +9,7 @@ Contains all the misc. functions to generate the ashby plot (not related to the 
 import os
 
 import numpy as np
+import pandas as pd
 
 import matplotlib.pyplot as plt
 from matplotlib import patches
@@ -79,7 +80,6 @@ def draw_plot(
         y_axis_quantity,
         ax,
         material_colors,
-        data_type = 'ranges'
     ):
     '''
         Plots both the data points (either ellipses if material upper and lower
@@ -109,44 +109,47 @@ def draw_plot(
         None.
     '''
     for category, material_data in data.groupby('Category'):
+        X = np.zeros(shape=(2*len(material_data),2))
+        X[:len(material_data),1] = material_data[y_axis_quantity + ' low']
+        X[:len(material_data),0] = material_data[x_axis_quantity + ' low']
 
-        if data_type == 'ranges':
-            X = np.zeros(shape=(2*len(material_data),2))
-            X[:len(material_data),1] = material_data[y_axis_quantity + ' low']
-            X[:len(material_data),0] = material_data[x_axis_quantity + ' low']
+        X[len(material_data):,1] = material_data[y_axis_quantity + ' high']
+        X[len(material_data):,0] = material_data[x_axis_quantity + ' high']
 
-            X[len(material_data):,1] = material_data[y_axis_quantity + ' high']
-            X[len(material_data):,0] = material_data[x_axis_quantity + ' high']
+        for i in range(len(material_data)):
+            if  (material_data[x_axis_quantity + ' low'].iloc[i] ==  material_data[x_axis_quantity + ' high'].iloc[i] or pd.isna(material_data[x_axis_quantity + ' high'].iloc[i]))\
+            and (material_data[y_axis_quantity + ' low'].iloc[i] ==  material_data[y_axis_quantity + ' high'].iloc[i] or pd.isna(material_data[y_axis_quantity + ' high'].iloc[i])):    # check if high is empty or low = high for both
+                ax.plot(
+                    material_data[x_axis_quantity + ' low'].iloc[i],
+                    material_data[y_axis_quantity + ' low'].iloc[i],
+                    color = material_colors[category],
+                    marker = 'o',
+                    )
 
-            for i in range(len(material_data)):
+            else:
+                linewidth = 1
+                if pd.isna(material_data[x_axis_quantity + ' high'].iloc[i]):       # x low = x high for plotting
+                    material_data[x_axis_quantity + ' high'].iloc[i] =  material_data[x_axis_quantity + ' low'].iloc[i]
+                    linewidth = 5
+                if pd.isna(material_data[y_axis_quantity + ' high'].iloc[i]):
+                    material_data[y_axis_quantity + ' high'].iloc[i] =  material_data[y_axis_quantity + ' low'].iloc[i]
+                    linewidth = 5
+
                 draw_ellipses(
-                        x = [material_data[x_axis_quantity + ' low'].iloc[i],
-                             material_data[x_axis_quantity + ' high'].iloc[i]],
-                        y = [material_data[y_axis_quantity + ' low'].iloc[i],
-                             material_data[y_axis_quantity + ' high'].iloc[i]],
+                        x = [material_data[x_axis_quantity + ' low' ].iloc[i] ,
+                            material_data[x_axis_quantity + ' high'].iloc[i]],
+                        y = [material_data[y_axis_quantity + ' low' ].iloc[i] ,
+                            material_data[y_axis_quantity + ' high'].iloc[i]],
                         plot_kwargs = {
                             'facecolor':colors.to_rgba(
                                 material_colors[category],
                                 alpha=0.25
                                 ),
-                            'edgecolor':material_colors[category]
+                            'edgecolor':material_colors[category],
+                            'linewidth': linewidth
                             },
                         ax = ax,
                         )
-
-        elif data_type == 'values':
-            X = np.zeros(shape = (len(material_data),2))
-            X[:,0] = material_data[x_axis_quantity]
-            X[:,1] = material_data[y_axis_quantity]
-
-            ax.scatter(
-                X[:,0],
-                X[:,1],
-                c=material_colors[category])
-
-        else:
-            raise(ValueError, 'Only options for data_type in draw_plot are ranges or values')
-
 
         draw_hull(
             X,

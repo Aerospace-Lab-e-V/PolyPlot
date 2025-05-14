@@ -4,13 +4,13 @@ Um den Code ganz auf unsere Bedürfnisse anpassen zu können haben wir ihn auf u
 ## Verwendung
 1. Python interpreter wählen: 
    Strg+Shift+P → Python:Select Interpreter → Enter Path → Find → .\Ashby\Scrips\python.exe
-2. Exel-Tabelle in .\material_properties\ ablegen (template folgt ggf.).
-Orientiert euch dazu an den beiden gegeben .xlsx Dokumenten: <br>
-common_... erstellt seine Hüllen aus Wertebereichen <br>
-single_... aus einzelnen Punkten
+2. Excel-Tabelle in .\material_properties\ ablegen (template folgt ggf.).
 3. Einstellungen in **plot_ashby.py** anpassen (Zeile 48-104) (teilweise automatisierung folgt ggf.) und ausführen.
 4. Der Plot wir in einem Popup erscheinen und kann bei belieben loal gespeichert werden 
 
+<br>
+
+> es existiert nur noch ein data_type❗ Für jede Achse existiert eine "low" und eine "high" Spalte. Wenn nur ein Wert geben ist, bitte die "low" Spalte befüllen und "high" entweder leer lassen oder ="low" setzen.
 
 <br>
 <br>
