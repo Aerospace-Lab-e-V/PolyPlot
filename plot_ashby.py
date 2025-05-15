@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
 # ❗ start of USER INPUT                                                                                                                                      
     # file with all of your material data (must be xlsx)
-    file_name = 'common_material_properties.xlsx'
+    file_name = 'Test.xlsx'
 
     figure_type = 'presentation' #options are 'publication' or 'presentation'
     figure_size = (16,9) #width, height, in inches
@@ -57,14 +57,36 @@ if __name__ == '__main__':
     x_axis_quantity = 'Density'
     y_axis_quantity = "Young Modulus"
 
+    levels = {           # different hirachie levels the Materials are stored in the excel
+            'name': 'Group',
+            'visible': True,
+            'alpha': 0.3
+        },{
+            'name': 'Material',
+            'visible': True,
+            'alpha': 0.4
+        },{
+            'name': 'Manufacturer',
+            'visible': True,
+            'alpha': 0.3
+        },{
+            'name': 'Version',
+            'visible': True,
+            'alpha': 0.3
+        },{
+            'name': 'Sample',
+            'visible': False,
+            'alpha': 0.3
+        }
+
     # ~ Flag to plot in log-log space                           
     log_flag = True
     # log_y_flag = True     # ToDo
 
     # ~ x- and y-axes limits                                    
     automatic_Display_Area = False      # & not working yet
-    x_lim = [10, 50000]
-    y_lim = [1E-4,9E2]
+    x_lim = [100,  2600]
+    y_lim = [1E-4, 4]
 
 
     # ~ insert Guideline (linear)                               
@@ -84,19 +106,19 @@ if __name__ == '__main__':
     # ~ insert horizontal & vertical lines                      
     parallel_lines_flag = True
     if parallel_lines_flag:
-            parallel_lines = [{
-                'direction' : 'x',
-                'position' : 100,
-                'color':'green',
-                'linestyle':'--',
-                'linewidth': 4
-            },{
-                'direction' : 'y',
-                'position' : 1000,
-                'color':'red',
-                'linestyle':':',
-                'linewidth': 4
-            }]
+        parallel_lines = [{
+            'direction' : 'x',
+            'position' : 100,
+            'color':'green',
+            'linestyle':'--',
+            'linewidth': 4
+        },{
+            'direction' : 'y',
+            'position' : 1000,
+            'color':'red',
+            'linestyle':':',
+            'linewidth': 4
+        }]
 
     # ~ insert Marker                                           
     individual_material_flag = True
@@ -120,11 +142,11 @@ if __name__ == '__main__':
         marker_size = 400
 
     # ~ insert colored area                                           
-    colored_area_flag = True
+    colored_area_flag = False
     if colored_area_flag:
         colored_areas = [{
-            'x': [1, 100, 1000, 1   ],
-            'y': [1, 1   , 1000, 1000],
+            'x': [1, 100, 1000, 1000, 1   ],
+            'y': [1, 1  , 100,  1000, 1000],
             'color': "g",
             'alpha': 0.5        # ∈[0;1]
             },{
@@ -159,9 +181,9 @@ if __name__ == '__main__':
         )
 
 
-    # Error handling about the colors dictionary
-    if set(data.groupby('Category').groups) > set(material_colors):
-        raise ValueError('You have material categories that have not been assigned a color. Please add a color to the material_colors dictionary (common_definitions function).')
+    #  Error handling about the colors dictionary
+    # if set(data.groupby('Material').groups) > set(material_colors):
+    #     raise ValueError('You have material categories that have not been assigned a color. Please add a color to the material_colors dictionary (common_definitions function).')
 
     #%% Figure manipulation
 
@@ -247,19 +269,25 @@ if __name__ == '__main__':
 
     if (x_axis_quantity == 'Poisson difference') or (y_axis_quantity == 'Poisson difference'):
 
-        data['Poisson difference high'] = 1/(1+data['Poisson low'])
-        data['Poisson difference low'] = 1/(1+data['Poisson high'])
+        data['Poisson difference high'] = 1/(1+data['Poisson low' ])
+        data['Poisson difference low' ] = 1/(1+data['Poisson high'])
 
+    current_level = 0
+    current_color = 0
     draw_plot(
+            0,      # current_level_number
+            None,   # current_master_level_name
+            levels,
             data,
             x_axis_quantity,
             y_axis_quantity,
             ax,
-            material_colors,
+            0,      # current_color
+            material_colors
             )
 
     create_legend(
-            material_classes = data.groupby('Category').groups.keys(),
+            material_classes = data.groupby('Material').groups.keys(),
             material_colors = material_colors,
             )
 

@@ -6,6 +6,8 @@ Contains all the misc. functions to generate the ashby plot (not related to the 
 
 @author: Walgren
 """
+
+
 import os
 
 import numpy as np
@@ -22,7 +24,7 @@ from src.plot_convex_hull import(
 
 
 from src.rotation_aware_annotation import RotationAwareAnnotation
-
+    
 
 def plotting_presets(figure_type:str = 'publication'):
     '''
@@ -75,10 +77,14 @@ def plotting_presets(figure_type:str = 'publication'):
 
 
 def draw_plot(
+        current_level_number,
+        current_master_level_name,
+        levels,
         data,
         x_axis_quantity,
         y_axis_quantity,
         ax,
+        current_color,
         material_colors,
     ):
     '''
@@ -88,6 +94,13 @@ def draw_plot(
 
         Parameters
         ----------
+        levels: dict
+            name: str
+                name of the level
+            visible: bool
+                togles visibility
+            alpha: float
+                sets color intensity
         data : pandas dataframe
             dataframe with all material data to be plotted.
             Note that this dataframe must include the column 'Category;'
@@ -108,58 +121,89 @@ def draw_plot(
         -------
         None.
     '''
-    for category, material_data in data.groupby('Category'):
-        X = np.zeros(shape=(2*len(material_data),2))
-        X[:len(material_data),1] = material_data[y_axis_quantity + ' low']
-        X[:len(material_data),0] = material_data[x_axis_quantity + ' low']
+    level = levels[current_level_number]['name']
+    print("====", current_level_number, current_master_level_name, level, "====")
+    for category, material_data in data.groupby(level):
+        # print(material_data)
+        if category in material_colors:
+            current_color = material_colors[category]
+        if current_level_number < len(levels) -1:
+            draw_plot(
+                current_level_number + 1,
+                category,
+                levels,
+                material_data,
+                x_axis_quantity,
+                y_axis_quantity,
+                ax,
+                current_color,
+                material_colors,
+                )
+        if (current_level_number < len(levels) -1 and len(material_data) == 1) \
+            or levels[current_level_number]['visible'] == False:
+            return
 
-        X[len(material_data):,1] = material_data[y_axis_quantity + ' high']
-        X[len(material_data):,0] = material_data[x_axis_quantity + ' high']
+        if current_color == 0 and levels[current_level_number]['visible'] == True:
+            if 'default' in material_colors:
+                current_color = material_colors['default']
+            else:
+                raise ValueError('You have material categories that have not been assigned a color. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)
+
 
         for i in range(len(material_data)):
-            if  (material_data[x_axis_quantity + ' low'].iloc[i] ==  material_data[x_axis_quantity + ' high'].iloc[i] or pd.isna(material_data[x_axis_quantity + ' high'].iloc[i]))\
-            and (material_data[y_axis_quantity + ' low'].iloc[i] ==  material_data[y_axis_quantity + ' high'].iloc[i] or pd.isna(material_data[y_axis_quantity + ' high'].iloc[i])):    # check if high is empty or low = high for both
+            if  (material_data[x_axis_quantity + ' low'].iloc[i] ==  material_data[x_axis_quantity + ' high'].iloc[i]) \
+            and (material_data[y_axis_quantity + ' low'].iloc[i] ==  material_data[y_axis_quantity + ' high'].iloc[i]):    # check if high is empty or low = high for both
                 ax.plot(
                     material_data[x_axis_quantity + ' low'].iloc[i],
                     material_data[y_axis_quantity + ' low'].iloc[i],
-                    color = material_colors[category],
+                    color = current_color,
                     marker = 'o',
                     )
 
             else:
                 linewidth = 1
                 if pd.isna(material_data[x_axis_quantity + ' high'].iloc[i]):       # x low = x high for plotting
-                    material_data[x_axis_quantity + ' high'].iloc[i] =  material_data[x_axis_quantity + ' low'].iloc[i]
+                    material_data[x_axis_quantity + ' high'].iloc[i] = material_data[x_axis_quantity + ' low'].iloc[i]
                     linewidth = 5
                 if pd.isna(material_data[y_axis_quantity + ' high'].iloc[i]):
-                    material_data[y_axis_quantity + ' high'].iloc[i] =  material_data[y_axis_quantity + ' low'].iloc[i]
+                    material_data[y_axis_quantity + ' high'].iloc[i] = material_data[y_axis_quantity + ' low'].iloc[i]
                     linewidth = 5
+
+
 
                 draw_ellipses(
                         x = [material_data[x_axis_quantity + ' low' ].iloc[i] ,
-                            material_data[x_axis_quantity + ' high'].iloc[i]],
+                             material_data[x_axis_quantity + ' high'].iloc[i]],
                         y = [material_data[y_axis_quantity + ' low' ].iloc[i] ,
-                            material_data[y_axis_quantity + ' high'].iloc[i]],
+                             material_data[y_axis_quantity + ' high'].iloc[i]],
                         plot_kwargs = {
                             'facecolor':colors.to_rgba(
-                                material_colors[category],
+                                current_color,
                                 alpha=0.25
                                 ),
-                            'edgecolor':material_colors[category],
+                            'edgecolor':current_color,
                             'linewidth': linewidth
                             },
                         ax = ax,
                         )
+        
+            X = np.zeros(shape=(2*len(material_data),2))
+            X[:len(material_data),1] = material_data[y_axis_quantity + ' low']
+            X[:len(material_data),0] = material_data[x_axis_quantity + ' low']
+
+            X[len(material_data):,1] = material_data[y_axis_quantity + ' high']
+            X[len(material_data):,0] = material_data[x_axis_quantity + ' high']
+
 
         draw_hull(
-            X,
+            X,          # & Performance: combine return matrix instead of reading out again
             scale = 1.05,
             padding = 'scale',
             n_interpolate = 100,
             interpolation = 'cubic',
             ax = ax,
             plot_kwargs = {
-                'color':material_colors[category],
+                'color':current_color,
                 'alpha':0.2
                 }
             )
@@ -405,7 +449,11 @@ def common_definitions():
         'Composites':'Brown',
         'Technical ceramics':'pink',
         'Metals':'grey',
-        'TEST':'black'
+        'TEST':'black',
+        'Thermolast':'orange',
+        'PETG': 'green',
+        'PEEK': 'blue',
+        'default':'white'
         }
 
     return units, material_colors
