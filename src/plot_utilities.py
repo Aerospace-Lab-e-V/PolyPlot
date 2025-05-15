@@ -16,6 +16,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import patches
 from matplotlib import colors
+from types import SimpleNamespace
+
 
 from src.plot_convex_hull import(
     draw_ellipses,
@@ -123,6 +125,7 @@ def draw_plot(
     '''
     level = levels[current_level_number]['name']
     print("====", current_level_number, current_master_level_name, level, "====")
+
     for category, material_data in data.groupby(level):
         # print(material_data)
         if category in material_colors:
@@ -257,22 +260,22 @@ def create_legend(
         ncol = 4)
 
 def draw_guideline(
-        guideline,
+        guidelines,
+        limit,
         ax,
-        log_flag = True,
     ):
-    '''
+    '''  # & edit parameter doku 
         Draws guideline for material index.
 
         Parameters
         ----------
         guideline : dict
-            power : float
+            x : float (optional)      x or y must be given
                 power of the material index (and thus the guideline)
                 e.g., 1 for E/rho, 3 for E^(1/3)/rho.
-            x_lim : list
+            y : float (optional)
                 x-axis limits ([low, high])
-            y_intercept : float optional
+            m : float (optional)
                 y_intercept of the guideline.
                 This gets tricky if your x- and y-axis limits do not include 1.0.
                 The default is 1.0.
@@ -280,48 +283,49 @@ def draw_guideline(
             string_position : location to start the string
         ax : matplotlib axis object
             The current plotting axis.
-        log_flag : bool
-            Flag to determine whether the logarithmic equation for a line
-            will be used or a standard equation.
-            The default is True.
 
         Returns
         -------
         None.
     '''
-    power           = guideline['power']
-    x_lim           = guideline['x_lim']
-    y_intercept     = guideline['y_intercept']
-    string          = guideline['string']
-    string_position = guideline['string_position']
-    linetype        = guideline['linetype']
 
+    num_points = 4
+    for guideline in guidelines:
 
-    # Create linspace to span x-limits
-    num_points = 5
-    x_values = np.linspace(x_lim[0],x_lim[1],num_points)
-    y_values = np.zeros(shape = num_points)
+        x = guideline['x']
+        y = guideline['y']
+        m = guideline['m']
 
-    #Create the line
-    for i in range(len(x_values)):
-        if log_flag:
-            y_values[i] = y_intercept*x_values[i]**power
-        else:
-            y_values[i] = power*x_values[i] + y_intercept
+        if x == None and m == None: # horizontal
+            x_values = np.linspace(float(limit[0][0]),float(limit[0][1]),num_points)
+            y_values = np.ones(num_points)* y
+        elif y == None and m == None: # vertical
+            x_values = np.ones(num_points)* x
+            y_values = np.linspace(float(limit[1][0]),float(limit[1][1]),num_points)
+        else:            
+            x_values = np.linspace(float(limit[0][0]),float(limit[0][1]),num_points)
+            y_values = np.zeros(num_points)
+            y_intercept = (y-m*x)
+            # if log_flag:
+            #     y_values[i] = y_intercept * x_values[i] ** m
+            # else:
+            y_values = m*x_values + y_intercept
 
     ax.plot(
         x_values,
         y_values,
-        linetype,
+        linestyle = guideline['linestyle'],
+        linewidth = guideline['linewidth'],
+        color     = guideline['color'],
         )
 
-    #Create an annotation on the line to denote the equation
+    # Create an annotation on the line to denote the equation
     # The spacing of this line takes a bit (xytext variable),
     # because the units are 1/72 in
     # FIXME generalize the xytext placement?
     RotationAwareAnnotation(
-        string,
-        xy=string_position,
+        guideline['string'],
+        xy=guideline['string_position'],
         p=(x_values[3], y_values[3]),
         pa = (x_values[0], y_values[0]),
         ax=ax,

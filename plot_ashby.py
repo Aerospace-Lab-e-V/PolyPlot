@@ -84,41 +84,26 @@ if __name__ == '__main__':
     # log_y_flag = True     # ToDo
 
     # ~ x- and y-axes limits                                    
-    automatic_Display_Area = False      # & not working yet
-    x_lim = [100,  2600]
-    y_lim = [1E-4, 4]
+    automatic_Display_Area = True      # & not working yet
+    x_lim = [100, 1000]
+    y_lim = [100, 1000]
 
 
     # ~ insert Guideline (linear)                               
     guideline_flag = True
     if guideline_flag:
-        guideline = {
-            'power':2,              # % Steigung          
-            'y_intercept': 1E-4,    # % y-Achsenabschnitt 
-            'x_lim':[1E-1, 1E8],    # x-limits of the guideline (not necessarily the figure x limits)
-            'string':r"$\frac{E^{1/2}}{\rho} \equiv k$", # % Beschriftung 
-            # 'string':r"$\frac{1}{(1+\nu)\rho} \equiv k$",
-            # location of the annotation, (300,0.51) for poisson, (65, 2E-4) for stiffness
-            'string_position': (65, 3) ,
-            'linetype': 'k--'
-            }
-    
-    # ~ insert horizontal & vertical lines                      
-    parallel_lines_flag = True
-    if parallel_lines_flag:
-        parallel_lines = [{
-            'direction' : 'x',
-            'position' : 100,
+        guidelines = [{
+            'x': 200,          # % Point y-coordinate | vertical   if x & m are none 
+            'y': 200,          # % Point y-coordinate | horizontal if y & m are none 
+            'm': 1,            # % incline  
+            'linestyle': '--',
             'color':'green',
-            'linestyle':'--',
-            'linewidth': 4
-        },{
-            'direction' : 'y',
-            'position' : 1000,
-            'color':'red',
-            'linestyle':':',
-            'linewidth': 4
-        }]
+            'linewidth': 4,
+            'string':r"$\frac{E^{1/2}}{\rho} \equiv k$", # % Beschriftung 
+            'string_position': (300, 0.5)
+            },
+        ]
+
 
     # ~ insert Marker                                           
     individual_material_flag = True
@@ -179,11 +164,6 @@ if __name__ == '__main__':
     data = pd.read_excel(
         file_path
         )
-
-
-    #  Error handling about the colors dictionary
-    # if set(data.groupby('Material').groups) > set(material_colors):
-    #     raise ValueError('You have material categories that have not been assigned a color. Please add a color to the material_colors dictionary (common_definitions function).')
 
     #%% Figure manipulation
 
@@ -254,17 +234,11 @@ if __name__ == '__main__':
     #draw guideline
     if guideline_flag:
         draw_guideline(
-                guideline,
-                ax = ax,
-                log_flag = log_flag,
-                )
-
-
-    if parallel_lines_flag:
-        draw_parallel_lines(
-                parallel_lines,
+                guidelines,
+                limit = [ax.get_xlim(), ax.get_ylim()],
                 ax = ax,
                 )
+
 
 
     if (x_axis_quantity == 'Poisson difference') or (y_axis_quantity == 'Poisson difference'):
