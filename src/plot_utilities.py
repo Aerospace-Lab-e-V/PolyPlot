@@ -172,8 +172,6 @@ def draw_plot(
                     material_data[y_axis_quantity + ' high'].iloc[i] = material_data[y_axis_quantity + ' low'].iloc[i]
                     linewidth = 5
 
-
-
                 draw_ellipses(
                         x = [material_data[x_axis_quantity + ' low' ].iloc[i] ,
                              material_data[x_axis_quantity + ' high'].iloc[i]],
@@ -264,7 +262,7 @@ def draw_guideline(
         limit,
         ax,
     ):
-    '''  # & edit parameter doku 
+    '''
         Draws guideline for material index.
 
         Parameters
@@ -281,6 +279,8 @@ def draw_guideline(
                 The default is 1.0.
             string : string to display and label the guideline
             string_position : location to start the string
+        limit: 4x4 float array
+            area shown on the plot
         ax : matplotlib axis object
             The current plotting axis.
 
@@ -288,7 +288,6 @@ def draw_guideline(
         -------
         None.
     '''
-
     num_points = 4
     for guideline in guidelines:
 
@@ -306,70 +305,32 @@ def draw_guideline(
             x_values = np.linspace(float(limit[0][0]),float(limit[0][1]),num_points)
             y_values = np.zeros(num_points)
             y_intercept = (y-m*x)
-            # if log_flag:
-            #     y_values[i] = y_intercept * x_values[i] ** m
-            # else:
+            # semilog: a∙x^m
             y_values = m*x_values + y_intercept
 
-    ax.plot(
-        x_values,
-        y_values,
-        linestyle = guideline['linestyle'],
-        linewidth = guideline['linewidth'],
-        color     = guideline['color'],
-        )
+        ax.plot(
+            x_values,
+            y_values,
+            linestyle = guideline['linestyle'],
+            linewidth = guideline['linewidth'],
+            color     = guideline['color'    ],
+            )
 
-    # Create an annotation on the line to denote the equation
-    # The spacing of this line takes a bit (xytext variable),
-    # because the units are 1/72 in
-    # FIXME generalize the xytext placement?
-    RotationAwareAnnotation(
-        guideline['string'],
-        xy=guideline['string_position'],
-        p=(x_values[3], y_values[3]),
-        pa = (x_values[0], y_values[0]),
-        ax=ax,
-        xytext=(0,0),
-        textcoords="offset points",
-        va="top"
-        )
+        # Create an annotation on the line to denote the equation
+        # The spacing of this line takes a bit (xytext variable),
+        # because the units are 1/72 in
+        # FIXME generalize the xytext placement?
+        RotationAwareAnnotation(
+            guideline['string'],
+            xy=guideline['string_position'],
+            p=(x_values[3], y_values[3]),
+            pa = (x_values[0], y_values[0]),
+            ax=ax,
+            xytext=(0,0),
+            textcoords="offset points",
+            va="top"
+            )
 
-
-def draw_parallel_lines(
-        parallel_lines,
-        ax
-    ):
-    '''
-        Draw vertical & horizontal lines
-
-        Parameters:
-        -----------
-        parallel_line : dict
-            diraction: char
-                'x' or 'y' - displays to which axis the line should be parallel 
-            position: float
-                value where to cross the x-/y-Axis
-            color:  string
-                color of the line
-            linestyle: streing
-                linevisualsation  -  e.g. dotted, ...
-
-        Returns:
-        --------
-        None
-    '''
-    for parallel_line in parallel_lines:
-        position  = parallel_line['position']
-        color     = parallel_line['color']
-        linestyle = parallel_line['linestyle']
-        linewidth = parallel_line['linewidth']
-
-        if(parallel_line['direction'] == 'x'):
-            ax.axhline(y=position, color=color, linestyle=linestyle, linewidth=linewidth)
-        elif(parallel_line['direction'] == 'y'):
-            ax.axvline(x=position, color=color, linestyle=linestyle, linewidth=linewidth)
-        else:
-            raise(ValueError, 'direktion for parallel_lines hat to be "x" or "y" ')
 
 
 def draw_colored_areas(
@@ -410,8 +371,46 @@ def draw_colored_areas(
             alpha = alpha
             )
 
+def create_marker(
+        markers,
+        x_axis_quantity,
+        y_axis_quantity,
+        marker_size,
+        ax
+    ):
+    for marker in markers:
+        ax.scatter(
+            marker[x_axis_quantity],
+            marker[y_axis_quantity],
+            c = marker['color'],
+            edgecolors ='k',
+            marker = marker['marker'],
+            s = marker_size * marker['size_factor'],
+            )
 
-            
+
+def create_annotation(
+        annotations,
+        arrows,
+        ax
+    ):
+    for annotation in annotations:
+        if annotation['arrow'] == 0:
+            ax.text(
+                annotation['txt_xy'],
+                           annotation['text'],
+                color    = annotation['txt_color'],
+                fontsize = annotation['fontsize'],
+            )
+        else:
+            ax.annotate(
+                           annotation['text'],
+                xy =       annotation['tip_xy'],
+                xytext =   annotation['txt_xy'],
+                color  =   annotation['txt_color'],
+                fontsize = annotation['fontsize'],
+                arrowprops = arrows[annotation['arrow']-1]
+            ),
 
 
 def common_definitions():
