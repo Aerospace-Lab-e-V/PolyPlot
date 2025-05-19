@@ -19,9 +19,9 @@
             sklearn
 '''
 import os
-
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 from src.plot_utilities import (
     create_legend,
@@ -48,35 +48,25 @@ if __name__ == '__main__':
 
 # ❗ start of USER INPUT                                                                                                                                      
     # file with all of your material data (must be xlsx)
-    file_name = 'Test.xlsx'
+    file_name = 'MatWeb_materials_export.xlsx'
 
     figure_type = 'presentation' #options are 'publication' or 'presentation'
     figure_size = (16,9) #width, height, in inches
 
-    # quantities you would like to plot
-    x_axis_quantity = 'Density'
-    y_axis_quantity = "Young Modulus"
+    # & Titel
 
-    levels = {           # different hirachie levels the Materials are stored in the excel
-            'name': 'Group',
-            'visible': True,
-            'alpha': 0.3
-        },{
+    # quantities you would like to plot
+    x_axis_quantity = 'Deflection Temperature at 18 MPa 264 psi'
+    y_axis_quantity = 'Tensile Strength at Break'
+
+    layers = {           # different hirachie layers the Materials are stored in the excel
             'name': 'Material',
             'visible': True,
-            'alpha': 0.4
-        },{
-            'name': 'Manufacturer',
-            'visible': True,
             'alpha': 0.3
         },{
-            'name': 'Version',
-            'visible': True,
-            'alpha': 0.3
-        },{
-            'name': 'Sample',
+            'name': 'Hersteller',
             'visible': False,
-            'alpha': 0.3
+            'alpha': 0.4
         }
 
     # ~ Flag to plot in log-log space                           
@@ -84,18 +74,19 @@ if __name__ == '__main__':
     # log_y_flag = True                # & Semilog
 
     # ~ x- and y-axes limits                                    
-    automatic_Display_Area = False      # & not working yet
-    x_lim = [0, 2400]
-    y_lim = [0, 5]
+    automatic_Display_Area_flag = True      # & not working yet
+    automatic_Display_Area_margin = .065
+    x_lim = [0, 200]
+    y_lim = [0, 120]
 
 
     # ~ insert Guideline (linear)                               
-    guideline_flag = True
+    guideline_flag = False
     if guideline_flag:
         guidelines = [{
-                'x': None,         # % Point y-coordinate | vertical   if x & m are none 
-                'y': 200,          # % Point y-coordinate | horizontal if y & m are none 
-                'm': None,         # % incline  
+                'x': 100,       # % Point x-coordinate | vertical   if y & m are none 
+                'y': 20,        # % Point y-coordinate | horizontal if x & m are none 
+                'm': 1,         # % incline                                           
                 'linestyle': '--',
                 'color':'green',
                 'linewidth': 4,
@@ -105,7 +96,7 @@ if __name__ == '__main__':
         ]
 
     # ~ insert Marker                                           
-    marker_flag = True
+    marker_flag = False
     if marker_flag:
         markers = [{
                 'Young Modulus':0.124E-2,
@@ -128,7 +119,7 @@ if __name__ == '__main__':
         marker_size = 400
 
     # ~ insert annotations                                          
-    annotation_flag = True
+    annotation_flag = False
     if annotation_flag:
         annotations = [{
                 'text': 'PETG',
@@ -163,13 +154,19 @@ if __name__ == '__main__':
                 'alpha': 0.2        # ∈[0;1]
             }
         ]
-
+    # ~ export
+    export_transparent_flag = True
+    if export_transparent_flag:
+        export_file_name = "Ashbyplot_transparent"
+        font_color = 'white'
+    else:
+        font_color = 'black'
     # $ to edit hull colors & units go to:  plot_utilities.py line 303  
     # $ to edit legend go to:               plot_utilities.py line 203  
     # $ to edit grid go to:                 line 203                    
 # ❗ end of USER INPUT                                                                                                                                      
 
-    #%% General setup
+    # : General setup :
     # Create dictionaries with common units bases etc.
     units, material_colors = common_definitions()
 
@@ -187,7 +184,7 @@ if __name__ == '__main__':
         file_path
         )
 
-    #%% Figure manipulation
+    # : Figure manipulation :
 
     #Create figure
     fig, ax = plt.subplots(1,1, figsize=figure_size)
@@ -205,28 +202,11 @@ if __name__ == '__main__':
             x_label = x_axis_quantity + '  [' + units[x_axis_quantity]  + ']'
 
 
-        ax.set_xlabel(x_label)
-        ax.set_ylabel(y_label)
+        ax.set_xlabel(x_label, color = font_color)
+        ax.set_ylabel(y_label, color = font_color)
     except:
-        raise ValueError("Could not set correct x- and y-labels. \
-            Make sure your x_axis_quantity and y_axis_quantity \
-            have equivalent key-value pairs in the units dictionary (common_definitions function).")
+        raise ValueError("Could not set correct x- and y-labels. Make sure your x_axis_quantity and y_axis_quantity have equivalent key-value pairs in the units dictionary (common_definitions function).")
 
-    #set axes limits
-    if automatic_Display_Area:
-        ax.margins(x=0.1, y=0.1)
-        # if log_flag:
-        #     ax.set(xlim=[min(data[x_axis_quantity + " low" ]) - abs(min(data[x_axis_quantity + " low" ]))**0.2, 
-        #                  max(data[x_axis_quantity + " high"]) + abs(max(data[x_axis_quantity + " high"]))**0.2], 
-        #            ylim=[min(data[y_axis_quantity + " low" ]) - abs(min(data[y_axis_quantity + " low" ]))**0.2,
-        #                  max(data[y_axis_quantity + " high"]) + abs(max(data[y_axis_quantity + " high"]))**0.2])
-        # else:
-        #     ax.set(xlim=[min(data[x_axis_quantity + " low" ]) * 0.6, 
-        #                  max(data[x_axis_quantity + " high"]) * 1.15], 
-        #            ylim=[min(data[y_axis_quantity + " low" ]) * 0.6,
-        #                  max(data[y_axis_quantity + " high"]) * 1.15])
-    else:
-        ax.set(xlim=x_lim, ylim=y_lim)
 
     #toggle log in plot     # & fix log parameter for semilog 
     if log_flag:
@@ -239,13 +219,34 @@ if __name__ == '__main__':
     #add grid lines
     # https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.grid.htmls
     ax.grid(
-        which = 'major',
-        axis = 'both',
-        linestyle = '-.',
-        zorder = 0.5)
+            which = 'major',
+            axis = 'both',
+            linestyle = '-.',
+            zorder = 0.5,
+        )
 
-    #%% Data plotting
 
+    #set axes limits
+    if automatic_Display_Area_flag:
+        ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
+    else:
+        ax.set(xlim=x_lim, ylim=y_lim)
+    
+    
+    # : Data plotting :
+    current_layer = 0
+    current_color = 0
+    draw_plot(
+            0,      # current_layer_number
+            None,   # current_master_layer_name
+            layers,
+            data,
+            x_axis_quantity,
+            y_axis_quantity,
+            ax,
+            0,      # current_color
+            material_colors
+            )
     # draw background colored areas
     if colored_area_flag:
         draw_colored_areas(
@@ -255,34 +256,35 @@ if __name__ == '__main__':
 
     #draw guideline
     if guideline_flag:
-        draw_guideline(
-                guidelines,
-                limit = [ax.get_xlim(), ax.get_ylim()],
-                ax = ax,
+        if automatic_Display_Area_flag:
+            # draw_guideline(
+            #         guidelines,
+            #         x_min = data[x_axis_quantity + ' low' ].min(skipna=True)/2,
+            #         x_max = data[x_axis_quantity + ' high'].max(skipna=True)*2,
+            #         y_min = data[y_axis_quantity + ' low' ].min(skipna=True)/2,
+            #         y_max = data[y_axis_quantity + ' high'].max(skipna=True)*2,
+            #         ax = ax,
+            #     )
+            draw_guideline(guidelines, 0, 500, 0, 500, ax)
+        else:
+            draw_guideline(
+                    guidelines,
+                    x_min = x_lim[0],
+                    x_max = x_lim[1],
+                    y_min = y_lim[0],
+                    y_max = y_lim[1],
+                    ax = ax,
                 )
-
 
     if (x_axis_quantity == 'Poisson difference') or (y_axis_quantity == 'Poisson difference'):
         data['Poisson difference high'] = 1/(1+data['Poisson low' ])
         data['Poisson difference low' ] = 1/(1+data['Poisson high'])
 
-    current_level = 0
-    current_color = 0
-    draw_plot(
-            0,      # current_level_number
-            None,   # current_master_level_name
-            levels,
-            data,
-            x_axis_quantity,
-            y_axis_quantity,
-            ax,
-            0,      # current_color
-            material_colors
-            )
 
     create_legend(
             material_classes = data.groupby('Material').groups.keys(),
             material_colors = material_colors,
+            font_color = font_color
             )
 
     if marker_flag:
@@ -301,6 +303,15 @@ if __name__ == '__main__':
             ax = ax
         )
 
+    if export_transparent_flag:
+        ax.tick_params(colors=font_color)     # Achsenbeschriftungen
+        ax.spines['bottom'].set_color(font_color)
+        ax.spines['left'].set_color(font_color)
+        ax.spines['top'].set_color(font_color)
+        ax.spines['right'].set_color(font_color)
+        ax.title.set_color(font_color)
 
+        plt.savefig(export_file_name, dpi=300, transparent=True) # & add number of datapoints to title
+        
+    plt.show()
 
-plt.show()
