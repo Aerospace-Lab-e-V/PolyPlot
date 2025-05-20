@@ -262,11 +262,11 @@ def draw_hull(
             )
     else:
         X_hull = calculate_hull(
-            X,
-            scale=scale,
-            padding=padding,
-            n_interpolate=n_interpolate,
-            interpolation=interpolation
+                X,
+                scale=scale,
+                padding=padding,
+                n_interpolate=n_interpolate,
+                interpolation=interpolation
             )
         # ell_tform = ax.transScale + ax.transLimits + ax.transAxes
         

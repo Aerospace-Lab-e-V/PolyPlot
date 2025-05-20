@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
 # ❗ start of USER INPUT                                                                                                                                      
     # file with all of your material data (must be xlsx)
-    file_name = 'MatWeb_materials_export.xlsx'
+    file_name = 'MatWeb_materials_export_tobi.xlsx'
 
     figure_type = 'presentation' #options are 'publication' or 'presentation'
     figure_size = (16,9) #width, height, in inches
@@ -56,17 +56,28 @@ if __name__ == '__main__':
     # & Titel
 
     # quantities you would like to plot
-    x_axis_quantity = 'Deflection Temperature at 18 MPa 264 psi'
-    y_axis_quantity = 'Tensile Strength at Break'
+    x_axis_quantity = 'Deflection Temperature at 1.8 MPa 264 psi'
+    y_axis_quantity = 'Tensile Strength'
+    y_axis_quantity_bk = "Tensile Strength Yield"
+    y_axis_quantity_bk2 = "Tensile Strength Ultimate"
+    y_axis_quantity_bk3 = "Tensile Strength at Break"
 
     layers = {           # different hirachie layers the Materials are stored in the excel
-            'name': 'Material',
+            'name': 'Gruppe',
             'visible': True,
-            'alpha': 0.3
+            'whitelist': [None],
+            'alpha': 0.4
+        },{
+            'name': 'Material',
+            'visible': False,
+            'whitelist': [None],
+            'alpha': 0.4
         },{
             'name': 'Hersteller',
             'visible': False,
-            'alpha': 0.4
+            'whitelist': [None],
+            'alpha': 0.4,
+
         }
 
     # ~ Flag to plot in log-log space                           
@@ -74,7 +85,7 @@ if __name__ == '__main__':
     # log_y_flag = True                # & Semilog
 
     # ~ x- and y-axes limits                                    
-    automatic_Display_Area_flag = True      # & not working yet
+    automatic_Display_Area_flag   = True      # & not working yet
     automatic_Display_Area_margin = .065
     x_lim = [0, 200]
     y_lim = [0, 120]
@@ -155,7 +166,7 @@ if __name__ == '__main__':
             }
         ]
     # ~ export
-    export_transparent_flag = True
+    export_transparent_flag = False
     if export_transparent_flag:
         export_file_name = "Ashbyplot_transparent"
         font_color = 'white'
@@ -243,6 +254,9 @@ if __name__ == '__main__':
             data,
             x_axis_quantity,
             y_axis_quantity,
+            y_axis_quantity_bk,
+            y_axis_quantity_bk2,
+            y_axis_quantity_bk3,
             ax,
             0,      # current_color
             material_colors
@@ -282,6 +296,8 @@ if __name__ == '__main__':
 
 
     create_legend(
+            # data,
+            # layers,
             material_classes = data.groupby('Material').groups.keys(),
             material_colors = material_colors,
             font_color = font_color
@@ -312,6 +328,6 @@ if __name__ == '__main__':
         ax.title.set_color(font_color)
 
         plt.savefig(export_file_name, dpi=300, transparent=True) # & add number of datapoints to title
-        
+
     plt.show()
 

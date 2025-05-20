@@ -83,6 +83,9 @@ def draw_plot(
         data,
         x_axis_quantity,
         y_axis_quantity,
+        y_axis_quantity_bk,
+        y_axis_quantity_bk2,
+        y_axis_quantity_bk3,
         ax,
         current_color,
         material_colors,
@@ -122,101 +125,152 @@ def draw_plot(
         None.
     '''
     layer = layers[current_layer_number]['name']
-    print("====", current_layer_number, current_master_layer_name, layer, "====")
+    # print("==== Layer ", current_layer_number, ": ", current_master_layer_name, "  (", layer, ") ====")
 
     for category, material_data in data.groupby(layer):
-        # print(material_data)
-        if category in material_colors:
-            current_color = material_colors[category]
-        if current_layer_number < len(layers) -1:
-            draw_plot(
-                current_layer_number + 1,
-                category,
-                layers,
-                material_data,
-                x_axis_quantity,
-                y_axis_quantity,
-                ax,
-                current_color,
-                material_colors,
-                )
-        if (current_layer_number < len(layers) -2 and len(material_data) == 1) \
-            or layers[current_layer_number]['visible'] == False:
-            return
-            
-        # print("md", material_data)
-
-        if current_color == 0 and layers[current_layer_number]['visible'] == True:
-            if 'default' in material_colors:
-                current_color = material_colors['default']
-            else:
-                raise ValueError('You have material categories that have not been assigned a color. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)
-
-
-        x_low  = material_data[x_axis_quantity + ' low' ].copy()
-        x_high = material_data[x_axis_quantity + ' high'].copy()
-        y_low  = material_data[y_axis_quantity + ' low' ].copy()
-        y_high = material_data[y_axis_quantity + ' high'].copy()
-
-        for i in range(len(material_data)):
-            linewidth = 1
-            if pd.isna(x_high.iloc[i]):       # x low = x high for plotting
-                x_high.iloc[i] = x_low.iloc[i]
-                linewidth = 4
-            if pd.isna(y_high.iloc[i]):
-                y_high.iloc[i] = y_low.iloc[i]
-                linewidth = 4
-
-
-            if  (x_low.iloc[i] == x_high.iloc[i]) \
-            and (y_low.iloc[i] == y_high.iloc[i]):    # check if high is empty or low = high for both
-                ax.plot(
-                    x_low.iloc[i],
-                    y_low.iloc[i],
-                    color = current_color,
-                    marker = 'o',
-                    alpha = 0.6
+        # if layers["whitelist"]
+            # print(material_data)
+            if category in material_colors:
+                current_color = material_colors[category]
+            if current_layer_number < len(layers) -1:
+                draw_plot(
+                    current_layer_number + 1,
+                    category,
+                    layers,
+                    material_data,
+                    x_axis_quantity,
+                    y_axis_quantity,
+                    y_axis_quantity_bk,
+                    y_axis_quantity_bk2,
+                    y_axis_quantity_bk3,
+                    ax,
+                    current_color,
+                    material_colors,
                     )
+            if (current_layer_number < len(layers) -2 and len(material_data) == 1) \
+                or layers[current_layer_number]['visible'] == False:
+                return
+                
+            # print("md", material_data)
 
-            else:
-                draw_ellipses(
-                        x = [x_low.iloc[i],  x_high.iloc[i]],
-                        y = [y_low.iloc[i],  y_high.iloc[i]],
-                        plot_kwargs = {
-                            'facecolor':colors.to_rgba(
-                                current_color,
-                                alpha=0.25
-                                ),
-                            'edgecolor':current_color,
-                            'linewidth': linewidth
-                            },
-                        ax = ax,
+            if current_color == 0 and layers[current_layer_number]['visible'] == True:
+                if 'default' in material_colors:
+                    current_color = material_colors['default']
+                else:
+                    raise ValueError('You have material categories that have not been assigned a color. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)
+
+
+            x_low        = material_data[x_axis_quantity     + ' low' ].copy()
+            x_high       = material_data[x_axis_quantity     + ' high'].copy()
+            y_low        = material_data[y_axis_quantity     + ' low' ].copy()
+            y_high       = material_data[y_axis_quantity     + ' high'].copy()
+            y_low_bk     = material_data[y_axis_quantity_bk  + ' low' ].copy()
+            y_high_bk    = material_data[y_axis_quantity_bk  + ' high'].copy()
+            y_low_bk2    = material_data[y_axis_quantity_bk2 + ' low' ].copy()
+            y_high_bk2   = material_data[y_axis_quantity_bk2 + ' high'].copy()
+            y_low_bk3    = material_data[y_axis_quantity_bk3 + ' low' ].copy()
+            y_high_bk3   = material_data[y_axis_quantity_bk3 + ' high'].copy()
+            # y_low  = np.empty([1, len(material_data)]) 
+            # y_high = np.empty([1, len(material_data)]) 
+
+            # for i in range(len(material_data)):
+            #     if not pd.isna(material_data[y_axis_quantity + ' low' ].iloc[i]):
+            #         y_low[1][i]  = material_data[y_axis_quantity + ' low' ].iloc[i].copy()
+            #         y_high[1][i] = material_data[y_axis_quantity + ' high'].iloc[i].copy()
+            #     else:
+            #         y_low[1][i]  = material_data[y_axis_quantity_bk + ' low' ].iloc[i].copy()
+            #         y_high[1][i] = material_data[y_axis_quantity_bk + ' high'].iloc[i].copy()
+
+            # for matrix in [x_l_, x_h_, y_l_, y_h_]:             #3D array: 1D: x/y_low/high ;  2D material_data of one axis ;  3D 
+            #     matrix.np.empty([4,len(material_data),1])
+            # for matrix in [x_l, x_h, y_l, y_h]:
+            #     matrix.np.empty([len(material_data),1])
+
+            # for name in len(x_axis):
+            #     x_l_[name] = material_data[name + ' low' ].copy()
+            #     x_h_[name] = material_data[name + ' high'].copy()        
+            # for name in len(y_axis):
+            #     y_l_[name] = material_data[name + ' low' ].copy()
+            #     y_h_[name] = material_data[name + ' high'].copy()
+            
+            for i in range(len(material_data)):
+                # for name in len(x_axis):
+                #     if not pd.isna(x_l_[name][i]):
+                #         x_l[i] = x_l_[name][i]
+                #         break
+                    
+                        
+                if pd.isna(y_low.iloc[i]):
+                    y_low.iloc[i]  = y_low_bk.iloc[i]
+                    y_high.iloc[i] = y_high_bk.iloc[i]
+                    if pd.isna(y_low.iloc[i]):
+                        y_low.iloc[i]  = y_low_bk2.iloc[i]
+                        y_high.iloc[i] = y_high_bk2.iloc[i]
+                        if pd.isna(y_low.iloc[i]):
+                            y_low.iloc[i]  = y_low_bk3.iloc[i]
+                            y_high.iloc[i] = y_high_bk3.iloc[i]
+
+
+                linewidth = 1
+                if pd.isna(x_high.iloc[i]):       # x low = x high for plotting
+                    x_high.iloc[i] = x_low.iloc[i]
+                    linewidth = 3
+                if pd.isna(y_high.iloc[i]):
+                    y_high.iloc[i] = y_low.iloc[i]
+                    linewidth = 3
+
+
+                if  (x_low.iloc[i] == x_high.iloc[i]) \
+                and (y_low.iloc[i] == y_high.iloc[i]):    # check if high is empty or low = high for both
+                    ax.plot(
+                        x_low.iloc[i],
+                        y_low.iloc[i],
+                        color = current_color,
+                        marker = 'o',
+                        alpha = 0.6
                         )
-        
-            X = np.zeros(shape=(2*len(material_data),2))
-            X[:len(material_data),1] = y_low
-            X[:len(material_data),0] = x_low
 
-            X[len(material_data):,1] = y_high
-            X[len(material_data):,0] = x_high
+                else:
+                    draw_ellipses(
+                            x = [x_low.iloc[i],  x_high.iloc[i]],
+                            y = [y_low.iloc[i],  y_high.iloc[i]],
+                            plot_kwargs = {
+                                'facecolor':colors.to_rgba(
+                                    current_color,
+                                    alpha=0.25
+                                    ),
+                                'edgecolor':current_color,
+                                'linewidth': linewidth
+                                },
+                            ax = ax,
+                            )
+            
+                X = np.zeros(shape=(2*len(material_data),2))
+                X[:len(material_data),1] = y_low
+                X[:len(material_data),0] = x_low
 
-        
+                X[len(material_data):,1] = y_high
+                X[len(material_data):,0] = x_high
 
-        draw_hull(
-            X,          # & Performance: combine return matrix instead of reading out again
-            scale = 1.05,
-            padding = 'scale',
-            n_interpolate = 100,
-            interpolation = 'cubic',
-            ax = ax,
-            plot_kwargs = {
-                'color':current_color,
-                'alpha':0.2
-                }
-            )
+            
+            # print(X)
+            draw_hull(
+                X,          # & Performance: combine return matrix instead of reading out again
+                scale = 1.05,
+                padding = 'scale',
+                n_interpolate = 100,
+                interpolation = 'cubic',
+                ax = ax,
+                plot_kwargs = {
+                    'color': current_color,
+                    'alpha': layers[current_layer_number]['alpha']
+                    }
+                )
 
 
 def create_legend(
+        # data,
+        # layers,
         material_classes,
         material_colors,
         font_color
@@ -246,6 +300,11 @@ def create_legend(
         None.
     '''
     handles = []
+    # for layer in layers:
+    #     if layer['visible' == True]:
+    #         for category, material_data in data.groupby(layer):
+                
+
     # make a manual legend
     for material_class in material_classes:
         patch = patches.Patch(
@@ -266,7 +325,7 @@ def create_legend(
         labelcolor = font_color,
         facecolor = 'none',
         edgecolor = 'none',
-        ncol = 4)
+        ncol = 5)
 
 def draw_guideline(
         guidelines,
@@ -455,7 +514,7 @@ def common_definitions():
         "Poisson": "-",
         "Poisson difference": "-",
         "Melting Point": "°C",
-        "Deflection Temperature at 18 MPa 264 psi": "°C",
+        "Deflection Temperature at 1.8 MPa 264 psi": "°C",
         "Tensile Strength at Break": "MPa"
         }
 
@@ -468,7 +527,19 @@ def common_definitions():
         'PETG':'#85E064',	
         'PPSU':'#B52ED6',	
         'PPS': '#CE82E0',
-        'PPA': 'green',
+
+        'PA11':'#219DD3',	
+        'POM': '#7BBFD9',	
+        'PP':  '#D69D20',	
+        'PVDF':'#E3B768',	
+        'PC':  '#3BD420',	
+        'PEI': '#85E064',	
+        'PA6': '#B52ED6',	
+        'PPA': '#CE82E0',
+
+        'PA': "red",
+        'PET':"black",
+        '':   "white",
         }
 #  'blue', 'orange', 'red', 'green', 'purple', 'Brown', 'pink', 'grey', 'black', 'white'
     return units, material_colors
