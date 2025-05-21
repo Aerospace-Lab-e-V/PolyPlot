@@ -138,10 +138,10 @@ if __name__ == '__main__':
                 'txt_color': 'black',
                 'tip_xy': [2000, 4],
                 'txt_xy': [1700, 3],
-                'arrow': 1
+                'arrow':0           # None ≙ no arrow
             },
         ]
-        arrows = [{ #1
+        arrows = [{
                 'width': 3,
                 'shrink': 0.1,     # shrink = 0: no arrow  |  ∈[0;1]
                 'facecolor': 'black',
