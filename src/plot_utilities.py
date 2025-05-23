@@ -138,11 +138,8 @@ def draw_plot(
                     category,
                     layers,
                     material_data,
-                    x_axis_quantity,
-                    y_axis_quantity,
-                    y_axis_quantity_bk,
-                    y_axis_quantity_bk2,
-                    y_axis_quantity_bk3,
+                    x_axis_quantities,
+                    y_axis_quantities,
                     ax,
                     current_color,
                     material_colors,
@@ -151,68 +148,32 @@ def draw_plot(
                 or layers[current_layer_number]['visible'] == False:
                 return
                 
-            # print("md", material_data)
-
+            # color checking
             if current_color == 0 and layers[current_layer_number]['visible'] == True:
                 if 'default' in material_colors:
                     current_color = material_colors['default']
                 else:
                     raise ValueError('You have material categories that have not been assigned a color. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)
 
-
-            x_low        = material_data[x_axis_quantity     + ' low' ].copy()
-            x_high       = material_data[x_axis_quantity     + ' high'].copy()
-            y_low        = material_data[y_axis_quantity     + ' low' ].copy()
-            y_high       = material_data[y_axis_quantity     + ' high'].copy()
-            y_low_bk     = material_data[y_axis_quantity_bk  + ' low' ].copy()
-            y_high_bk    = material_data[y_axis_quantity_bk  + ' high'].copy()
-            y_low_bk2    = material_data[y_axis_quantity_bk2 + ' low' ].copy()
-            y_high_bk2   = material_data[y_axis_quantity_bk2 + ' high'].copy()
-            y_low_bk3    = material_data[y_axis_quantity_bk3 + ' low' ].copy()
-            y_high_bk3   = material_data[y_axis_quantity_bk3 + ' high'].copy()
-            # y_low  = np.empty([1, len(material_data)]) 
-            # y_high = np.empty([1, len(material_data)]) 
-
-            # for i in range(len(material_data)):
-            #     if not pd.isna(material_data[y_axis_quantity + ' low' ].iloc[i]):
-            #         y_low[1][i]  = material_data[y_axis_quantity + ' low' ].iloc[i].copy()
-            #         y_high[1][i] = material_data[y_axis_quantity + ' high'].iloc[i].copy()
-            #     else:
-            #         y_low[1][i]  = material_data[y_axis_quantity_bk + ' low' ].iloc[i].copy()
-            #         y_high[1][i] = material_data[y_axis_quantity_bk + ' high'].iloc[i].copy()
-
-            # for matrix in [x_l_, x_h_, y_l_, y_h_]:             #3D array: 1D: x/y_low/high ;  2D material_data of one axis ;  3D 
-            #     matrix.np.empty([4,len(material_data),1])
-            # for matrix in [x_l, x_h, y_l, y_h]:
-            #     matrix.np.empty([len(material_data),1])
-
-            # for name in len(x_axis):
-            #     x_l_[name] = material_data[name + ' low' ].copy()
-            #     x_h_[name] = material_data[name + ' high'].copy()        
-            # for name in len(y_axis):
-            #     y_l_[name] = material_data[name + ' low' ].copy()
-            #     y_h_[name] = material_data[name + ' high'].copy()
+            # selecting axis quantity 
+            axis = np.empty(shape=[2][2][len(material_data)])               # x,y | low,high | data
+            for dimension in [x_axis_quantities, y_axis_quantities]:        # x & y axis
+                for quantity in dimension:                                  # cycling between possible names per axis
+                    for pos in material_data[quantity]:                     # cycling position in matereial data for each name
+                        if not pd.isna(material_data[axis[pos] + ' low' ]):
+                            axis[axis][0][pos] = material_data[quantity + ' low' ].iloc[i].copy()
+                            axis[axis][1][pos] = material_data[quantity + ' high'].iloc[i].copy()
+                            break
             
+            x_low  = axis[0][0][:]
+            x_high = axis[0][1][:]
+            y_low  = axis[1][0][:]
+            y_high = axis[1][1][:]
+
+
             for i in range(len(material_data)):
-                # for name in len(x_axis):
-                #     if not pd.isna(x_l_[name][i]):
-                #         x_l[i] = x_l_[name][i]
-                #         break
-                    
-                        
-                if pd.isna(y_low.iloc[i]):
-                    y_low.iloc[i]  = y_low_bk.iloc[i]
-                    y_high.iloc[i] = y_high_bk.iloc[i]
-                    if pd.isna(y_low.iloc[i]):
-                        y_low.iloc[i]  = y_low_bk2.iloc[i]
-                        y_high.iloc[i] = y_high_bk2.iloc[i]
-                        if pd.isna(y_low.iloc[i]):
-                            y_low.iloc[i]  = y_low_bk3.iloc[i]
-                            y_high.iloc[i] = y_high_bk3.iloc[i]
-
-
                 linewidth = 1
-                if pd.isna(x_high.iloc[i]):       # x low = x high for plotting
+                if pd.isna(x_high.iloc[i]):             # low = high for plotting points / lines
                     x_high.iloc[i] = x_low.iloc[i]
                     linewidth = 3
                 if pd.isna(y_high.iloc[i]):
@@ -221,7 +182,7 @@ def draw_plot(
 
 
                 if  (x_low.iloc[i] == x_high.iloc[i]) \
-                and (y_low.iloc[i] == y_high.iloc[i]):    # check if high is empty or low = high for both
+                and (y_low.iloc[i] == y_high.iloc[i]):    #if low = high draw point
                     ax.plot(
                         x_low.iloc[i],
                         y_low.iloc[i],
@@ -246,8 +207,8 @@ def draw_plot(
                             )
             
                 X = np.zeros(shape=(2*len(material_data),2))
-                X[:len(material_data),1] = y_low
                 X[:len(material_data),0] = x_low
+                X[:len(material_data),1] = y_low
 
                 X[len(material_data):,1] = y_high
                 X[len(material_data):,0] = x_high

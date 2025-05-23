@@ -254,9 +254,6 @@ if __name__ == '__main__':
             data,
             x_axis_quantity,
             y_axis_quantity,
-            y_axis_quantity_bk,
-            y_axis_quantity_bk2,
-            y_axis_quantity_bk3,
             ax,
             0,      # current_color
             material_colors
