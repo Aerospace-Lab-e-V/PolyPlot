@@ -24,16 +24,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from src.plot_utilities import (
-    create_legend,
     draw_plot,
     plotting_presets,
-    draw_guideline,
-    draw_colored_areas,
     common_definitions,
-    create_marker,
-    create_annotation,
     )
 
+from src.plot_acessories import (
+    create_legend,
+    draw_guideline,
+    draw_colored_areas,
+    create_marker,
+    create_annotation,
+)
 
 if __name__ == '__main__':
     #%% USER INPUTS (everything you will need to change *should* be here)
@@ -48,7 +50,8 @@ if __name__ == '__main__':
 
 # ❗ start of USER INPUT                                                                                                                                      
     # file with all of your material data (must be xlsx)
-    file_name = 'MatWeb_materials_export_tobi.xlsx'
+    file_name = 'MatWeb_materials_export_tom_finaleDaten.xlsx'
+    sheet = 0
 
     figure_type = 'presentation' #options are 'publication' or 'presentation'
     figure_size = (16,9) #width, height, in inches
@@ -56,28 +59,32 @@ if __name__ == '__main__':
     # & Titel
 
     # quantities you would like to plot
-    x_axis_quantity = 'Deflection Temperature at 1.8 MPa 264 psi'
-    y_axis_quantity = 'Tensile Strength'
-    y_axis_quantity_bk = "Tensile Strength Yield"
-    y_axis_quantity_bk2 = "Tensile Strength Ultimate"
-    y_axis_quantity_bk3 = "Tensile Strength at Break"
+    x_axes_quantities = ['Deflection Temperature at 1.8 MPa 264 psi']
+    y_axes_quantities = ["Tensile Strength Yield", "Tensile Strength Ultimate", "Tensile Strength at Break", "Tensile Strength"]
+
 
     layers = {           # different hirachie layers the Materials are stored in the excel
             'name': 'Gruppe',
             'visible': True,
+            'whitelist_flag': False,    # False ≙ blacklist 
             'whitelist': [None],
             'alpha': 0.4
         },{
             'name': 'Material',
-            'visible': False,
+            'visible': True,
+            'whitelist_flag': False,    # False ≙ blacklist 
             'whitelist': [None],
             'alpha': 0.4
         },{
             'name': 'Hersteller',
-            'visible': False,
+            'visible': True,
+            'whitelist_flag': False,    # False ≙ blacklist 
             'whitelist': [None],
             'alpha': 0.4,
-
+        },{
+            'name': None,       # individual Datapoints # & not working ...len-2
+            'visible': True,
+            'alpha': 0.4, 
         }
 
     # ~ Flag to plot in log-log space                           
@@ -185,14 +192,16 @@ if __name__ == '__main__':
     plotting_presets(figure_type)
 
     #load data
-    file_path = os.path.join(
-        os.getcwd(),
-        'material_properties',
-        file_name,
-        )
+   
 
     data = pd.read_excel(
-        file_path
+        os.path.join(
+            os.getcwd(),
+            # 'ashby-diagramme-1',
+            'material_properties',
+            file_name,
+            ),
+        sheet_name = sheet
         )
 
     # : Figure manipulation :
@@ -201,22 +210,21 @@ if __name__ == '__main__':
     fig, ax = plt.subplots(1,1, figsize=figure_size)
 
     # set x- and y-labels
-    try:
-        if y_axis_quantity == 'Poisson difference':
-            y_label = r'Hyperbolic Poisson Ratio $\frac{1}{1+\nu}$, '+ units[y_axis_quantity]
-        else:
-            y_label = y_axis_quantity + '  [' + units[y_axis_quantity] + ']'
+    # try:
+    #     if y_axis_quantity == 'Poisson difference':
+    #         y_label = r'Hyperbolic Poisson Ratio $\frac{1}{1+\nu}$, '+ units[y_axis_quantity]
+    #     else:
+    #         y_label = y_axis_quantity + '  [' + units[y_axis_quantity] + ']'
 
-        if x_axis_quantity == 'Poisson difference':
-            x_label = r'Hyperbolic Poisson Ratio $\frac{1}{1+\nu}$, '+ units[x_axis_quantity]
-        else:
-            x_label = x_axis_quantity + '  [' + units[x_axis_quantity]  + ']'
+    #     if x_axis_quantity == 'Poisson difference':
+    #         x_label = r'Hyperbolic Poisson Ratio $\frac{1}{1+\nu}$, '+ units[x_axis_quantity]
+    #     else:
+    #         x_label = x_axis_quantity + '  [' + units[x_axis_quantity]  + ']'
 
-
-        ax.set_xlabel(x_label, color = font_color)
-        ax.set_ylabel(y_label, color = font_color)
-    except:
-        raise ValueError("Could not set correct x- and y-labels. Make sure your x_axis_quantity and y_axis_quantity have equivalent key-value pairs in the units dictionary (common_definitions function).")
+    #     ax.set_xlabel(x_label, color = font_color)
+    #     ax.set_ylabel(y_label, color = font_color)
+    # except:
+    #     raise ValueError("Could not set correct x- and y-labels. Make sure your x_axis_quantity and y_axis_quantity have equivalent key-value pairs in the units dictionary (common_definitions function).")
 
 
     #toggle log in plot     # & fix log parameter for semilog 
@@ -252,8 +260,8 @@ if __name__ == '__main__':
             None,   # current_master_layer_name
             layers,
             data,
-            x_axis_quantity,
-            y_axis_quantity,
+            x_axes_quantities,
+            y_axes_quantities,
             ax,
             0,      # current_color
             material_colors
@@ -287,9 +295,9 @@ if __name__ == '__main__':
                     ax = ax,
                 )
 
-    if (x_axis_quantity == 'Poisson difference') or (y_axis_quantity == 'Poisson difference'):
-        data['Poisson difference high'] = 1/(1+data['Poisson low' ])
-        data['Poisson difference low' ] = 1/(1+data['Poisson high'])
+    # if (x_axis_quantity == 'Poisson difference') or (y_axis_quantity == 'Poisson difference'):
+    #     data['Poisson difference high'] = 1/(1+data['Poisson low' ])
+    #     data['Poisson difference low' ] = 1/(1+data['Poisson high'])
 
 
     create_legend(

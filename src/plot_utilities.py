@@ -12,7 +12,6 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib import patches
 from matplotlib import colors
 from types import SimpleNamespace
 
@@ -76,16 +75,96 @@ def plotting_presets(figure_type:str = 'publication'):
     plt.rcParams['lines.markersize'] = 10
 
 
+def quantity_availability(
+        x_axes_quantities,
+        y_axes_quantities,
+        data
+    ):
+    x_low  = np.zeros(shape=(0))
+    x_high = np.zeros(shape=(0))
+    y_low  = np.zeros(shape=(0))
+    y_high = np.zeros(shape=(0))
+
+    x_high_short = np.zeros(shape=(0))
+    y_high_short = np.zeros(shape=(0))
+
+    for pos in range(len(data)):                   # cycling position in matereial data for each name
+        x_low_temp = None
+        for quantity in x_axes_quantities:         # cycling possible names per axes
+            if not pd.isna(data[quantity + ' low'].iloc[pos]):
+                x_low_temp  = data[quantity + ' low' ].iloc[pos].copy()
+                x_high_temp = data[quantity + ' high'].iloc[pos].copy()
+                break
+        if x_low_temp != None:                     # checking only fr y-value if x-value exists
+            for quantity in y_axes_quantities:     # cycling possible names per axes
+                if not pd.isna(data[quantity + ' low'].iloc[pos]):
+                    x_low  = np.append(x_low,  x_low_temp )
+                    x_high = np.append(x_high, x_high_temp)
+                    y_low  = np.append(y_low,  data[quantity + ' low' ].iloc[pos].copy())
+                    y_high = np.append(y_high, data[quantity + ' high'].iloc[pos].copy())
+                    break
+
+    # for pos in range(len(x_low)):   # clear nan rows
+    #     if not (np.isnan(x_high[pos]) and np.isnan(y_high[pos])):
+    #         x_high_short = np.append(x_high_short, x_high[pos])
+    #         y_high_short = np.append(y_high_short, y_high[pos])
+
+    
+    print("x: ", x_low, " - ", x_high, "  ||  y: ", y_low, " - ", y_high)
+    return x_low.T, x_high.T, y_low.T, y_high.T
+    # return x_low.T, x_high_short.T, y_low.T, y_high_short.T 
+
+
+def plot_points(
+        x_low, 
+        x_high,
+        y_low,
+        y_high,
+        current_color,
+        ax
+    ):
+    datapoints = len(x_low)
+    for i in range(datapoints):
+        if pd.isna(x_high[i]) and pd.isna(y_high[i]):    #if low = high draw point
+            ax.plot(
+                x_low[i],
+                y_low[i],
+                color = current_color,
+                marker = 'o',
+                alpha = 0.6
+                )
+        else:
+            linewidth = 1
+            if pd.isna(x_high[i]):             # low = high for plotting points / lines
+                x_high[i] = x_low[i]
+                linewidth = 3
+            if pd.isna(y_high[i]):
+                y_high[i] = y_low[i]
+                linewidth = 3
+
+            draw_ellipses(
+                x = [x_low[i],  x_high[i]],
+                y = [y_low[i],  y_high[i]],
+                plot_kwargs = {
+                    'facecolor':colors.to_rgba(
+                        current_color,
+                        alpha=0.25
+                        ),
+                    'edgecolor':current_color,
+                    'linewidth': linewidth
+                    },
+                ax = ax,
+                )
+
+
+
 def draw_plot(
         current_layer_number,
         current_master_layer_name,
         layers,
         data,
-        x_axis_quantity,
-        y_axis_quantity,
-        y_axis_quantity_bk,
-        y_axis_quantity_bk2,
-        y_axis_quantity_bk3,
+        x_axes_quantities,
+        y_axes_quantities,
         ax,
         current_color,
         material_colors,
@@ -108,12 +187,12 @@ def draw_plot(
             dataframe with all material data to be plotted.
             Note that this dataframe must include the column 'Category;'
             which is case sensitive!
-        x_axis_quantity : str
-            quantity you would like to plot on the x-axis.
-        y_axis_quantity : str
-            quantity you would like to plot on the y-axis.
-        ax : matplotlib.pyplot.axis
-            figure axis on which you would like to plot
+        x_axes_quantity : str
+            quantity you would like to plot on the x-axes.
+        y_axes_quantity : str
+            quantity you would like to plot on the y-axes.
+        ax : matplotlib.pyplot.axes
+            figure axes on which you would like to plot
         material_colors : dict
             key-value pairs of categories and the desired colors
         data_type : str, optional
@@ -124,326 +203,84 @@ def draw_plot(
         -------
         None.
     '''
-    layer = layers[current_layer_number]['name']
-    # print("==== Layer ", current_layer_number, ": ", current_master_layer_name, "  (", layer, ") ====")
+    layer_name = layers[current_layer_number]['name']
+    whitelist = layers[current_layer_number]['whitelist']
+    whitelist_flag = layers[current_layer_number]['whitelist_flag']
 
-    for category, material_data in data.groupby(layer):
-        # if layers["whitelist"]
-            # print(material_data)
-            if category in material_colors:
-                current_color = material_colors[category]
-            if current_layer_number < len(layers) -1:
-                draw_plot(
+    combined_DATA = np.zeros(shape=(0,2))
+
+    for category, material_data in data.groupby(layer_name):
+        print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======")
+
+        if category in material_colors:
+            current_color = material_colors[category]
+        if current_layer_number < len(layers) -2:
+            DATA = draw_plot(
                     current_layer_number + 1,
                     category,
                     layers,
                     material_data,
-                    x_axis_quantities,
-                    y_axis_quantities,
+                    x_axes_quantities,
+                    y_axes_quantities,
                     ax,
                     current_color,
                     material_colors,
-                    )
-            if (current_layer_number < len(layers) -2 and len(material_data) == 1) \
-                or layers[current_layer_number]['visible'] == False:
-                return
-                
-            # color checking
-            if current_color == 0 and layers[current_layer_number]['visible'] == True:
-                if 'default' in material_colors:
-                    current_color = material_colors['default']
-                else:
-                    raise ValueError('You have material categories that have not been assigned a color. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)
-
-            # selecting axis quantity 
-            axis = np.empty(shape=[2][2][len(material_data)])               # x,y | low,high | data
-            for dimension in [x_axis_quantities, y_axis_quantities]:        # x & y axis
-                for quantity in dimension:                                  # cycling between possible names per axis
-                    for pos in material_data[quantity]:                     # cycling position in matereial data for each name
-                        if not pd.isna(material_data[axis[pos] + ' low' ]):
-                            axis[axis][0][pos] = material_data[quantity + ' low' ].iloc[i].copy()
-                            axis[axis][1][pos] = material_data[quantity + ' high'].iloc[i].copy()
-                            break
-            
-            x_low  = axis[0][0][:]
-            x_high = axis[0][1][:]
-            y_low  = axis[1][0][:]
-            y_high = axis[1][1][:]
-
-
-            for i in range(len(material_data)):
-                linewidth = 1
-                if pd.isna(x_high.iloc[i]):             # low = high for plotting points / lines
-                    x_high.iloc[i] = x_low.iloc[i]
-                    linewidth = 3
-                if pd.isna(y_high.iloc[i]):
-                    y_high.iloc[i] = y_low.iloc[i]
-                    linewidth = 3
-
-
-                if  (x_low.iloc[i] == x_high.iloc[i]) \
-                and (y_low.iloc[i] == y_high.iloc[i]):    #if low = high draw point
-                    ax.plot(
-                        x_low.iloc[i],
-                        y_low.iloc[i],
-                        color = current_color,
-                        marker = 'o',
-                        alpha = 0.6
-                        )
-
-                else:
-                    draw_ellipses(
-                            x = [x_low.iloc[i],  x_high.iloc[i]],
-                            y = [y_low.iloc[i],  y_high.iloc[i]],
-                            plot_kwargs = {
-                                'facecolor':colors.to_rgba(
-                                    current_color,
-                                    alpha=0.25
-                                    ),
-                                'edgecolor':current_color,
-                                'linewidth': linewidth
-                                },
-                            ax = ax,
-                            )
-            
-                X = np.zeros(shape=(2*len(material_data),2))
-                X[:len(material_data),0] = x_low
-                X[:len(material_data),1] = y_low
-
-                X[len(material_data):,1] = y_high
-                X[len(material_data):,0] = x_high
-
-            
-            # print(X)
-            draw_hull(
-                X,          # & Performance: combine return matrix instead of reading out again
-                scale = 1.05,
-                padding = 'scale',
-                n_interpolate = 100,
-                interpolation = 'cubic',
-                ax = ax,
-                plot_kwargs = {
-                    'color': current_color,
-                    'alpha': layers[current_layer_number]['alpha']
-                    }
                 )
 
+        # color checking
+        if current_color == 0 and layers[current_layer_number]['visible'] == True:
+            if 'default' in material_colors:
+                current_color = material_colors['default']
+            else:
+                raise ValueError('You have material categories that have not been assigned a color. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)
+        
+        
+        if current_layer_number == len(layers)-1 \
+        and ((category     in whitelist and whitelist_flag == True)  \
+        or   (category not in whitelist and whitelist_flag == False)):
+            x_low, x_high, y_low, y_high = quantity_availability(
+                    x_axes_quantities,
+                    y_axes_quantities,
+                    material_data
+                )
 
-def create_legend(
-        # data,
-        # layers,
-        material_classes,
-        material_colors,
-        font_color
-        ):
-    '''
-        Creates a legend located outside the plot bounding box. Currently
-        set to the top of the plot.
+            if layers[current_layer_number]['visible'] == True:
+                plot_points(
+                    x_low, 
+                    x_high,
+                    y_low,
+                    y_high,
+                    current_color,
+                    ax
+                )
 
-        Important references:
-            Extracting an iterable from a pandas groupby:
-                https://stackoverflow.com/questions/28844535/python-pandas-groupby-get-list-of-groups
-            Manual legend creation:
-                https://stackoverflow.com/questions/39500265/how-to-manually-create-a-legend
-            Plotting legends outside the bounding box:
-                https://stackoverflow.com/questions/4700614/how-to-put-the-legend-outside-the-plot
+            X = np.append(x_low, x_high)    	# & nan handling (_high)
+            Y = np.append(y_low, y_high)
+            DATA = np.column_stack((X,Y))
+            combined_DATA = np.vstack((combined_DATA, DATA))        # & check for NO new data to prevent identical hulls
+            print("rows:", DATA.shape[0], "; columns:", DATA.shape[1])
+            print("DATA: ", DATA)
+            print("combined DATA: ", combined_DATA)
 
-        Parameters
-        ----------
-        material_classes : Iterable list or dict_keys object
-            The list of different material classes you wish to display in the
-            legend. Commonly found via data.groupby("Category").groups.keys()
-        material_colors : DICT
-            Dictionary that references the material class to the color you
-            wish to display it as.
-        Returns
-        -------
-        None.
-    '''
-    handles = []
-    # for layer in layers:
-    #     if layer['visible' == True]:
-    #         for category, material_data in data.groupby(layer):
-                
 
-    # make a manual legend
-    for material_class in material_classes:
-        patch = patches.Patch(
-            color = material_colors[material_class],
-            label = material_class
-            )
-        handles.append(patch)
-
-    # place legend outside the plot     # ToDo put Legend right of the plot
-    
-    plt.legend(
-        handles=handles,
-        bbox_to_anchor = (0, 1.02, 1, 0.2),
-        loc  = 'lower left',
-        mode = 'expand',
-        borderaxespad = 0,
-        fontsize = 15,
-        labelcolor = font_color,
-        facecolor = 'none',
-        edgecolor = 'none',
-        ncol = 5)
-
-def draw_guideline(
-        guidelines,
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-        ax,
-    ):
-    '''
-        Draws guideline for material index.
-
-        Parameters
-        ----------
-        guideline : dict
-            x : float (optional)      x or y must be given
-                power of the material index (and thus the guideline)
-                e.g., 1 for E/rho, 3 for E^(1/3)/rho.
-            y : float (optional)
-                x-axis limits ([low, high])
-            m : float (optional)
-                y_intercept of the guideline.
-                This gets tricky if your x- and y-axis limits do not include 1.0.
-                The default is 1.0.
-            string : string to display and label the guideline
-            string_position : location to start the string
-        limit: 4x4 float array
-            area shown on the plot
-        ax : matplotlib axis object
-            The current plotting axis.
-
-        Returns
-        -------
-        None.
-    '''
-    num_points = 4
-    for guideline in guidelines:
-
-        x = guideline['x']
-        y = guideline['y']
-        m = guideline['m']
-
-        if x == None and m == None: # horizontal
-            x_values = np.linspace(y_min, y_max, num_points)
-            y_values = np.ones(num_points)* y
-        elif y == None and m == None: # vertical
-            x_values = np.ones(num_points)* x
-            y_values = np.linspace(x_min ,x_max, num_points)
-        else:            
-            x_values = np.linspace(x_min, x_max, num_points)
-            y_intercept = (y- (m*x))
-            # semilog: a∙x^m
-            y_values = m*x_values + y_intercept
-
-        ax.plot(
-            x_values,
-            y_values,
-            linestyle = guideline['linestyle'],
-            linewidth = guideline['linewidth'],
-            color     = guideline['color'    ],
+    if not combined_DATA.shape[0] == 0                 \
+    and layers[current_layer_number]['visible'] == True:
+        draw_hull(
+            combined_DATA,
+            scale = 1.05,
+            padding = 'scale',
+            n_interpolate = 100,
+            interpolation = 'cubic',
+            ax = ax,
+            plot_kwargs = {
+                'color': current_color,
+                'alpha': layers[current_layer_number]['alpha']
+                }
             )
 
-        # Create an annotation on the line to denote the equation
-        # The spacing of this line takes a bit (xytext variable),
-        # because the units are 1/72 in
-        # FIXME generalize the xytext placement?
-        RotationAwareAnnotation(
-            guideline['string'],
-            xy=guideline['string_position'],
-            p=(x_values[3], y_values[3]),
-            pa = (x_values[0], y_values[0]),
-            ax=ax,
-            xytext=(0,0),
-            textcoords="offset points",
-            va="top"
-            )
+    if current_layer_number != 0:
+        return combined_DATA
 
-
-
-def draw_colored_areas(
-    colored_areas,
-    ax
-    ):
-    '''
-        colors the backgrounf of specific areas
-
-        Parameters
-        ----------
-        colored_areas : dict
-            x : list
-                x-coordinates of edgeponts
-            y : list
-                y-coordinates corresponding to the given x-coordinates above
-            color : char
-                specifies color of the area
-            alpha : float between 0 and 1
-                intensity of the color
-        ax : matplotlib axis object
-            The current plotting axis.
-
-        Returns
-        -------
-        None.
-    '''
-    for colored_area in colored_areas:
-        x         = colored_area['x']
-        y         = colored_area['y']
-        color     = colored_area['color']
-        alpha     = colored_area['alpha']
-
-        ax.fill(
-            x, 
-            y, 
-            color = color, 
-            alpha = alpha
-            )
-
-def create_marker(
-        markers,
-        x_axis_quantity,
-        y_axis_quantity,
-        marker_size,
-        ax
-    ):
-    for marker in markers:
-        ax.scatter(
-            marker[x_axis_quantity],
-            marker[y_axis_quantity],
-            c = marker['color'],
-            edgecolors ='k',
-            marker = marker['marker'],
-            s = marker_size * marker['size_factor'],
-            )
-
-
-def create_annotation(
-        annotations,
-        arrows,
-        ax
-    ):
-    for annotation in annotations:
-        if annotation['arrow'] == 0:
-            ax.text(
-                annotation['txt_xy'],
-                           annotation['text'],
-                color    = annotation['txt_color'],
-                fontsize = annotation['fontsize'],
-            )
-        else:
-            ax.annotate(
-                           annotation['text'],
-                xy =       annotation['tip_xy'],
-                xytext =   annotation['txt_xy'],
-                color  =   annotation['txt_color'],
-                fontsize = annotation['fontsize'],
-                arrowprops = arrows[annotation['arrow']-1]
-            ),
 
 
 def common_definitions():
@@ -502,5 +339,5 @@ def common_definitions():
         'PET':"black",
         '':   "white",
         }
-#  'blue', 'orange', 'red', 'green', 'purple', 'Brown', 'pink', 'grey', 'black', 'white'
+    #  'blue', 'orange', 'red', 'green', 'purple', 'Brown', 'pink', 'grey', 'black', 'white'
     return units, material_colors
