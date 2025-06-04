@@ -73,54 +73,29 @@ def plotting_presets(figure_type:str = 'publication'):
 
 
 def filter_data(data, filters, filter_keys):
-    plot_data = pd.DataFrame    # & datatype ❗!❗
-    for pos in range(len(data)):
-        plot_datapoint = True
-        for filter in filters:
-            entry = data[filter["name"]].iloc[pos]
-            print(entry)
-            for state in filter_keys:
-                if not( state["state"] == filter["name"] and entry in state["entries"]):
-                    plot_datapoint = False
-        if plot_datapoint == True:
-            pd.DataFrame.append(plot_data, plot_entry)
-    return plot_data
+    plot_datapoint = True
+    for filter in filters:
+        entry = data[filter["name"]]
+        state = None
+        for keys in filter_keys:
+            if entry in keys["entries"]:
+                state = keys["state"]
 
-# def filter_data(data, filters, filter_keys):
-#     plot_data = pd.DataFrame
-#     for filter in filters:
-#         for entry, material_data in data.groupby(filter["name"]):
-#             for state in filter_keys:
-#                 if state["state"] == filter["name"]:
-#                     if entry in state["entries"]:
-#                         pd.DataFrame.append(plot_data, plot_entry)
-#     return plot_data
+        if not state in filter["state"]:
+            plot_datapoint = False
 
-
-# def filter_data(data, filters, filter_keys):
-#     plot_data = pd.DataFrame
-#     for entry, material_data in data.groupby(filter):
-#         plot_entry == True
-#         for filter in filters:
-#             if filter not in data:
-#                 raise ValueError("unrecognized filter set")
-#             for state in filter_keys:
-#                 if entry in state["entries"]:
-#                     entry_state = state["state"]
-            
-#             if entry_state != filter["state"]:
-#                 plot_entry == False
-
-#         if plot_entry == True:
-#             pd.DataFrame.append(plot_data, plot_entry)
-    
-#     return plot_data                 
+    return plot_datapoint             
 
 
 def quantity_availability(
         x_axes_quantities,
         y_axes_quantities,
-        data
+        filter, 
+        filter_keys,
+        visible,
+        current_color,
+        data,
+        ax
     ):
     x_low  = np.zeros(shape=(0))
     x_high = np.zeros(shape=(0))
@@ -131,71 +106,107 @@ def quantity_availability(
     y_high_short = np.zeros(shape=(0))
 
     for pos in range(len(data)):                   # cycling position in matereial data for each name
-        x_low_temp = None
-        for quantity in x_axes_quantities:         # cycling possible names per axes
-            if not pd.isna(data[quantity + ' low'].iloc[pos]):
-                x_low_temp  = data[quantity + ' low' ].iloc[pos].copy()
-                x_high_temp = data[quantity + ' high'].iloc[pos].copy()
-                break
-        if x_low_temp != None:                     # checking only for y-value if x-value exists
-            for quantity in y_axes_quantities:     # cycling possible names per axes
+        if filter_data(data.iloc[pos,:], filter, filter_keys) == True:
+            for quantity in x_axes_quantities:         # cycling possible names per axes
                 if not pd.isna(data[quantity + ' low'].iloc[pos]):
-                    x_low  = np.append(x_low,  x_low_temp )
-                    x_high = np.append(x_high, x_high_temp)
-                    y_low  = np.append(y_low,  data[quantity + ' low' ].iloc[pos].copy())
-                    y_high = np.append(y_high, data[quantity + ' high'].iloc[pos].copy())
+                    x_low_temp  = data[quantity + ' low' ].iloc[pos].copy()
+                    x_high_temp = data[quantity + ' high'].iloc[pos].copy()
                     break
+            if x_low_temp != None:                     # checking only for y-value if x-value exists
+                for quantity in y_axes_quantities:     # cycling possible names per axes
+                    if not pd.isna(data[quantity + ' low'].iloc[pos]):
+                        x_low_      = x_low_temp
+                        y_low_      = data[quantity + ' low' ].iloc[pos].copy()
+                        y_high_temp = data[quantity + ' high'].iloc[pos].copy()
 
-    # for pos in range(len(x_low)):   # clear nan rows
-    #     if not (np.isnan(x_high[pos]) and np.isnan(y_high[pos])):
-    #         x_high_short = np.append(x_high_short, x_high[pos])
-    #         y_high_short = np.append(y_high_short, y_high[pos])
-    
+                        x_low  = np.append(x_low,   x_low_)
+                        y_low  = np.append(y_low,   y_low_)
+
+                        if not( pd.isna(x_high_temp) or pd.isna(x_high_temp)):
+                            x_high_ = x_high_temp
+                            y_high_ = y_high_temp
+
+                            x_high = np.append(x_high,  x_high_)
+                            y_high = np.append(y_high,  y_high_)
+
+                    # +  plot  + 
+                            if visible: 
+                                linewidth = 1
+                                if pd.isna(x_high_):             # low = high for plotting points / lines
+                                    x_high_ = x_low_
+                                    linewidth = 3
+                                if pd.isna(y_high_):
+                                    y_high_ = y_low_
+                                    linewidth = 3
+
+                                draw_ellipses(
+                                    x = [x_low_,  x_high_],
+                                    y = [y_low_,  y_high_],
+                                    plot_kwargs = {
+                                        'facecolor':colors.to_rgba(
+                                            current_color,
+                                            alpha=0.25
+                                            ),
+                                        'edgecolor':current_color,
+                                        'linewidth': linewidth
+                                        },
+                                    ax = ax,
+                                    )
+
+                        elif visible:
+                            ax.plot(
+                                x_low_,
+                                y_low_,
+                                color = current_color,
+                                marker = 'o',
+                                alpha = 0.6
+                                )
+                        break
+
     print("x: ", x_low, " - ", x_high, "  ||  y: ", y_low, " - ", y_high)
     return x_low.T, x_high.T, y_low.T, y_high.T
-    # return x_low.T, x_high_short.T, y_low.T, y_high_short.T 
 
 
-def plot_points(
-        x_low, 
-        x_high,
-        y_low,
-        y_high,
-        current_color,
-        ax
-    ):
-    datapoints = len(x_low)
-    for i in range(datapoints):
-        if pd.isna(x_high[i]) and pd.isna(y_high[i]):    #if low = high draw point
-            ax.plot(
-                x_low[i],
-                y_low[i],
-                color = current_color,
-                marker = 'o',
-                alpha = 0.6
-                )
-        else:
-            linewidth = 1
-            if pd.isna(x_high[i]):             # low = high for plotting points / lines
-                x_high[i] = x_low[i]
-                linewidth = 3
-            if pd.isna(y_high[i]):
-                y_high[i] = y_low[i]
-                linewidth = 3
+# def plot_points(
+#         x_low, 
+#         x_high,
+#         y_low,
+#         y_high,
+#         current_color,
+#         ax
+#     ):
+#     datapoints = len(x_low)
+#     for i in range(datapoints):
+#         if pd.isna(x_high[i]) and pd.isna(y_high[i]):    #if low = high draw point
+#             ax.plot(
+#                 x_low[i],
+#                 y_low[i],
+#                 color = current_color,
+#                 marker = 'o',
+#                 alpha = 0.6
+#                 )
+#         else:
+#             linewidth = 1
+#             if pd.isna(x_high[i]):             # low = high for plotting points / lines
+#                 x_high[i] = x_low[i]
+#                 linewidth = 3
+#             if pd.isna(y_high[i]):
+#                 y_high[i] = y_low[i]
+#                 linewidth = 3
 
-            draw_ellipses(
-                x = [x_low[i],  x_high[i]],
-                y = [y_low[i],  y_high[i]],
-                plot_kwargs = {
-                    'facecolor':colors.to_rgba(
-                        current_color,
-                        alpha=0.25
-                        ),
-                    'edgecolor':current_color,
-                    'linewidth': linewidth
-                    },
-                ax = ax,
-                )
+#             draw_ellipses(
+#                 x = [x_low[i],  x_high[i]],
+#                 y = [y_low[i],  y_high[i]],
+#                 plot_kwargs = {
+#                     'facecolor':colors.to_rgba(
+#                         current_color,
+#                         alpha=0.25
+#                         ),
+#                     'edgecolor':current_color,
+#                     'linewidth': linewidth
+#                     },
+#                 ax = ax,
+#                 )
 
 
 
@@ -270,7 +281,7 @@ def draw_plot(
                                         
 
             if (category in layer_whitelist and layer_whitelist_flag == True) or (category not in layer_whitelist and layer_whitelist_flag == False):
-                DATA, legend, plotted = draw_plot(
+                DATA, legend, plotted = draw_plot(      
                         current_layer_number + 1,
                         category,
                         layers,
@@ -285,7 +296,9 @@ def draw_plot(
                         material_colors,
                     )
 
-                if DATA.shape[0] > 0 and layer_visibility == True                              \
+                print(DATA.shape[0])
+
+                if DATA.shape[0] > 1 and layer_visibility == True                              \
                 and not (len(data.groupby(layer_name).groups.keys()) == 1 and plotted == False): # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
                     draw_hull(
                         DATA,
@@ -302,39 +315,43 @@ def draw_plot(
                     plotted = True
 
                 combined_DATA = np.vstack((combined_DATA, DATA))
-                print("-- Layer ", current_layer_number, " DATA: ", DATA, " combined_DATA: ", combined_DATA) # . combined_DATA[~np.isnan(combined_DATA)]
+                # print("-- Layer ", current_layer_number, " DATA: ", DATA, " combined_DATA: ", combined_DATA) # . combined_DATA[~np.isnan(combined_DATA)]
 
 
         if len(data.groupby(layer_name).groups.keys()) > 1:
-            plotted == False
+            plotted == False        # & plotted
                 
         return combined_DATA, legend, plotted
 
             
     # +       recursive exit       +
     else:
-        if len(filter) > 10: # & > 0 -- filters not yet working
-            print("applying filters")
-            filtered_data = filter_data(data, filter, filter_keys)
-        else:
-            filtered_data = data
+        # if len(filter) > 10: # & > 0 -- filters not yet working
+        #     print("applying filters")
+        #     filtered_data = filter_data(data, filter, filter_keys)
+        # else:
+        #     filtered_data = data
 
         x_low, x_high, y_low, y_high = quantity_availability(   # read data
                 x_axes_quantities,
                 y_axes_quantities,
-                filtered_data
-                # data
-            )
-
-        if layers[current_layer_number]['visible'] == True:     # plot points / elypsis
-            plot_points(   
-                x_low, 
-                x_high,
-                y_low,
-                y_high,
+                filter, 
+                filter_keys,
+                layers[current_layer_number]['visible'],
                 current_color,
+                data,
                 ax
             )
+
+        # if layers[current_layer_number]['visible'] == True:     # plot points / elypsis
+        #     plot_points(   
+        #         x_low, 
+        #         x_high,
+        #         y_low,
+        #         y_high,
+        #         current_color,
+        #         ax
+        #     )
 
         X = np.append(x_low, x_high)    	# & nan handling (_high)
         Y = np.append(y_low, y_high)

@@ -92,9 +92,9 @@ if __name__ == '__main__':
         }
 
     # ~ filter                                                  
-    filter = {
+    filter = {     # & little groups aren't plotet correctly
         "name": "available",
-        "state": True
+        "state": [True]
     },
 
     filter_keys = {
@@ -113,14 +113,14 @@ if __name__ == '__main__':
     log_y_flag = False                          # & other gridlines
 
     # ~ x- and y-axes limits                                    
-    automatic_Display_Area_flag   = True       # & incompatible with: guideline, areas
+    automatic_Display_Area_flag   = True
     automatic_Display_Area_margin = .065
     x_lim = [20, 250]
     y_lim = [20, 150]
 
 
     # ~ insert Guideline (linear)                               
-    guideline_flag = True
+    guideline_flag = False
     if guideline_flag:
         guidelines = [{
                 'x': 100,       # % Point x-coordinate | vertical   if m = True  
@@ -278,98 +278,101 @@ if __name__ == '__main__':
             material_colors
         )
 
-    if legend_flag:
-        create_legend(
-            legend_items,
-            material_colors = material_colors,
-            font_color = font_color
-        )
+    if len(DATA):
+
+        if legend_flag:
+            create_legend(
+                legend_items,
+                material_colors = material_colors,
+                font_color = font_color
+            )
 
 
-    if colored_area_flag:
-        draw_colored_areas(
-            colored_areas,
-            ax = ax
-        )
+        if colored_area_flag:
+            draw_colored_areas(
+                colored_areas,
+                ax = ax
+            )
 
-    if guideline_flag:
+        if guideline_flag:
+            if automatic_Display_Area_flag:
+                draw_guideline(
+                        guidelines,
+                        x_min = np.nanmin(DATA[:,0])/2,
+                        x_max = np.nanmax(DATA[:,0])*2,
+                        y_min = np.nanmin(DATA[:,1])/2, # for vertical lines
+                        y_max = np.nanmax(DATA[:,1])*2,
+                        ax = ax,
+                    )
+            else:
+                draw_guideline(
+                        guidelines,
+                        x_min = x_lim[0],
+                        x_max = x_lim[1],
+                        y_min = y_lim[0],
+                        y_max = y_lim[1],
+                        ax = ax,
+                    )
+
+
+        if marker_flag:
+            create_marker(
+                markers,
+                x_axis_quantity,
+                y_axis_quantity,
+                marker_size,
+                ax = ax
+            )
+
+        if annotation_flag:
+            create_annotation(
+                annotations,
+                arrows,
+                ax = ax
+            )
+
+
+
+    # : Figure manipulation :
+        #set axes limits
         if automatic_Display_Area_flag:
-            draw_guideline(
-                    guidelines,
-                    x_min = np.nanmin(DATA[:,0])/2,
-                    x_max = np.nanmax(DATA[:,0])*2,
-                    y_min = np.nanmin(DATA[:,1])/2, # for vertical lines
-                    y_max = np.nanmax(DATA[:,1])*2,
-                    ax = ax,
-                )
-        else:
-            draw_guideline(
-                    guidelines,
-                    x_min = x_lim[0],
-                    x_max = x_lim[1],
-                    y_min = y_lim[0],
-                    y_max = y_lim[1],
-                    ax = ax,
-                )
+            # ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
+            x_low  = float(np.nanmin(DATA[:,0]))
+            x_high = float(np.nanmax(DATA[:,0]))
+            y_low  = float(np.nanmin(DATA[:,1]))
+            y_high = float(np.nanmax(DATA[:,1]))
+            x_lim[0] = x_low  - (x_high - x_low) * automatic_Display_Area_margin    # & edit for log
+            x_lim[1] = x_high + (x_high - x_low) * automatic_Display_Area_margin
+            y_lim[0] = y_low  - (y_high - y_low) * automatic_Display_Area_margin
+            y_lim[1] = y_high + (y_high - y_low) * automatic_Display_Area_margin
+        ax.set(xlim=x_lim, ylim=y_lim)
+        
 
+         #toggle log in plot
+        if log_x_flag:
+            ax.set_xscale('log')
+        if log_y_flag:
+            ax.set_yscale('log')
 
-    if marker_flag:
-        create_marker(
-            markers,
-            x_axis_quantity,
-            y_axis_quantity,
-            marker_size,
-            ax = ax
-        )
+        #add grid lines
+        ax.grid(
+                which = 'major',
+                axis = 'both',
+                linestyle = '-.',
+                zorder = 0.5,
+            )
 
-    if annotation_flag:
-        create_annotation(
-            annotations,
-            arrows,
-            ax = ax
-        )
+        # set x- and y-labels
+        try:
+            x_label = x_label + '  [' + units[x_label]  + ']'
+            y_label = y_label + '  [' + units[y_label]  + ']'
 
-
-
-# : Figure manipulation :
-    #toggle log in plot
-    if log_x_flag:
-        ax.set_xscale('log')
-    if log_y_flag:
-        ax.set_yscale('log')
-
-    #add grid lines
-    ax.grid(
-            which = 'major',
-            axis = 'both',
-            linestyle = '-.',
-            zorder = 0.5,
-        )
-
-
-    #set axes limits
-    if automatic_Display_Area_flag:
-        # ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
-        x_low  = float(np.nanmin(DATA[:,0]))
-        x_high = float(np.nanmax(DATA[:,0]))
-        y_low  = float(np.nanmin(DATA[:,1]))
-        y_high = float(np.nanmax(DATA[:,1]))
-        x_lim[0] = x_low  - (x_high - x_low) * automatic_Display_Area_margin
-        x_lim[1] = x_high + (x_high - x_low) * automatic_Display_Area_margin
-        y_lim[0] = y_low  - (y_high - y_low) * automatic_Display_Area_margin
-        y_lim[1] = y_high + (y_high - y_low) * automatic_Display_Area_margin
-    ax.set(xlim=x_lim, ylim=y_lim)
-    
-    # set x- and y-labels
-    try:
-        x_label = x_label + '  [' + units[x_label]  + ']'
-        y_label = y_label + '  [' + units[y_label]  + ']'
-
-        ax.set_xlabel(x_label, color = font_color)
-        ax.set_ylabel(y_label, color = font_color)
-    except:
-        raise ValueError("Could not set correct x- and y-labels. Make sure your x_axis_quantity and y_axis_quantity have equivalent key-value pairs in the units dictionary (common_definitions function).")
-
+            ax.set_xlabel(x_label, color = font_color)
+            ax.set_ylabel(y_label, color = font_color)
+        except:
+            raise ValueError("Could not set correct x- and y-labels. Make sure your x_axis_quantity and y_axis_quantity have equivalent key-value pairs in the units dictionary (common_definitions function).")
+    else:
+        raise ValueError("No Data plotet. Are the filters named correctly?")
 
 # : export :
     if export_transparent_flag:
