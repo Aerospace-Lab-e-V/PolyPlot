@@ -92,9 +92,10 @@ if __name__ == '__main__':
         }
 
     # ~ filter                                                  
+    # & filter_flag
     filter = {     # & little groups aren't plotet correctly
         "name": "available",
-        "state": [True]
+        "states": [True]
     },
 
     filter_keys = {

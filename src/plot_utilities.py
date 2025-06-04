@@ -81,7 +81,7 @@ def filter_data(data, filters, filter_keys):
             if entry in keys["entries"]:
                 state = keys["state"]
 
-        if not state in filter["state"]:
+        if not state in filter["states"]:
             plot_datapoint = False
 
     return plot_datapoint             
@@ -165,48 +165,6 @@ def quantity_availability(
 
     print("x: ", x_low, " - ", x_high, "  ||  y: ", y_low, " - ", y_high)
     return x_low.T, x_high.T, y_low.T, y_high.T
-
-
-# def plot_points(
-#         x_low, 
-#         x_high,
-#         y_low,
-#         y_high,
-#         current_color,
-#         ax
-#     ):
-#     datapoints = len(x_low)
-#     for i in range(datapoints):
-#         if pd.isna(x_high[i]) and pd.isna(y_high[i]):    #if low = high draw point
-#             ax.plot(
-#                 x_low[i],
-#                 y_low[i],
-#                 color = current_color,
-#                 marker = 'o',
-#                 alpha = 0.6
-#                 )
-#         else:
-#             linewidth = 1
-#             if pd.isna(x_high[i]):             # low = high for plotting points / lines
-#                 x_high[i] = x_low[i]
-#                 linewidth = 3
-#             if pd.isna(y_high[i]):
-#                 y_high[i] = y_low[i]
-#                 linewidth = 3
-
-#             draw_ellipses(
-#                 x = [x_low[i],  x_high[i]],
-#                 y = [y_low[i],  y_high[i]],
-#                 plot_kwargs = {
-#                     'facecolor':colors.to_rgba(
-#                         current_color,
-#                         alpha=0.25
-#                         ),
-#                     'edgecolor':current_color,
-#                     'linewidth': linewidth
-#                     },
-#                 ax = ax,
-#                 )
 
 
 
@@ -326,12 +284,6 @@ def draw_plot(
             
     # +       recursive exit       +
     else:
-        # if len(filter) > 10: # & > 0 -- filters not yet working
-        #     print("applying filters")
-        #     filtered_data = filter_data(data, filter, filter_keys)
-        # else:
-        #     filtered_data = data
-
         x_low, x_high, y_low, y_high = quantity_availability(   # read data
                 x_axes_quantities,
                 y_axes_quantities,
@@ -343,17 +295,7 @@ def draw_plot(
                 ax
             )
 
-        # if layers[current_layer_number]['visible'] == True:     # plot points / elypsis
-        #     plot_points(   
-        #         x_low, 
-        #         x_high,
-        #         y_low,
-        #         y_high,
-        #         current_color,
-        #         ax
-        #     )
-
-        X = np.append(x_low, x_high)    	# & nan handling (_high)
+        X = np.append(x_low, x_high)
         Y = np.append(y_low, y_high)
         DATA = np.column_stack((X,Y))
         return DATA, legend, False
