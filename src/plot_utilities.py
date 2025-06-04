@@ -20,9 +20,6 @@ from src.plot_convex_hull import(
     draw_ellipses,
     draw_hull,
     )
-
-
-from src.rotation_aware_annotation import RotationAwareAnnotation
     
 
 def plotting_presets(figure_type:str = 'publication'):
@@ -75,6 +72,51 @@ def plotting_presets(figure_type:str = 'publication'):
     plt.rcParams['lines.markersize'] = 10
 
 
+def filter_data(data, filters, filter_keys):
+    plot_data = pd.DataFrame    # & datatype ❗!❗
+    for pos in range(len(data)):
+        plot_datapoint = True
+        for filter in filters:
+            entry = data[filter["name"]].iloc[pos]
+            print(entry)
+            for state in filter_keys:
+                if not( state["state"] == filter["name"] and entry in state["entries"]):
+                    plot_datapoint = False
+        if plot_datapoint == True:
+            pd.DataFrame.append(plot_data, plot_entry)
+    return plot_data
+
+# def filter_data(data, filters, filter_keys):
+#     plot_data = pd.DataFrame
+#     for filter in filters:
+#         for entry, material_data in data.groupby(filter["name"]):
+#             for state in filter_keys:
+#                 if state["state"] == filter["name"]:
+#                     if entry in state["entries"]:
+#                         pd.DataFrame.append(plot_data, plot_entry)
+#     return plot_data
+
+
+# def filter_data(data, filters, filter_keys):
+#     plot_data = pd.DataFrame
+#     for entry, material_data in data.groupby(filter):
+#         plot_entry == True
+#         for filter in filters:
+#             if filter not in data:
+#                 raise ValueError("unrecognized filter set")
+#             for state in filter_keys:
+#                 if entry in state["entries"]:
+#                     entry_state = state["state"]
+            
+#             if entry_state != filter["state"]:
+#                 plot_entry == False
+
+#         if plot_entry == True:
+#             pd.DataFrame.append(plot_data, plot_entry)
+    
+#     return plot_data                 
+
+
 def quantity_availability(
         x_axes_quantities,
         y_axes_quantities,
@@ -95,7 +137,7 @@ def quantity_availability(
                 x_low_temp  = data[quantity + ' low' ].iloc[pos].copy()
                 x_high_temp = data[quantity + ' high'].iloc[pos].copy()
                 break
-        if x_low_temp != None:                     # checking only fr y-value if x-value exists
+        if x_low_temp != None:                     # checking only for y-value if x-value exists
             for quantity in y_axes_quantities:     # cycling possible names per axes
                 if not pd.isna(data[quantity + ' low'].iloc[pos]):
                     x_low  = np.append(x_low,  x_low_temp )
@@ -108,7 +150,6 @@ def quantity_availability(
     #     if not (np.isnan(x_high[pos]) and np.isnan(y_high[pos])):
     #         x_high_short = np.append(x_high_short, x_high[pos])
     #         y_high_short = np.append(y_high_short, y_high[pos])
-
     
     print("x: ", x_low, " - ", x_high, "  ||  y: ", y_low, " - ", y_high)
     return x_low.T, x_high.T, y_low.T, y_high.T
@@ -162,9 +203,12 @@ def draw_plot(
         current_layer_number,
         current_master_layer_name,
         layers,
+        filter,
+        filter_keys,
         data,
         x_axes_quantities,
         y_axes_quantities,
+        legend,
         ax,
         current_color,
         material_colors,
@@ -203,141 +247,96 @@ def draw_plot(
         -------
         None.
     '''
-    layer_name = layers[current_layer_number]['name']
-    whitelist = layers[current_layer_number]['whitelist']
-    whitelist_flag = layers[current_layer_number]['whitelist_flag']
 
-    combined_DATA = np.zeros(shape=(0,2))
+    # +       recursive repetition       +
+    if current_layer_number < len(layers) - 1:
+        layer_name           = layers[current_layer_number]['name']
+        layer_whitelist      = layers[current_layer_number]['whitelist']
+        layer_whitelist_flag = layers[current_layer_number]['whitelist_flag']
+        layer_visibility     = layers[current_layer_number]['visible']
+        combined_DATA        = np.zeros(shape=(0,2))
 
-    for category, material_data in data.groupby(layer_name):
-        print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======")
+        for category, material_data in data.groupby(layer_name):
+            print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======")
 
-        if category in material_colors:
-            current_color = material_colors[category]
-        if current_layer_number < len(layers) -2:
-            DATA = draw_plot(
-                    current_layer_number + 1,
-                    category,
-                    layers,
-                    material_data,
-                    x_axes_quantities,
-                    y_axes_quantities,
-                    ax,
-                    current_color,
-                    material_colors,
-                )
+            if category in material_colors   and   category not in legend   and   layer_visibility == True:   # ° color & legend entry handling
+                current_color = material_colors[category]
+                legend.append(category)
+            elif current_color == 0:
+                if 'default' in material_colors:
+                    current_color = material_colors['default']
+                else:
+                    raise ValueError('You have material categories that have not been assigned a color and no default value. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)                    
+                                        
 
-        # color checking
-        if current_color == 0 and layers[current_layer_number]['visible'] == True:
-            if 'default' in material_colors:
-                current_color = material_colors['default']
-            else:
-                raise ValueError('You have material categories that have not been assigned a color. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)
-        
-        
-        if current_layer_number == len(layers)-1 \
-        and ((category     in whitelist and whitelist_flag == True)  \
-        or   (category not in whitelist and whitelist_flag == False)):
-            x_low, x_high, y_low, y_high = quantity_availability(
-                    x_axes_quantities,
-                    y_axes_quantities,
-                    material_data
-                )
+            if (category in layer_whitelist and layer_whitelist_flag == True) or (category not in layer_whitelist and layer_whitelist_flag == False):
+                DATA, legend, plotted = draw_plot(
+                        current_layer_number + 1,
+                        category,
+                        layers,
+                        filter,
+                        filter_keys,
+                        material_data,
+                        x_axes_quantities,
+                        y_axes_quantities,
+                        legend,
+                        ax,
+                        current_color,
+                        material_colors,
+                    )
 
-            if layers[current_layer_number]['visible'] == True:
-                plot_points(
-                    x_low, 
-                    x_high,
-                    y_low,
-                    y_high,
-                    current_color,
-                    ax
-                )
+                if DATA.shape[0] > 0 and layer_visibility == True                              \
+                and not (len(data.groupby(layer_name).groups.keys()) == 1 and plotted == False): # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
+                    draw_hull(
+                        DATA,
+                        scale = 1.05,
+                        padding = 'scale',
+                        n_interpolate = 100,
+                        interpolation = 'cubic',
+                        ax = ax,
+                        plot_kwargs = {
+                            'color': current_color,
+                            'alpha': layers[current_layer_number]['alpha']
+                            }
+                        )
+                    plotted = True
 
-            X = np.append(x_low, x_high)    	# & nan handling (_high)
-            Y = np.append(y_low, y_high)
-            DATA = np.column_stack((X,Y))
-            combined_DATA = np.vstack((combined_DATA, DATA))        # & check for NO new data to prevent identical hulls
-            print("rows:", DATA.shape[0], "; columns:", DATA.shape[1])
-            print("DATA: ", DATA)
-            print("combined DATA: ", combined_DATA)
+                combined_DATA = np.vstack((combined_DATA, DATA))
+                print("-- Layer ", current_layer_number, " DATA: ", DATA, " combined_DATA: ", combined_DATA) # . combined_DATA[~np.isnan(combined_DATA)]
 
 
-    if not combined_DATA.shape[0] == 0                 \
-    and layers[current_layer_number]['visible'] == True:
-        draw_hull(
-            combined_DATA,
-            scale = 1.05,
-            padding = 'scale',
-            n_interpolate = 100,
-            interpolation = 'cubic',
-            ax = ax,
-            plot_kwargs = {
-                'color': current_color,
-                'alpha': layers[current_layer_number]['alpha']
-                }
+        if len(data.groupby(layer_name).groups.keys()) > 1:
+            plotted == False
+                
+        return combined_DATA, legend, plotted
+
+            
+    # +       recursive exit       +
+    else:
+        if len(filter) > 10: # & > 0 -- filters not yet working
+            print("applying filters")
+            filtered_data = filter_data(data, filter, filter_keys)
+        else:
+            filtered_data = data
+
+        x_low, x_high, y_low, y_high = quantity_availability(   # read data
+                x_axes_quantities,
+                y_axes_quantities,
+                filtered_data
+                # data
             )
 
-    if current_layer_number != 0:
-        return combined_DATA
+        if layers[current_layer_number]['visible'] == True:     # plot points / elypsis
+            plot_points(   
+                x_low, 
+                x_high,
+                y_low,
+                y_high,
+                current_color,
+                ax
+            )
 
-
-
-def common_definitions():
-    '''
-        Creates two dictionaries for colors and units (labeling).
-        Add the units that you wish to see in the world (Ghandhi, 1913)
-
-        Returns
-        -------
-        units : dict
-            Dictionary with key-value pairs for each quantity and its
-            respective SI unit. Keys are case sensitive.
-            Could maybe be a way to just grab this
-            from a preexisting python package.
-
-        material_colors : dict
-            key-value pairs for each category of material and the respective
-            color in which you wish to see it plotted. Keys are case sensitive.
-    '''
-    # common units for labeling the axes. These are case sensitive.
-    units = {
-        'Density': 'kg/m$^3$',
-        'Tensile Strength': 'MPa',
-        "Young Modulus": 'GPa',
-        "Fracture Toughness": r"MPa$\sqrt{\text{m}}$",
-        "Thermal Conductivity": r"W/m$\cdot$K",
-        "Thermal expansion": "1$^-6$/m",
-        "Resistivity": r"$\Omega \cdot$m",
-        "Poisson": "-",
-        "Poisson difference": "-",
-        "Melting Point": "°C",
-        "Deflection Temperature at 1.8 MPa 264 psi": "°C",
-        "Tensile Strength at Break": "MPa"
-        }
-
-    material_colors = {
-        'ABS': '#219DD3',	
-        'PA12':'#7BBFD9',	
-        'PEEK':'#D69D20',	
-        'PLA': '#E3B768',	
-        'PET': '#3BD420',	
-        'PETG':'#85E064',	
-        'PPSU':'#B52ED6',	
-        'PPS': '#CE82E0',
-
-        'PA11':'#219DD3',	
-        'POM': '#7BBFD9',	
-        'PP':  '#D69D20',	
-        'PVDF':'#E3B768',	
-        'PC':  '#3BD420',	
-        'PEI': '#85E064',	
-        'PA6': '#B52ED6',	
-        'PPA': '#CE82E0',
-
-        'PA': "red",
-        'PET':"black",
-        '':   "white",
-        }
-    #  'blue', 'orange', 'red', 'green', 'purple', 'Brown', 'pink', 'grey', 'black', 'white'
-    return units, material_colors
+        X = np.append(x_low, x_high)    	# & nan handling (_high)
+        Y = np.append(y_low, y_high)
+        DATA = np.column_stack((X,Y))
+        return DATA, legend, False

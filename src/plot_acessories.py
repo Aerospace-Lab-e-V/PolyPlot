@@ -1,12 +1,10 @@
 from matplotlib import patches
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 
 def create_legend(
-        # data,
-        # layers,
-        material_classes,
+        legend_items,
         material_colors,
         font_color
         ):
@@ -35,25 +33,18 @@ def create_legend(
         None.
     '''
     handles = []
-    # for layer in layers:
-    #     if layer['visible' == True]:
-    #         for category, material_data in data.groupby(layer):
-                
 
-    # make a manual legend
-    for material_class in material_classes:
+    for item in legend_items:
         patch = patches.Patch(
-            color = material_colors[material_class],
-            label = material_class
+            color = material_colors[item],
+            label = item
             )
         handles.append(patch)
-
-    # place legend outside the plot     # ToDo put Legend right of the plot
     
     plt.legend(
         handles=handles,
         bbox_to_anchor = (0, 1.02, 1, 0.2),
-        loc  = 'lower left',
+        loc  = 'lower left',        # & put Legend right of the plot
         mode = 'expand',
         borderaxespad = 0,
         fontsize = 15,
@@ -87,8 +78,8 @@ def draw_guideline(
                 The default is 1.0.
             string : string to display and label the guideline
             string_position : location to start the string
-        limit: 4x4 float array
-            area shown on the plot
+        x_min, x_max: float
+            definition area
         ax : matplotlib axis object
             The current plotting axis.
 
@@ -96,23 +87,22 @@ def draw_guideline(
         -------
         None.
     '''
-    num_points = 4
+    num_points = 5
     for guideline in guidelines:
 
         x = guideline['x']
         y = guideline['y']
         m = guideline['m']
 
-        if x == None and m == None: # horizontal
-            x_values = np.linspace(y_min, y_max, num_points)
+        if m == False:  # horizontal
+            x_values = np.linspace(x_min, x_max, num_points)
             y_values = np.ones(num_points)* y
-        elif y == None and m == None: # vertical
+        elif m == True: # vertical
             x_values = np.ones(num_points)* x
-            y_values = np.linspace(x_min ,x_max, num_points)
-        else:            
+            y_values = np.linspace(y_min, y_max, num_points)
+        else:                                                   # & semilog
             x_values = np.linspace(x_min, x_max, num_points)
             y_intercept = (y- (m*x))
-            # semilog: a∙x^m
             y_values = m*x_values + y_intercept
 
         ax.plot(
@@ -123,20 +113,27 @@ def draw_guideline(
             color     = guideline['color'    ],
             )
 
-        # Create an annotation on the line to denote the equation
-        # The spacing of this line takes a bit (xytext variable),
-        # because the units are 1/72 in
-        # FIXME generalize the xytext placement?
-        RotationAwareAnnotation(
-            guideline['string'],
-            xy=guideline['string_position'],
-            p=(x_values[3], y_values[3]),
-            pa = (x_values[0], y_values[0]),
-            ax=ax,
-            xytext=(0,0),
-            textcoords="offset points",
-            va="top"
-            )
+        if m == True:
+            label_angle = np.pi/2
+        else:
+            label_angle = np.arctan(m)
+
+        if guideline['string_above'] == True:
+            label_normal_angle = label_angle + np.pi/2
+        else: 
+            label_normal_angle = label_angle - np.pi/2
+
+        x_text = x + np.cos(label_normal_angle)*guideline['string_padding']
+        y_text = y + np.sin(label_normal_angle)*guideline['string_padding']
+
+        ax.text(
+            x_text,
+            y_text, 
+            guideline['string'], 
+            fontsize=guideline["fontsize"],
+            rotation=np.rad2deg(label_angle), 
+            rotation_mode='anchor',
+            transform_rotates_text=True)
 
 
 
