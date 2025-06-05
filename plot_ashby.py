@@ -24,17 +24,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from src.plot_utilities import (
-    draw_plot,
-    plotting_presets,
+        draw_plot,
+        plotting_presets,
     )
 
 from src.plot_acessories import (
-    create_legend,
-    draw_guideline,
-    draw_colored_areas,
-    create_marker,
-    create_annotation,
-)
+        draw_guideline,
+        draw_colored_areas,
+        create_marker,
+        create_annotation,
+    )
+from src.formating import(
+        create_legend,
+        watermark
+
+    )
 
 if __name__ == '__main__':
     #%% USER INPUTS (everything you will need to change *should* be here)
@@ -68,12 +72,12 @@ if __name__ == '__main__':
     layers = {           # different hirachie layers the Materials are stored in the excel  # & still very buggy (3. & 2.if!1.)
             'name': 'Gruppe',
             'visible': True,
-            'whitelist_flag': False,    # False ≙ blacklist 
-            'whitelist': [None],
+            'whitelist_flag': True,    # False ≙ blacklist 
+            'whitelist': ['PA'],
             'alpha': 0.4
         },{
             'name': 'Material',
-            'visible': False,
+            'visible': True,
             'whitelist_flag': False,    # False ≙ blacklist 
             'whitelist': [None],
             'alpha': 0.4
@@ -93,10 +97,14 @@ if __name__ == '__main__':
 
     # ~ filter                                                  
     # & filter_flag
-    filter = {     # & little groups aren't plotet correctly
-        "name": "available",
-        "states": [True]
-    },
+    filter_flag = False
+    if filter_flag:
+        filter = {     # & little groups aren't plotted correctly
+            "name": "available",
+            "states": [True, False, None]
+        },
+    else:
+        filter = None       # & performance skip filtercheck when getting data if flag == False
 
     filter_keys = {
         "state":   True,
@@ -115,7 +123,7 @@ if __name__ == '__main__':
 
     # ~ x- and y-axes limits                                    
     automatic_Display_Area_flag   = True
-    automatic_Display_Area_margin = .065
+    automatic_Display_Area_margin = .1
     x_lim = [20, 250]
     y_lim = [20, 150]
 
@@ -131,7 +139,7 @@ if __name__ == '__main__':
                 'color':'green',
                 'linewidth': 4,
                 'fontsize': 22,
-                'string':r"$\frac{E^{1/2}}{\rho} \equiv k$",        # bottom left corner in (x,y) + padding
+                'string':r"$\frac{Latex}{Test} = ✔$",        # bottom left corner in (x,y) + padding
                 'string_above': True,   # text above ore below line
                 'string_padding': 4     # distance form line
             },
@@ -189,11 +197,11 @@ if __name__ == '__main__':
                 'y': [0,   0,  50, 50, 200, 200],
                 'color': "r",
                 'alpha': 0.2        # ∈[0;1]
-            },{
-                'x': [0, 100,  100, 0],
-                'y': [1,   100, 50, 5],
-                'color': "g",
-                'alpha': 0.2        # ∈[0;1]
+            # },{
+            #     'x': [0, 100,  100, 0],
+            #     'y': [1,   100, 50, 5],
+            #     'color': "g",
+            #     'alpha': 0.2        # ∈[0;1]
             },
         ]
     # ~ units (LaTeX)                                                
@@ -377,11 +385,12 @@ if __name__ == '__main__':
 
 # : export :
     if export_transparent_flag:
+        watermark(fig, alpha=0.7)
+        
         ax.tick_params(colors=font_color)     # Achsenbeschriftungen
         ax.spines[:].set_color(font_color)
-        ax.title.set_color(font_color)
 
-        plt.savefig(export_file_name, dpi=300, transparent=True)
+        plt.savefig(os.path.join('export', export_file_name), dpi=300, transparent=True)
 
     plt.show()
 

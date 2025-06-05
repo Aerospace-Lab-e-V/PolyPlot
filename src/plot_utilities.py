@@ -74,15 +74,16 @@ def plotting_presets(figure_type:str = 'publication'):
 
 def filter_data(data, filters, filter_keys):
     plot_datapoint = True
-    for filter in filters:
-        entry = data[filter["name"]]
-        state = None
-        for keys in filter_keys:
-            if entry in keys["entries"]:
-                state = keys["state"]
+    if filters != None:
+        for filter in filters:
+            entry = data[filter["name"]]
+            state = None
+            for keys in filter_keys:
+                if entry in keys["entries"]:
+                    state = keys["state"]
 
-        if not state in filter["states"]:
-            plot_datapoint = False
+            if not state in filter["states"]:
+                plot_datapoint = False
 
     return plot_datapoint             
 
@@ -226,19 +227,19 @@ def draw_plot(
         combined_DATA        = np.zeros(shape=(0,2))
 
         for category, material_data in data.groupby(layer_name):
-            print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======")
-
-            if category in material_colors   and   category not in legend   and   layer_visibility == True:   # ° color & legend entry handling
-                current_color = material_colors[category]
-                legend.append(category)
-            elif current_color == 0:
-                if 'default' in material_colors:
-                    current_color = material_colors['default']
-                else:
-                    raise ValueError('You have material categories that have not been assigned a color and no default value. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)                    
-                                        
+            print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======")             
 
             if (category in layer_whitelist and layer_whitelist_flag == True) or (category not in layer_whitelist and layer_whitelist_flag == False):
+                if category in material_colors   and   category not in legend:   # ° color & legend entry handling
+                    current_color = material_colors[category]
+                    legend.append(category)             # & ignores layer visibility
+                elif current_color == 0:
+                    if 'default' in material_colors:
+                        current_color = material_colors['default']
+                    else:
+                        raise ValueError('You have material categories that have not been assigned a color and no default value. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)                    
+                           
+
                 DATA, legend, plotted = draw_plot(      
                         current_layer_number + 1,
                         category,
@@ -254,7 +255,6 @@ def draw_plot(
                         material_colors,
                     )
 
-                print(DATA.shape[0])
 
                 if DATA.shape[0] > 1 and layer_visibility == True                              \
                 and not (len(data.groupby(layer_name).groups.keys()) == 1 and plotted == False): # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
