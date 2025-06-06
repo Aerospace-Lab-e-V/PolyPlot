@@ -44,31 +44,97 @@ def create_legend(
         handles.append(patch)
     
     plt.legend(
-        handles=handles,
-        bbox_to_anchor = (0, 1.02, 1, 0.2),
-        loc  = 'lower left',        # & put Legend right of the plot
-        mode = 'expand',
-        borderaxespad = 0,
-        fontsize = 15,
-        labelcolor = font_color,
-        facecolor = 'none',
-        edgecolor = 'none',
-        ncol = 5)
+            handles=handles,
+            bbox_to_anchor = (1, 0, 1, 1),
+            title="Materialien:",
+            loc  = 'center left',
+            labelspacing = 1.05,
+            mode = 'expand',
+            borderaxespad = 0,
+            fontsize = 15,
+            labelcolor = font_color,
+            facecolor = 'none',
+            edgecolor = 'none',
+            ncol = 1,
+            # draggable = True
+        )
+    # plt.legend(        # ° legend above
+    #     handles=handles,
+    #     bbox_to_anchor = (0, 1.02, 1, 0.2),
+    #     loc  = 'lower left',        # & put Legend right of the plot
+    #     mode = 'expand',
+    #     borderaxespad = 0,
+    #     fontsize = 15,
+    #     labelcolor = font_color,
+    #     facecolor = 'none',
+    #     edgecolor = 'none',
+    #     ncol = 5)
 
 
-def watermark(fig, alpha):
+def watermark(fig, alpha, pos, size):
     logo =  os.path.join(
             os.getcwd(),
             'media',
             'watermark.png'
         )
 
+    # change alpha value
     img = Image.open(logo).convert("RGBA")
     r, g, b, a = img.split()
-    a = a.point(lambda x: int(x * alpha))  # z.B. 40% Sichtbarkeit
+    a = a.point(lambda x: int(x * alpha))
     img = Image.merge("RGBA", (r, g, b, a))
     img_array = np.array(img)
 
-    logo_ax = fig.add_axes([0.75, 0.11, 0.15, 0.15], anchor='SE', zorder=101)
+    logo_ax = fig.add_axes([pos[0], pos[1], size, size], anchor='SE', zorder=101, )
     logo_ax.imshow(img_array)
-    logo_ax.axis('off') 
+    logo_ax.axis('off')
+
+
+def plotting_presets(figure_type:str = 'publication'):
+    '''
+        Creates plotting presets for font size, marker size,
+        and other quality of life presets.
+
+
+        Parameters
+        ----------
+        figure_type : str
+            Type of figure you would like to create.
+            Options are 'publication' or 'presentation'
+            Toggles different presets like font family, font size, etc.
+
+        Returns
+        -------
+        None.
+    '''
+    #Graphs in a separate window (run in Spyder)
+    if 'SPY_PYTHONPATH' in os.environ:
+        # see https://stackoverflow.com/questions/32538758/nameerror-name-get-ipython-is-not-defined
+        # running inside spyder!
+        #Graphs in a separate window
+        from IPython import get_ipython
+        get_ipython().run_line_magic('matplotlib', 'qt')
+        #Graphs inline (ala Jupyter notebook)
+        #get_ipython().run_line_magic('matplotlib', 'inline')
+    if figure_type.lower() == 'publication':
+        # Plot with serif, Times New Roman Font
+        plt.rc('font', family='serif')
+        plt.rc('font', serif='Times New Roman')
+        plt.rcParams.update({'font.size': 10})
+        plt.rc('text', usetex='True')
+    elif figure_type.lower() == 'presentation':
+        #Plot with sans serif, Arial font
+        plt.rc('font', family='sans-serif')
+        plt.rcParams.update({'font.sans-serif':'Arial'})
+        plt.rcParams.update({'font.size': 18})
+        plt.rc('text',usetex='False')
+    else:
+        raise(ValueError,'Options for plotting_presets are publication or presentation')
+
+    # Use Latex to render all fonts (this may interfere with the svg font encoding)
+    # plt.rc('text', usetex='True')
+    #Use no svg font encoding such that they can be imported as text into inkscape
+    # FIXME grab the stack overflow link for this.
+    plt.rcParams['svg.fonttype'] = 'none'
+    #Modify marker size to make them readable
+    plt.rcParams['lines.markersize'] = 10

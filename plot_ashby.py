@@ -25,7 +25,6 @@ import numpy as np
 
 from src.plot_utilities import (
         draw_plot,
-        plotting_presets,
     )
 
 from src.plot_acessories import (
@@ -36,7 +35,8 @@ from src.plot_acessories import (
     )
 from src.formating import(
         create_legend,
-        watermark
+        watermark,
+        plotting_presets,
 
     )
 
@@ -63,21 +63,21 @@ if __name__ == '__main__':
 
     # quantities you would like to plot
     x_axes_quantities = ['Deflection Temperature at 1.8 MPa 264 psi']
-    x_label = x_axes_quantities[0]
+    x_label = "Deflection Temperature [°C] @ 1.8 MPa"  # x_axes_quantities[0]
     y_axes_quantities = ["Tensile Strength Yield", "Tensile Strength Ultimate", "Tensile Strength at Break", "Tensile Strength"]
-    y_label = y_axes_quantities[0]
+    y_label = "Tensile Strength Yield [MPa]"   # y_axes_quantities[0]
     legend_flag = True
 
     # ~ layer                                                   
     layers = {           # different hirachie layers the Materials are stored in the excel  # & still very buggy (3. & 2.if!1.)
             'name': 'Gruppe',
-            'visible': True,
-            'whitelist_flag': True,    # False ≙ blacklist 
-            'whitelist': ['PA'],
+            'visible': False,
+            'whitelist_flag': False,    # False ≙ blacklist 
+            'whitelist': [None],
             'alpha': 0.4
         },{
             'name': 'Material',
-            'visible': True,
+            'visible': False,
             'whitelist_flag': False,    # False ≙ blacklist 
             'whitelist': [None],
             'alpha': 0.4
@@ -240,7 +240,7 @@ if __name__ == '__main__':
 
         'PA': "red",
         'PET':"black",
-        'default':"white",
+        'default':"grey",
         }
 # ~ export                                                          
     export_transparent_flag = False
@@ -248,6 +248,7 @@ if __name__ == '__main__':
         export_file_name = "Ashbyplot_transparent"
         font_color = 'white'
     else:
+        title = "Ashbyplot"
         font_color = 'black'
 # ❗ end of USER INPUT                                                                                                                                      
 
@@ -268,6 +269,9 @@ if __name__ == '__main__':
 
     #Create figure
     fig, ax = plt.subplots(1,1, figsize=figure_size)
+    # fig = plt.figure(figsize=figure_size)                      # hulls in right plot ??
+    # ax  = plt.subplot2grid((1,11), (0,0), colspan=10)
+    # legend_sp = plt.subplot2grid((1,11), (0,10), colspan=1)    # hide spines, ticks, 
     # & other formats: title , legend at side
 
 
@@ -370,11 +374,12 @@ if __name__ == '__main__':
                 linestyle = '-.',
                 zorder = 0.5,
             )
+        # plt.tight_layout(pad=2.5)
 
         # set x- and y-labels
         try:
-            x_label = x_label + '  [' + units[x_label]  + ']'
-            y_label = y_label + '  [' + units[y_label]  + ']'
+            # x_label = x_label + '  [' + units[x_label]  + ']'
+            # y_label = y_label + '  [' + units[y_label]  + ']'
 
             ax.set_xlabel(x_label, color = font_color)
             ax.set_ylabel(y_label, color = font_color)
@@ -385,12 +390,14 @@ if __name__ == '__main__':
 
 # : export :
     if export_transparent_flag:
-        watermark(fig, alpha=0.7)
+        watermark(fig, alpha=0.7, pos=[0.75, 0.11], size=.16)
         
         ax.tick_params(colors=font_color)     # Achsenbeschriftungen
         ax.spines[:].set_color(font_color)
 
         plt.savefig(os.path.join('export', export_file_name), dpi=300, transparent=True)
+    else:
+        plt.title(title, loc='left')
 
     plt.show()
 
