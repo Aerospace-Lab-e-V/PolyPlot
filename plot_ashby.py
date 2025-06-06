@@ -24,16 +24,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from src.plot_utilities import (
-    create_legend,
-    draw_plot,
-    plotting_presets,
-    draw_guideline,
-    draw_colored_areas,
-    common_definitions,
-    create_marker,
-    create_annotation,
+        draw_plot,
     )
 
+from src.plot_acessories import (
+        draw_guideline,
+        draw_colored_areas,
+        create_marker,
+        create_annotation,
+    )
+from src.formating import(
+        create_legend,
+        watermark,
+        plotting_presets,
+
+    )
 
 if __name__ == '__main__':
     #%% USER INPUTS (everything you will need to change *should* be here)
@@ -48,7 +53,8 @@ if __name__ == '__main__':
 
 # ❗ start of USER INPUT                                                                                                                                      
     # file with all of your material data (must be xlsx)
-    file_name = 'MatWeb_materials_export_tobi.xlsx'
+    file_name = 'MatWeb_materials_export_tom_finaleDaten.xlsx'
+    sheet = 0
 
     figure_type = 'presentation' #options are 'publication' or 'presentation'
     figure_size = (16,9) #width, height, in inches
@@ -56,53 +62,86 @@ if __name__ == '__main__':
     # & Titel
 
     # quantities you would like to plot
-    x_axis_quantity = 'Deflection Temperature at 1.8 MPa 264 psi'
-    y_axis_quantity = 'Tensile Strength'
-    y_axis_quantity_bk = "Tensile Strength Yield"
-    y_axis_quantity_bk2 = "Tensile Strength Ultimate"
-    y_axis_quantity_bk3 = "Tensile Strength at Break"
+    x_axes_quantities = ['Deflection Temperature at 1.8 MPa 264 psi']
+    x_label = "Deflection Temperature [°C] @ 1.8 MPa"  # x_axes_quantities[0]
+    y_axes_quantities = ["Tensile Strength Yield", "Tensile Strength Ultimate", "Tensile Strength at Break", "Tensile Strength"]
+    y_label = "Tensile Strength Yield [MPa]"   # y_axes_quantities[0]
+    legend_flag = True
 
-    layers = {           # different hirachie layers the Materials are stored in the excel
+    # ~ layer                                                   
+    layers = {           # different hirachie layers the Materials are stored in the excel  # & still very buggy (3. & 2.if!1.)
             'name': 'Gruppe',
-            'visible': True,
+            'visible': False,
+            'whitelist_flag': False,    # False ≙ blacklist 
             'whitelist': [None],
             'alpha': 0.4
         },{
             'name': 'Material',
             'visible': False,
+            'whitelist_flag': False,    # False ≙ blacklist 
             'whitelist': [None],
             'alpha': 0.4
         },{
             'name': 'Hersteller',
             'visible': False,
+            'whitelist_flag': False,    # False ≙ blacklist 
             'whitelist': [None],
             'alpha': 0.4,
-
+        },{
+            'name': None,       # individual Datapoints
+            'visible': True,
+            'whitelist_flag': False,    # ignore
+            'whitelist': [None],        # ignore
+            'alpha': 0.3, 
         }
 
-    # ~ Flag to plot in log-log space                           
-    log_flag = False
-    # log_y_flag = True                # & Semilog
+    # ~ filter                                                  
+    # & filter_flag
+    filter_flag = False
+    if filter_flag:
+        filter = {     # & little groups aren't plotted correctly
+            "name": "available",
+            "states": [True, False, None]
+        },
+    else:
+        filter = None       # & performance skip filtercheck when getting data if flag == False
+
+    filter_keys = {
+        "state":   True,
+        "entries": ["y","Y","✔","true", "True" ]
+    },{
+        "state":   False,
+        "entries": ["n","N","✘","false","False"]
+    },{
+        "state":   None,
+        "entries": ["", " ","-","none", "None" ]
+    }
+
+    # ~ log-Space                                               
+    log_x_flag = False                          # & incompatible with: guideline, areas(?)
+    log_y_flag = False                          # & other gridlines
 
     # ~ x- and y-axes limits                                    
-    automatic_Display_Area_flag   = True      # & not working yet
-    automatic_Display_Area_margin = .065
-    x_lim = [0, 200]
-    y_lim = [0, 120]
+    automatic_Display_Area_flag   = True
+    automatic_Display_Area_margin = .1
+    x_lim = [20, 250]
+    y_lim = [20, 150]
 
 
     # ~ insert Guideline (linear)                               
     guideline_flag = False
     if guideline_flag:
         guidelines = [{
-                'x': 100,       # % Point x-coordinate | vertical   if y & m are none 
-                'y': 20,        # % Point y-coordinate | horizontal if x & m are none 
-                'm': 1,         # % incline                                           
+                'x': 100,       # % Point x-coordinate | vertical   if m = True  
+                'y': 80,        # % Point y-coordinate | horizontal if m = False 
+                'm': .4,        # % incline                                      
                 'linestyle': '--',
                 'color':'green',
                 'linewidth': 4,
-                'string':r"$\frac{E^{1/2}}{\rho} \equiv k$", # % Beschriftung 
-                'string_position': (300, 0.5)
+                'fontsize': 22,
+                'string':r"$\frac{Latex}{Test} = ✔$",        # bottom left corner in (x,y) + padding
+                'string_above': True,   # text above ore below line
+                'string_padding': 4     # distance form line
             },
         ]
 
@@ -154,180 +193,211 @@ if __name__ == '__main__':
     colored_area_flag = False
     if colored_area_flag:
         colored_areas = [{
-                'x': [1, 100, 1000, 1000, 1   ],
-                'y': [1, 1  , 100,  1000, 1000],
-                'color': "g",
-                'alpha': 0.5        # ∈[0;1]
-            },{
-                'x': [1000, 100000, 100000, 1000],
-                'y': [1,    1,      1000,   1000],
+                'x': [0, 300, 300, 80,  80, 0  ],
+                'y': [0,   0,  50, 50, 200, 200],
                 'color': "r",
                 'alpha': 0.2        # ∈[0;1]
-            }
+            # },{
+            #     'x': [0, 100,  100, 0],
+            #     'y': [1,   100, 50, 5],
+            #     'color': "g",
+            #     'alpha': 0.2        # ∈[0;1]
+            },
         ]
-    # ~ export
+    # ~ units (LaTeX)                                                
+    units = {
+        'Density': 'kg/m$^3$',
+        "Tensile Strength Yield": 'MPa',
+        "Young Modulus": 'GPa',
+        "Fracture Toughness": r"MPa$\sqrt{\text{m}}$",
+        "Thermal Conductivity": r"W/m$\cdot$K",
+        "Thermal expansion": "1$^-6$/m",
+        "Resistivity": r"$\Omega \cdot$m",
+        "Poisson": "-",
+        "Poisson difference": "-",
+        "Melting Point": "°C",
+        "Deflection Temperature at 1.8 MPa 264 psi": "°C",
+        }
+    # ~ colors                                                      
+    material_colors = {
+        'ABS': '#219DD3',	
+        'PA12':'#7BBFD9', 	
+        'PEEK':'#D69D20',	
+        'PLA': '#E3B768',	
+        'PET': '#3BD420',	
+        'PETG':'#85E064',	
+        'PPSU':'#B52ED6',	
+        'PPS': '#CE82E0',
+
+        'PA11':'#219DD3',	
+        'POM': '#7BBFD9',	
+        'PP':  '#D69D20',	
+        'PVDF':'#E3B768',	
+        'PC':  '#3BD420',	
+        'PEI': '#85E064',	
+        'PA6': '#B52ED6',	
+        'PPA': '#CE82E0',
+
+        'PA': "red",
+        'PET':"black",
+        'default':"grey",
+        }
+# ~ export                                                          
     export_transparent_flag = False
     if export_transparent_flag:
         export_file_name = "Ashbyplot_transparent"
         font_color = 'white'
     else:
+        title = "Ashbyplot"
         font_color = 'black'
-    # $ to edit hull colors & units go to:  plot_utilities.py line 303  
-    # $ to edit legend go to:               plot_utilities.py line 203  
-    # $ to edit grid go to:                 line 203                    
 # ❗ end of USER INPUT                                                                                                                                      
 
     # : General setup :
-    # Create dictionaries with common units bases etc.
-    units, material_colors = common_definitions()
-
     # Set up baseline plot formatting
     plotting_presets(figure_type)
 
     #load data
-    file_path = os.path.join(
-        os.getcwd(),
-        'material_properties',
-        file_name,
-        )
-
     data = pd.read_excel(
-        file_path
+        os.path.join(
+            os.getcwd(),
+            # 'ashby-diagramme-1',
+            'material_properties',
+            file_name,
+            ),
+        sheet_name = sheet
         )
-
-    # : Figure manipulation :
 
     #Create figure
     fig, ax = plt.subplots(1,1, figsize=figure_size)
-
-    # set x- and y-labels
-    try:
-        if y_axis_quantity == 'Poisson difference':
-            y_label = r'Hyperbolic Poisson Ratio $\frac{1}{1+\nu}$, '+ units[y_axis_quantity]
-        else:
-            y_label = y_axis_quantity + '  [' + units[y_axis_quantity] + ']'
-
-        if x_axis_quantity == 'Poisson difference':
-            x_label = r'Hyperbolic Poisson Ratio $\frac{1}{1+\nu}$, '+ units[x_axis_quantity]
-        else:
-            x_label = x_axis_quantity + '  [' + units[x_axis_quantity]  + ']'
+    # fig = plt.figure(figsize=figure_size)                      # hulls in right plot ??
+    # ax  = plt.subplot2grid((1,11), (0,0), colspan=10)
+    # legend_sp = plt.subplot2grid((1,11), (0,10), colspan=1)    # hide spines, ticks, 
+    # & other formats: title , legend at side
 
 
-        ax.set_xlabel(x_label, color = font_color)
-        ax.set_ylabel(y_label, color = font_color)
-    except:
-        raise ValueError("Could not set correct x- and y-labels. Make sure your x_axis_quantity and y_axis_quantity have equivalent key-value pairs in the units dictionary (common_definitions function).")
-
-
-    #toggle log in plot     # & fix log parameter for semilog 
-    if log_flag:
-        ax.loglog()
-    # if log_x_flag:
-    #     ax.set_xscale('log')
-    # if log_y_flag:
-    #     ax.set_yscale('log')
-
-    #add grid lines
-    # https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.grid.htmls
-    ax.grid(
-            which = 'major',
-            axis = 'both',
-            linestyle = '-.',
-            zorder = 0.5,
-        )
-
-
-    #set axes limits
-    if automatic_Display_Area_flag:
-        ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
-    else:
-        ax.set(xlim=x_lim, ylim=y_lim)
-    
-    
-    # : Data plotting :
-    current_layer = 0
-    current_color = 0
-    draw_plot(
+# : Data plotting :
+    DATA, legend_items, _ = draw_plot(
             0,      # current_layer_number
             None,   # current_master_layer_name
             layers,
+            filter,
+            filter_keys,
             data,
-            x_axis_quantity,
-            y_axis_quantity,
-            y_axis_quantity_bk,
-            y_axis_quantity_bk2,
-            y_axis_quantity_bk3,
+            x_axes_quantities,
+            y_axes_quantities,
+            [],     # legend_items
             ax,
             0,      # current_color
             material_colors
-            )
-    # draw background colored areas
-    if colored_area_flag:
-        draw_colored_areas(
-            colored_areas,
-            ax = ax
         )
 
-    #draw guideline
-    if guideline_flag:
+    if len(DATA):
+
+        if legend_flag:
+            create_legend(
+                legend_items,
+                material_colors = material_colors,
+                font_color = font_color
+            )
+
+
+        if colored_area_flag:
+            draw_colored_areas(
+                colored_areas,
+                ax = ax
+            )
+
+        if guideline_flag:
+            if automatic_Display_Area_flag:
+                draw_guideline(
+                        guidelines,
+                        x_min = np.nanmin(DATA[:,0])/2,
+                        x_max = np.nanmax(DATA[:,0])*2,
+                        y_min = np.nanmin(DATA[:,1])/2, # for vertical lines
+                        y_max = np.nanmax(DATA[:,1])*2,
+                        ax = ax,
+                    )
+            else:
+                draw_guideline(
+                        guidelines,
+                        x_min = x_lim[0],
+                        x_max = x_lim[1],
+                        y_min = y_lim[0],
+                        y_max = y_lim[1],
+                        ax = ax,
+                    )
+
+
+        if marker_flag:
+            create_marker(
+                markers,
+                x_axis_quantity,
+                y_axis_quantity,
+                marker_size,
+                ax = ax
+            )
+
+        if annotation_flag:
+            create_annotation(
+                annotations,
+                arrows,
+                ax = ax
+            )
+
+
+
+    # : Figure manipulation :
+        #set axes limits
         if automatic_Display_Area_flag:
-            # draw_guideline(
-            #         guidelines,
-            #         x_min = data[x_axis_quantity + ' low' ].min(skipna=True)/2,
-            #         x_max = data[x_axis_quantity + ' high'].max(skipna=True)*2,
-            #         y_min = data[y_axis_quantity + ' low' ].min(skipna=True)/2,
-            #         y_max = data[y_axis_quantity + ' high'].max(skipna=True)*2,
-            #         ax = ax,
-            #     )
-            draw_guideline(guidelines, 0, 500, 0, 500, ax)
-        else:
-            draw_guideline(
-                    guidelines,
-                    x_min = x_lim[0],
-                    x_max = x_lim[1],
-                    y_min = y_lim[0],
-                    y_max = y_lim[1],
-                    ax = ax,
-                )
+            # ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
+            x_low  = float(np.nanmin(DATA[:,0]))
+            x_high = float(np.nanmax(DATA[:,0]))
+            y_low  = float(np.nanmin(DATA[:,1]))
+            y_high = float(np.nanmax(DATA[:,1]))
+            x_lim[0] = x_low  - (x_high - x_low) * automatic_Display_Area_margin    # & edit for log
+            x_lim[1] = x_high + (x_high - x_low) * automatic_Display_Area_margin
+            y_lim[0] = y_low  - (y_high - y_low) * automatic_Display_Area_margin
+            y_lim[1] = y_high + (y_high - y_low) * automatic_Display_Area_margin
+        ax.set(xlim=x_lim, ylim=y_lim)
+        
 
-    if (x_axis_quantity == 'Poisson difference') or (y_axis_quantity == 'Poisson difference'):
-        data['Poisson difference high'] = 1/(1+data['Poisson low' ])
-        data['Poisson difference low' ] = 1/(1+data['Poisson high'])
+         #toggle log in plot
+        if log_x_flag:
+            ax.set_xscale('log')
+        if log_y_flag:
+            ax.set_yscale('log')
 
-
-    create_legend(
-            # data,
-            # layers,
-            material_classes = data.groupby('Material').groups.keys(),
-            material_colors = material_colors,
-            font_color = font_color
+        #add grid lines
+        ax.grid(
+                which = 'major',
+                axis = 'both',
+                linestyle = '-.',
+                zorder = 0.5,
             )
+        # plt.tight_layout(pad=2.5)
 
-    if marker_flag:
-        create_marker(
-            markers,
-            x_axis_quantity,
-            y_axis_quantity,
-            marker_size,
-            ax = ax
-        )
+        # set x- and y-labels
+        try:
+            # x_label = x_label + '  [' + units[x_label]  + ']'
+            # y_label = y_label + '  [' + units[y_label]  + ']'
 
-    if annotation_flag:
-        create_annotation(
-            annotations,
-            arrows,
-            ax = ax
-        )
+            ax.set_xlabel(x_label, color = font_color)
+            ax.set_ylabel(y_label, color = font_color)
+        except:
+            raise ValueError("Could not set correct x- and y-labels. Make sure your x_axis_quantity and y_axis_quantity have equivalent key-value pairs in the units dictionary (common_definitions function).")
+    else:
+        raise ValueError("No Data plotet. Are the filters named correctly?")
 
+# : export :
     if export_transparent_flag:
+        watermark(fig, alpha=0.7, pos=[0.75, 0.11], size=.16)
+        
         ax.tick_params(colors=font_color)     # Achsenbeschriftungen
-        ax.spines['bottom'].set_color(font_color)
-        ax.spines['left'].set_color(font_color)
-        ax.spines['top'].set_color(font_color)
-        ax.spines['right'].set_color(font_color)
-        ax.title.set_color(font_color)
+        ax.spines[:].set_color(font_color)
 
-        plt.savefig(export_file_name, dpi=300, transparent=True) # & add number of datapoints to title
+        plt.savefig(os.path.join('export', export_file_name), dpi=300, transparent=True)
+    else:
+        plt.title(title, loc='left')
 
     plt.show()
 

@@ -250,8 +250,8 @@ def draw_hull(
     if plot_kwargs is None:
         plot_kwargs = {}
         
-    if len(X) < 3: #if you have fewer than three data points, you cannot form a convex hull
-    
+    if np.sum(~np.isnan(X).any(axis=1)) <= 3: #if you have fewer than three data points, you cannot form a convex hull
+        
         draw_ellipses(
             x = X[:,0],
             y = X[:,1],
