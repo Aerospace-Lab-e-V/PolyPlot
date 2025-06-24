@@ -1,7 +1,6 @@
 {
 "frames":[{
-
-    "export_file_name":"Ashby",
+    "export_file_name":null,
     "file_name":"MatWeb_materials_export_tom_finaleDaten.xlsx",
     "sheet":0,
 
@@ -16,11 +15,10 @@
     "log_x_flag":false,
     "log_y_flag":false,
 
-    "x_axes_quantities":["Deflection Temperature at 1.8 MPa 264 psi"],
-    "x_label":"Deflection Temperature [°C] @ 1.8 MPa",
-    "y_axes_quantities":["Tensile Strength Yield", "Tensile Strength Ultimate", "Tensile Strength at Break", "Tensile Strength"],
-    "y_label":"Tensile Strength $R_m$ [MPa]",
+    "x_quantity":"deftemp",
+    "y_quantity":"Rm",
     "legend_flag":true,
+    "language":"de",
     
     "layers":[{
             "name": "Gruppe",
@@ -166,5 +164,17 @@
         "PET":"black",
         "default":"grey"
         }
-    }]
+}],
+
+"axes":[{
+        "name":"deftemp",
+        "columns":["Deflection Temperature at 1.8 MPa 264 psi"],
+        "de":"Verformungstemperatur [°C] @ 1.8 MPa",
+        "en":"Deflection Temperature [°C] @ 1.8 MPa"
+    },{
+        "name":"Rm",
+        "columns":["Tensile Strength Yield", "Tensile Strength Ultimate", "Tensile Strength at Break", "Tensile Strength"],
+        "de":"Zugfestigkeit $R_m$ [MPa]",
+        "en":"Tensile Strength $R_m$ [MPa]"
+}]
 }

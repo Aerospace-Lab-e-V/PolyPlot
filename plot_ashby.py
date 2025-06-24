@@ -44,7 +44,26 @@ from src.formatting import(
 if __name__ == '__main__':
     with open('config.json', 'r', encoding="utf-8") as file:
         config = json.load(file)
+
         for frame in config["frames"]:
+            # : axes :
+            quantities = [None, None]
+            labels     = [None, None]
+            columns    = [None, None]
+            for i, quantity in enumerate([frame["x_quantity"], frame["y_quantity"]]):
+                for axe in config["axes"]:
+                    if axe["name"] == quantity:
+                        quantities[i] = axe["name"]
+                        labels[i]     = axe[frame["language"]]
+                        columns[i]    = axe["columns"]
+                        break
+            if None in quantities:
+                raise ValueError("quantity not found. please check the config.json")
+            x_quantity, y_quantity = quantities
+            x_label,    y_label    = labels
+            x_column,   y_column   = columns
+
+
             # : General setup :
 
             if frame["export_file_name"] != None:
@@ -84,8 +103,8 @@ if __name__ == '__main__':
                     frame["filter"],
                     frame["filter_keys"],
                     data,
-                    frame["x_axes_quantities"],
-                    frame["y_axes_quantities"],
+                    x_column,
+                    y_column,
                     [],     # legend_items
                     ax,
                     0,      # current_color
@@ -93,7 +112,6 @@ if __name__ == '__main__':
                 )
 
             if len(DATA):
-
                 if frame["legend_flag"]:
                     create_legend(
                         legend_items,
@@ -132,8 +150,8 @@ if __name__ == '__main__':
                 if frame["marker_flag"]:
                     create_marker(
                         frame["markers"],
-                        frame["x_axes_quantities"],
-                        frame["y_axes_quantities"],
+                        x_column,
+                        y_column,
                         frame["marker_size"],
                         ax = ax
                     )
@@ -181,13 +199,10 @@ if __name__ == '__main__':
 
                 # set x- and y-labels
                 try:
-                    # .x_label = x_label + '  [' + units[x_label]  + ']'
-                    # .y_label = y_label + '  [' + units[y_label]  + ']'
-
-                    ax.set_xlabel(frame["x_label"], color = font_color)
-                    ax.set_ylabel(frame["y_label"], color = font_color)
+                    ax.set_xlabel(x_label, color = font_color)
+                    ax.set_ylabel(y_label, color = font_color)
                 except:
-                    raise ValueError("Could not set correct x- and y-labels. Make sure your x_axis_quantity and y_axis_quantity have equivalent key-value pairs in the units dictionary (common_definitions function).")
+                    raise ValueError("Could not set correct x- and y-labels.")
             else:
                 raise ValueError("No Data plotet. Are the filters named correctly?")
 
@@ -198,9 +213,7 @@ if __name__ == '__main__':
                 ax.spines[:].set_color(font_color)
 
                 plt.savefig(os.path.join('export', frame["export_file_name"]), dpi=300, transparent=True)
+                plt.show()
             else:
                 plt.title(title, loc='left', size=40)
                 watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
-
-            plt.show()
-
