@@ -43,21 +43,23 @@ def create_legend(
             )
         handles.append(patch)
     
-    plt.legend(
+    legend = plt.legend(
             handles=handles,
             bbox_to_anchor = (1, 0, 1, 1),
-            title="Materialien:",
+            title= "Materialien:",
             loc  = 'center left',
             labelspacing = 1.05,
             mode = 'expand',
-            borderaxespad = 0,
             fontsize = 15,
+            alignment = 'left',
             labelcolor = font_color,
             facecolor = 'none',
             edgecolor = 'none',
             ncol = 1,
             # draggable = True
         )
+    plt.setp(legend.get_title(), color=font_color)
+
     # plt.legend(        # ° legend above
     #     handles=handles,
     #     bbox_to_anchor = (0, 1.02, 1, 0.2),

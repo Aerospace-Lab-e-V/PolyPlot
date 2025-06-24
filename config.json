@@ -1,0 +1,170 @@
+{
+"frames":[{
+
+    "export_file_name":"Ashby",
+    "file_name":"MatWeb_materials_export_tom_finaleDaten.xlsx",
+    "sheet":0,
+
+    "automatic_Display_Area_flag":true,
+    "automatic_Display_Area_margin": 0.1,
+    "plot_width":16,
+    "plot_height":9,
+
+    "x_lim":[20, 250],
+    "y_lim":[20, 150],
+
+    "log_x_flag":false,
+    "log_y_flag":false,
+
+    "x_axes_quantities":["Deflection Temperature at 1.8 MPa 264 psi"],
+    "x_label":"Deflection Temperature [°C] @ 1.8 MPa",
+    "y_axes_quantities":["Tensile Strength Yield", "Tensile Strength Ultimate", "Tensile Strength at Break", "Tensile Strength"],
+    "y_label":"Tensile Strength $R_m$ [MPa]",
+    "legend_flag":true,
+    
+    "layers":[{
+            "name": "Gruppe",
+            "visible": true,
+            "whitelist_flag": false,
+            "whitelist": [null],
+            "alpha": 0.4
+        },{
+            "name": "Material",
+            "visible": false,
+            "whitelist_flag": false,
+            "whitelist": [null],
+            "alpha": 0.4
+        },{
+            "name": "Hersteller",
+            "visible": false,
+            "whitelist_flag": false,
+            "whitelist": [null],
+            "alpha": 0.4
+        },{
+            "name": null,
+            "visible": true,
+            "whitelist_flag": false,
+            "whitelist": [null],
+            "alpha": 0.3
+        }],
+
+    "filter":[{
+            "name": "available",
+            "states": [true, false, null]
+        }],
+
+
+    "filter_keys":[{
+            "state":   true,
+            "entries": ["y","Y","✔","true", "true" ]
+        },{
+            "state":   false,
+            "entries": ["n","N","✘","false","false"]
+        },{
+            "state":   null,
+            "entries": ["", " ","-","null", "null" ]
+        }],
+
+    "guideline_flag":true,
+    "guidelines":[{
+            "x": 100,
+            "y": 80,
+            "m": 0.4,
+            "linestyle": "--",
+            "color":"green",
+            "linewidth": 4,
+            "fontsize": 22,
+            "string":"$\\frac{Latex}{Test} = ✔$",
+            "string_above": true,
+            "string_padding": 4
+        }],
+
+    "marker_flag":true,
+    "markers":[{
+            "Deflection Temperature at 1.8 MPa 264 psi":140,
+            "Tensile Strength Ultimate":30,
+            "Density":400,
+            "name":"Foam",
+            "color":"b",
+            "marker": "*",
+            "size_factor":1
+        },{
+            "Young Modulus":2.009,
+            "Poisson":0.3,
+            "Density":1300,
+            "name":"PLA",
+            "color":"r",
+            "marker":".",
+            "size_factor":1
+        }],
+        "marker_size": 400,
+
+    "annotation_flag":true,
+    "annotations":[{
+            "text": "PETG",
+            "fontsize": 20,
+            "txt_color": "black",
+            "tip_xy": [2000, 4],
+            "txt_xy": [1700, 3],
+            "arrow":0
+        }],
+    "arrows":[{
+            "width": 3,
+            "shrink": 0.1,
+            "facecolor": "black",
+            "headlength": 10,
+            "headwidth": 10
+        }],
+
+    "colored_areas_flag":true,
+    "colored_areas":[{
+            "x": [0, 300, 300, 80,  80, 0  ],
+            "y": [0,   0,  50, 50, 200, 200],
+            "color": "r",
+            "alpha": 0.2
+        },{
+            "x": [0, 100,  100, 0],
+            "y": [1,   100, 50, 5],
+            "color": "g",
+            "alpha": 0.2
+        }],
+
+
+    "units":{
+        "Density": "kg/m$^3$",
+        "Tensile Strength Yield": "MPa",
+        "Young Modulus":"GPa",
+        "Fracture Toughness":"MPa$\\sqrt{\\text{m}}$",
+        "Thermal Conductivity":"W/m$\\cdot$K",
+        "Thermal expansion":"1$^-6$/m",
+        "Resistivity":"$\\Omega \\cdot$m",
+        "Poisson":"-",
+        "Poisson difference":"-",
+        "Melting Point":"°C",
+        "Deflection Temperature at 1.8 MPa 264 psi": "°C"
+        },
+    "material_colors":{
+        "ABS": "#219DD3",	
+        "PA12":"#7BBFD9", 	
+        "PEEK":"#D69D20",	
+        "PLA": "#E3B768",	
+        "PET": "#3BD420",	
+        "PETG":"#85E064",	
+        "PPSU":"#B52ED6",	
+        "PPS": "#CE82E0",
+
+        "PA11":"#219DD3",	
+        "POM": "#7BBFD9",	
+        "PP":  "#D69D20",	
+        "PVDF":"#E3B768",	
+        "PC":  "#3BD420",	
+        "PEI": "#85E064",	
+        "PA6": "#B52ED6",	
+        "PPA": "#CE82E0",
+
+        "PA": "red",
+        "PET":"black",
+        "default":"grey"
+        }
+    }]
+}

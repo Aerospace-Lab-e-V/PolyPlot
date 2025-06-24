@@ -125,20 +125,30 @@ def draw_colored_areas(
 
 def create_marker(
         markers,
-        x_axis_quantity,
-        y_axis_quantity,
+        x_axis_quantities,
+        y_axis_quantities,
         marker_size,
         ax
     ):
     for marker in markers:
-        ax.scatter(
-            marker[x_axis_quantity],
-            marker[y_axis_quantity],
-            c = marker['color'],
-            edgecolors ='k',
-            marker = marker['marker'],
-            s = marker_size * marker['size_factor'],
-            )
+        values = [None, None]
+        for i, axes in enumerate([x_axis_quantities, y_axis_quantities]):
+            for quantity in axes:
+                try:
+                    values[i] =  marker[quantity]
+                    break
+                except:
+                    pass
+
+        if values[:] != None:
+            ax.scatter(
+                values[0],
+                values[1],
+                c = marker['color'],
+                edgecolors ='k',
+                marker = marker['marker'],
+                s = marker_size * marker['size_factor'],
+                )
 
 
 def create_annotation(
@@ -149,14 +159,15 @@ def create_annotation(
     for annotation in annotations:
         if annotation['arrow'] == 0:
             ax.text(
-                annotation['txt_xy'],
-                           annotation['text'],
+                x        = annotation['txt_xy'][0],
+                y        = annotation['txt_xy'][1],
+                s        = annotation['text'],
                 color    = annotation['txt_color'],
                 fontsize = annotation['fontsize'],
             )
         else:
             ax.annotate(
-                           annotation['text'],
+                s        = annotation['text'],
                 xy =       annotation['tip_xy'],
                 xytext =   annotation['txt_xy'],
                 color  =   annotation['txt_color'],
