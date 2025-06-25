@@ -127,20 +127,6 @@
             "alpha": 0.2
         }],
 
-
-    "units":{
-        "Density": "kg/m$^3$",
-        "Tensile Strength Yield": "MPa",
-        "Young Modulus":"GPa",
-        "Fracture Toughness":"MPa$\\sqrt{\\text{m}}$",
-        "Thermal Conductivity":"W/m$\\cdot$K",
-        "Thermal expansion":"1$^-6$/m",
-        "Resistivity":"$\\Omega \\cdot$m",
-        "Poisson":"-",
-        "Poisson difference":"-",
-        "Melting Point":"°C",
-        "Deflection Temperature at 1.8 MPa 264 psi": "°C"
-        },
     "material_colors":{
         "ABS": "#219DD3",	
         "PA12":"#7BBFD9", 	
@@ -169,8 +155,8 @@
 "axes":[{
         "name":"deftemp",
         "columns":["Deflection Temperature at 1.8 MPa 264 psi"],
-        "de":"Verformungstemperatur [°C] @ 1.8 MPa",
-        "en":"Deflection Temperature [°C] @ 1.8 MPa"
+        "de":"Verformungstemperatur [°C] @ 1,8 MPa",
+        "en":"Deflection Temperature $HDT$ [°C] @ 1.8 MPa"
     },{
         "name":"Rm",
         "columns":["Tensile Strength Yield", "Tensile Strength Ultimate", "Tensile Strength at Break", "Tensile Strength"],

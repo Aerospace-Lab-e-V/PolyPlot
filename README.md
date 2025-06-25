@@ -7,7 +7,6 @@
  * export the plot transparent with white font or inset a water mark
  * automatic display area
  * log and semilog spaces
- * 
  * generation of multiple plots at once
  * easy language switch
  * and much more ...
@@ -27,6 +26,6 @@ Um den Code ganz auf unsere Bedürfnisse anpassen zu können haben wir ihn auf u
 1. VSC: Python extension installieren
 2. Python interpreter wählen: 
    VSC: Strg+Shift+P → Python:Select Interpreter → Enter Path → Find → .\Ashby\Scrips\python.exe
-3. Excel-Tabelle in .\material_properties\ ablegen.
-4. Einstellungen in **plot_ashby.py** anpassen (Zeile 50-244) und file über das Dreieck oben rechts ausführen.
-5. Der Plot wir in einem Popup erscheinen und kann bei belieben loal gespeichert werden 
+3. Excel-Tabelle in .\material_properties\ ablegen
+4. Einstellungen in **config.json** anpassen (doku folgt)
+5. plot_ashby.py ausführen

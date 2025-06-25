@@ -196,7 +196,6 @@ if __name__ == '__main__':
                         zorder = 0.5,
                     )
                 # .plt.tight_layout(pad=2.5)
-
                 # set x- and y-labels
                 try:
                     ax.set_xlabel(x_label, color = font_color)
@@ -207,13 +206,13 @@ if __name__ == '__main__':
                 raise ValueError("No Data plotet. Are the filters named correctly?")
 
             # : export :
-            if frame["export_file_name"] != None:
+            if frame["export_file_name"] == None:
+                plt.title(title, loc='left', size=40)
+                watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
                 
-                ax.tick_params(colors=font_color)     # Achsenbeschriftungen
+                plt.show()
+            else:
+                ax.tick_params(colors=font_color)
                 ax.spines[:].set_color(font_color)
 
                 plt.savefig(os.path.join('export', frame["export_file_name"]), dpi=300, transparent=True)
-                plt.show()
-            else:
-                plt.title(title, loc='left', size=40)
-                watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
