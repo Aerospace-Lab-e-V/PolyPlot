@@ -1,14 +1,19 @@
 {
 "frames":[{
     "export_file_name":null,
-    "file_name":"MatWeb_materials_export_tom_finaleDaten.xlsx",
-    "sheet":0,
+
+    "import_database_url":null,
+    "import_file_name":"MatWeb_materials_export.xlsx",
+    "import_sheet":0,
+
+
+    "image_width":16,
+    "image_height":9,
+    "image_dpi":300,
+
 
     "automatic_Display_Area_flag":true,
     "automatic_Display_Area_margin": 0.1,
-    "plot_width":16,
-    "plot_height":9,
-
     "x_lim":[20, 250],
     "y_lim":[20, 150],
 
@@ -17,16 +22,10 @@
 
     "x_quantity":"deftemp",
     "y_quantity":"Rm",
-    "legend_flag":true,
     "language":"de",
+    "legend_flag":true,
     
     "layers":[{
-            "name": "Gruppe",
-            "visible": true,
-            "whitelist_flag": false,
-            "whitelist": [null],
-            "alpha": 0.4
-        },{
             "name": "Material",
             "visible": false,
             "whitelist_flag": false,
@@ -39,17 +38,11 @@
             "whitelist": [null],
             "alpha": 0.4
         },{
-            "name": null,
-            "visible": true,
-            "whitelist_flag": false,
-            "whitelist": [null],
-            "alpha": 0.3
+            "alpha_points": 0.3,
+            "alpha_areas":  0.6
         }],
 
-    "filter":[{
-            "name": "available",
-            "states": [true, false, null]
-        }],
+    "filter":[],
 
 
     "filter_keys":[{
@@ -147,7 +140,6 @@
         "PPA": "#CE82E0",
 
         "PA": "red",
-        "PET":"black",
         "default":"grey"
         }
 }],
@@ -162,5 +154,10 @@
         "columns":["Tensile Strength Yield", "Tensile Strength Ultimate", "Tensile Strength at Break", "Tensile Strength"],
         "de":"Zugfestigkeit $R_m$ [MPa]",
         "en":"Tensile Strength $R_m$ [MPa]"
-}]
+    },{
+        "name":"dichte",
+        "columns":["Density"],
+        "de":"Dichte",
+        "en":"Density"
+    }]
 }

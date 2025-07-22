@@ -44,7 +44,8 @@ def quantity_availability(
         y_axes_quantities,
         filter, 
         filter_keys,
-        visible,
+        alpha_points,
+        alpha_areas,
         current_color,
         data,
         ax
@@ -82,7 +83,7 @@ def quantity_availability(
                             y_high = np.append(y_high,  y_high_)
 
                     # +  plot  + 
-                            if visible: 
+                            if not alpha_areas != None and alpha_areas > 0: 
                                 linewidth = 1
                                 if pd.isna(x_high_):             # low = high for plotting points / lines
                                     x_high_ = x_low_
@@ -97,7 +98,7 @@ def quantity_availability(
                                     plot_kwargs = {
                                         'facecolor':colors.to_rgba(
                                             current_color,
-                                            alpha=0.25
+                                            alpha=alpha_areas
                                             ),
                                         'edgecolor':current_color,
                                         'linewidth': linewidth
@@ -105,13 +106,13 @@ def quantity_availability(
                                     ax = ax,
                                     )
 
-                        elif visible:
+                        elif alpha_points != None and alpha_points > 0:
                             ax.plot(
                                 x_low_,
                                 y_low_,
                                 color = current_color,
                                 marker = 'o',
-                                alpha = 0.6
+                                alpha = alpha_points
                                 )
                         break
 
@@ -174,14 +175,14 @@ def draw_plot(
         layer_name           = layers[current_layer_number]['name']
         layer_whitelist      = layers[current_layer_number]['whitelist']
         layer_whitelist_flag = layers[current_layer_number]['whitelist_flag']
-        layer_visibility     = layers[current_layer_number]['visible']
+        layer_alpha          = layers[current_layer_number]['alpha']
         combined_DATA        = np.zeros(shape=(0,2))
 
         for category, material_data in data.groupby(layer_name):
             print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======")             
 
             if (category in layer_whitelist and layer_whitelist_flag == True) or (category not in layer_whitelist and layer_whitelist_flag == False):
-                if category in material_colors and category not in legend and layer_visibility == True:   # ° color & legend entry handling
+                if category in material_colors and category not in legend and layer_alpha > 0:   # ° color & legend entry handling
                     current_color = material_colors[category]
                     legend.append(category)             # & ignores layer visibility
                 elif current_color == 0:
@@ -207,7 +208,7 @@ def draw_plot(
                     )
 
                 print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
-                if DATA.shape[0] > 1 and layer_visibility == True              \
+                if DATA.shape[0] > 1 and layer_alpha!= 0 and layer_alpha!= None          \
                 and not len(data.groupby(layer_name).groups.keys()) == 1       \
                 and plotted == False: # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
                     draw_hull(
@@ -219,7 +220,7 @@ def draw_plot(
                         ax = ax,
                         plot_kwargs = {
                             'color': current_color,
-                            'alpha': layers[current_layer_number]['alpha']
+                            'alpha': layer_alpha
                             }
                         )
                     plotted = True
@@ -241,7 +242,8 @@ def draw_plot(
                 y_axes_quantities,
                 filter, 
                 filter_keys,
-                layers[current_layer_number]['visible'],
+                layers[current_layer_number]['alpha_points'],
+                layers[current_layer_number]['alpha_areas'],
                 current_color,
                 data,
                 ax

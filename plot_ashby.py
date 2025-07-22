@@ -73,16 +73,16 @@ if __name__ == '__main__':
                 font_color = 'black'
 
             plotting_presets(figure_type = 'presentation')
-            figure_size = (frame["plot_width"],frame["plot_height"])
+            figure_size = (frame["image_width"],frame["image_height"])
 
             #load data
             data = pd.read_excel(
                 os.path.join(
                     os.getcwd(),
                     'material_properties',
-                    frame["file_name"],
+                    frame["import_file_name"],
                     ),
-                sheet_name = frame["sheet"]
+                sheet_name = frame["import_sheet"]
                 )
 
             #Create figure
@@ -95,7 +95,7 @@ if __name__ == '__main__':
             # & other formats: title , legend at side
 
 
-        # : Data plotting :
+            # : Data plotting :
             DATA, legend_items, _ = draw_plot(
                     0,      # current_layer_number
                     None,   # current_master_layer_name
@@ -111,108 +111,115 @@ if __name__ == '__main__':
                     frame["material_colors"]
                 )
 
-            if len(DATA):
-                if frame["legend_flag"]:
-                    create_legend(
-                        legend_items,
-                        material_colors = frame["material_colors"],
-                        font_color = font_color
-                    )
+            if not len(DATA):
+                raise ValueError("No Data plotet. Please check the .xlcs & config.json.")
 
 
-                if frame["colored_areas_flag"]:
-                    draw_colored_areas(
-                        frame["colored_areas"],
-                        ax = ax
-                    )
+            if frame["legend_flag"]:
+                create_legend(
+                    legend_items,
+                    language = frame["language"],
+                    material_colors = frame["material_colors"],
+                    font_color = font_color
+                )
 
-                if frame["guideline_flag"]:
-                    if frame["automatic_Display_Area_flag"]:
-                        draw_guideline(
-                                frame["guidelines"],
-                                x_min = np.nanmin(DATA[:,0])/2,
-                                x_max = np.nanmax(DATA[:,0])*2,
-                                y_min = np.nanmin(DATA[:,1])/2, # for vertical lines
-                                y_max = np.nanmax(DATA[:,1])*2,
-                                ax = ax,
-                            )
-                    else:
-                        draw_guideline(
-                                frame["guidelines"],
-                                x_min = x_lim[0],
-                                x_max = x_lim[1],
-                                y_min = y_lim[0],
-                                y_max = y_lim[1],
-                                ax = ax,
-                            )
+            try:
+                draw_colored_areas(
+                    frame["colored_areas"],
+                    ax = ax
+                )
+            except:
+                print("Error drawing colored areas. Check config.json! continuing...")
 
+            try:
+                if frame["automatic_Display_Area_flag"]:
+                    draw_guideline(
+                            frame["guidelines"],
+                            x_min = np.nanmin(DATA[:,0])/2,
+                            x_max = np.nanmax(DATA[:,0])*2,
+                            y_min = np.nanmin(DATA[:,1])/2, # for vertical lines
+                            y_max = np.nanmax(DATA[:,1])*2,
+                            ax = ax,
+                        )
+                else:
+                    draw_guideline(
+                            frame["guidelines"],
+                            x_min = x_lim[0],
+                            x_max = x_lim[1],
+                            y_min = y_lim[0],
+                            y_max = y_lim[1],
+                            ax = ax,
+                        )
+            except:
+                print("Error drawing guideline. Check config.json! continuing...")
 
-                if frame["marker_flag"]:
-                    create_marker(
-                        frame["markers"],
-                        x_column,
-                        y_column,
-                        frame["marker_size"],
-                        ax = ax
-                    )
+            try:
+                create_marker(
+                    frame["markers"],
+                    x_column,
+                    y_column,
+                    frame["marker_size"],
+                    ax = ax
+                )
+            except:
+                print("Error drawing marker. Check config.json! continuing...")
 
-                if frame["annotation_flag"]:
-                    create_annotation(
-                        frame["annotations"],
-                        frame["arrows"],
-                        ax = ax
-                    )
-
+            try:
+                create_annotation(
+                    frame["annotations"],
+                    frame["arrows"],
+                    ax = ax
+                )
+            except:
+                print("Error printing annotation. Check config.json! continuing...")
 
 
             # : Figure manipulation :
-                #set axes limits
-                if frame["automatic_Display_Area_flag"]:
-                    x_lim = frame["x_lim"]
-                    y_lim = frame["y_lim"]
-                    # .ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
-                    x_low  = float(np.nanmin(DATA[:,0]))
-                    x_high = float(np.nanmax(DATA[:,0]))
-                    y_low  = float(np.nanmin(DATA[:,1]))
-                    y_high = float(np.nanmax(DATA[:,1]))
-                    x_lim[0] = x_low  - (x_high - x_low) * frame["automatic_Display_Area_margin"]    # & edit for log
-                    x_lim[1] = x_high + (x_high - x_low) * frame["automatic_Display_Area_margin"]
-                    y_lim[0] = y_low  - (y_high - y_low) * frame["automatic_Display_Area_margin"]
-                    y_lim[1] = y_high + (y_high - y_low) * frame["automatic_Display_Area_margin"]
-                ax.set(xlim=x_lim, ylim=y_lim)
-                
+            #set axes limits
+            if frame["automatic_Display_Area_flag"]:
+                x_lim = frame["x_lim"]
+                y_lim = frame["y_lim"]
+                # .ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
+                x_low  = float(np.nanmin(DATA[:,0]))
+                x_high = float(np.nanmax(DATA[:,0]))
+                y_low  = float(np.nanmin(DATA[:,1]))
+                y_high = float(np.nanmax(DATA[:,1]))
+                x_lim[0] = x_low  - (x_high - x_low) * frame["automatic_Display_Area_margin"]    # & edit for log
+                x_lim[1] = x_high + (x_high - x_low) * frame["automatic_Display_Area_margin"]
+                y_lim[0] = y_low  - (y_high - y_low) * frame["automatic_Display_Area_margin"]
+                y_lim[1] = y_high + (y_high - y_low) * frame["automatic_Display_Area_margin"]
+            ax.set(xlim=x_lim, ylim=y_lim)
+            
 
-                #toggle log in plot
-                if frame["log_x_flag"]:
-                    ax.set_xscale('log')
-                if frame["log_y_flag"]:
-                    ax.set_yscale('log')
+            #toggle log in plot
+            if frame["log_x_flag"]:
+                ax.set_xscale('log')
+            if frame["log_y_flag"]:
+                ax.set_yscale('log')
 
-                #add grid lines
-                ax.grid(
-                        which = 'major',
-                        axis = 'both',
-                        linestyle = '-.',
-                        zorder = 0.5,
-                    )
-                # .plt.tight_layout(pad=2.5)
-                # set x- and y-labels
-                try:
-                    ax.set_xlabel(x_label, color = font_color)
-                    ax.set_ylabel(y_label, color = font_color)
-                except:
-                    raise ValueError("Could not set correct x- and y-labels.")
-            else:
-                raise ValueError("No Data plotet. Are the filters named correctly?")
+            #add grid lines
+            ax.grid(
+                    which = 'major',
+                    axis = 'both',
+                    linestyle = '-.',
+                    zorder = 0.5,
+                )
+            # .plt.tight_layout(pad=2.5)
+            # set x- and y-labels
+            try:
+                ax.set_xlabel(x_label, color = font_color)
+                ax.set_ylabel(y_label, color = font_color)
+            except:
+                print("ERROR: Could not set correct x- and y-labels. continung...")
 
-            # : export :
-            if frame["export_file_name"] == None:
-                plt.title(title, loc='left', size=40)
-                watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
-                
-                plt.show()
-            else:
-                ax.tick_params(colors=font_color)
-                ax.spines[:].set_color(font_color)
+        # : export :
+        if frame["export_file_name"] == None:
+            plt.title(title, loc='left', size=40)
+            watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
+            
+            plt.show()
+        else:
+            ax.tick_params(colors=font_color)
+            ax.spines[:].set_color(font_color)
 
-                plt.savefig(os.path.join('export', frame["export_file_name"]), dpi=300, transparent=True)
+            plt.savefig(os.path.join('export', frame["export_file_name"]), dpi=frame["image_dpi"], transparent=True)

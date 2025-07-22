@@ -7,6 +7,7 @@ import numpy as np
 
 def create_legend(
         legend_items,
+        language,
         material_colors,
         font_color
         ):
@@ -42,11 +43,16 @@ def create_legend(
             label = item
             )
         handles.append(patch)
+
+    if language == "de":
+        title = "Materialien:"
+    else:
+        title = "materials:"
     
     legend = plt.legend(
             handles=handles,
             bbox_to_anchor = (1, 0, 1, 1),
-            title= "Materialien:",
+            title= title,
             loc  = 'center left',
             labelspacing = 1.05,
             mode = 'expand',

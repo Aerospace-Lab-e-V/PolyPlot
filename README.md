@@ -1,6 +1,6 @@
 # Ashby plots in python
  Simple script to generate Ashby plots based on generic material property data. This package enables you to:
- * creation of custom guidelines to define material indices (e.g., $\frac{E^{1/2}}{\rho}$),
+ * creation of custom guidelines to define material indices (e.g. $\frac{E^{1/2}}{\rho}$),
  * color areas to highlight relevant spots
  * put annotations and markers everywhere
  * filter your data for relevant points
@@ -20,12 +20,12 @@
 <br>
 
 Der source-code stammt ursprüngilich von diesem [GitHub](https://github.com/walgren/Ashby-plots) (MIT-Lizens).
-Um den Code ganz auf unsere Bedürfnisse anpassen zu können haben wir ihn auf unser GitLab übernommen.
+Um den Code ganz auf unsere Bedürfnisse anpassen zu können, haben wir ihn auf unser GitLab übernommen.
 
 ## Verwendung
 1. VSC: Python extension installieren
 2. Python interpreter wählen: 
    VSC: Strg+Shift+P → Python:Select Interpreter → Enter Path → Find → .\Ashby\Scrips\python.exe
 3. Excel-Tabelle in .\material_properties\ ablegen
-4. Einstellungen in **config.json** anpassen (doku folgt)
+4. Einstellungen in **config.json** anpassen ([siehe Wiki](https://wiki.aerospace-lab.de/spaces/RPS/pages/235667472/ASHBY-Plots))
 5. plot_ashby.py ausführen
