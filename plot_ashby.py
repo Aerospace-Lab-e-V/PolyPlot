@@ -24,6 +24,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 
+from src.import_data import(
+        import_teable,
+    )
+
 from src.plot_utilities import (
         draw_plot,
     )
@@ -72,27 +76,25 @@ if __name__ == '__main__':
                 title = "Ashbyplot"
                 font_color = 'black'
 
-            plotting_presets(figure_type = 'presentation')
-            figure_size = (frame["image_width"],frame["image_height"])
-
-            #load data
-            data = pd.read_excel(
-                os.path.join(
-                    os.getcwd(),
-                    'material_properties',
-                    frame["import_file_name"],
-                    ),
-                sheet_name = frame["import_sheet"]
-                )
 
             #Create figure
+            plotting_presets(figure_type = 'presentation')
+            figure_size = (frame["image_width"],frame["image_height"])
             fig, ax = plt.subplots(1,1, figsize=figure_size)
             plt.subplots_adjust(left=0.09, right=0.86)
 
-            # fig = plt.figure(figsize=figure_size)                      # hulls in right plot ??
-            # ax  = plt.subplot2grid((1,11), (0,0), colspan=10)
-            # legend_sp = plt.subplot2grid((1,11), (0,10), colspan=1)    # hide spines, ticks, 
-            # & other formats: title , legend at side
+
+            #load data
+            # data = pd.read_excel(
+            #     os.path.join(
+            #         os.getcwd(),
+            #         'material_properties',
+            #         frame["import_file_name"],
+            #         ),
+            #     sheet_name = frame["import_sheet"]
+            #     )
+            data = import_teable(frame["filter"])
+
 
 
             # : Data plotting :
@@ -100,8 +102,6 @@ if __name__ == '__main__':
                     0,      # current_layer_number
                     None,   # current_master_layer_name
                     frame["layers"],
-                    frame["filter"],
-                    frame["filter_keys"],
                     data,
                     x_column,
                     y_column,

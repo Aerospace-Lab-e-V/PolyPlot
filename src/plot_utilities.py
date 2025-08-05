@@ -19,31 +19,12 @@ from types import SimpleNamespace
 from src.plot_convex_hull import(
     draw_ellipses,
     draw_hull,
-    )
-
-
-
-def filter_data(data, filters, filter_keys):
-    plot_datapoint = True
-    if filters != None:
-        for filter in filters:
-            entry = data[filter["name"]]
-            state = None
-            for keys in filter_keys:
-                if entry in keys["entries"]:
-                    state = keys["state"]
-
-            if not state in filter["states"]:
-                plot_datapoint = False
-
-    return plot_datapoint             
+    )         
 
 
 def quantity_availability(
         x_axes_quantities,
         y_axes_quantities,
-        filter, 
-        filter_keys,
         alpha_points,
         alpha_areas,
         current_color,
@@ -59,62 +40,62 @@ def quantity_availability(
     y_high_short = np.zeros(shape=(0))
 
     for pos in range(len(data)):                   # cycling position in matereial data for each name
-        if filter_data(data.iloc[pos,:], filter, filter_keys) == True:
-            for quantity in x_axes_quantities:         # cycling possible names per axes
+        x_low_temp = None
+        for quantity in x_axes_quantities:         # cycling possible names per axes
+            if not pd.isna(data[quantity + ' low'].iloc[pos]):
+                x_low_temp  = data[quantity + ' low' ].iloc[pos].copy()
+                x_high_temp = data[quantity + ' high'].iloc[pos].copy()
+                break
+        if x_low_temp != None:                     # checking only for y-value if x-value exists
+            for quantity in y_axes_quantities:     # cycling possible names per axes
                 if not pd.isna(data[quantity + ' low'].iloc[pos]):
-                    x_low_temp  = data[quantity + ' low' ].iloc[pos].copy()
-                    x_high_temp = data[quantity + ' high'].iloc[pos].copy()
-                    break
-            if x_low_temp != None:                     # checking only for y-value if x-value exists
-                for quantity in y_axes_quantities:     # cycling possible names per axes
-                    if not pd.isna(data[quantity + ' low'].iloc[pos]):
-                        x_low_      = x_low_temp
-                        y_low_      = data[quantity + ' low' ].iloc[pos].copy()
-                        y_high_temp = data[quantity + ' high'].iloc[pos].copy()
+                    x_low_      = x_low_temp
+                    y_low_      = data[quantity + ' low' ].iloc[pos].copy()
+                    y_high_temp = data[quantity + ' high'].iloc[pos].copy()
 
-                        x_low  = np.append(x_low,   x_low_)
-                        y_low  = np.append(y_low,   y_low_)
+                    x_low  = np.append(x_low,   x_low_)
+                    y_low  = np.append(y_low,   y_low_)
 
-                        if not( pd.isna(x_high_temp) or pd.isna(x_high_temp)):
-                            x_high_ = x_high_temp
-                            y_high_ = y_high_temp
+                    if not( pd.isna(x_high_temp) or pd.isna(x_high_temp)):
+                        x_high_ = x_high_temp
+                        y_high_ = y_high_temp
 
-                            x_high = np.append(x_high,  x_high_)
-                            y_high = np.append(y_high,  y_high_)
+                        x_high = np.append(x_high,  x_high_)
+                        y_high = np.append(y_high,  y_high_)
 
-                    # +  plot  + 
-                            if not alpha_areas != None and alpha_areas > 0: 
-                                linewidth = 1
-                                if pd.isna(x_high_):             # low = high for plotting points / lines
-                                    x_high_ = x_low_
-                                    linewidth = 3
-                                if pd.isna(y_high_):
-                                    y_high_ = y_low_
-                                    linewidth = 3
+                # +  plot  + 
+                        if not alpha_areas != None and alpha_areas > 0: 
+                            linewidth = 1
+                            if pd.isna(x_high_):             # low = high for plotting points / lines
+                                x_high_ = x_low_
+                                linewidth = 3
+                            if pd.isna(y_high_):
+                                y_high_ = y_low_
+                                linewidth = 3
 
-                                draw_ellipses(
-                                    x = [x_low_,  x_high_],
-                                    y = [y_low_,  y_high_],
-                                    plot_kwargs = {
-                                        'facecolor':colors.to_rgba(
-                                            current_color,
-                                            alpha=alpha_areas
-                                            ),
-                                        'edgecolor':current_color,
-                                        'linewidth': linewidth
-                                        },
-                                    ax = ax,
-                                    )
-
-                        elif alpha_points != None and alpha_points > 0:
-                            ax.plot(
-                                x_low_,
-                                y_low_,
-                                color = current_color,
-                                marker = 'o',
-                                alpha = alpha_points
+                            draw_ellipses(
+                                x = [x_low_,  x_high_],
+                                y = [y_low_,  y_high_],
+                                plot_kwargs = {
+                                    'facecolor':colors.to_rgba(
+                                        current_color,
+                                        alpha=alpha_areas
+                                        ),
+                                    'edgecolor':current_color,
+                                    'linewidth': linewidth
+                                    },
+                                ax = ax,
                                 )
-                        break
+
+                    elif alpha_points != None and alpha_points > 0:
+                        ax.plot(
+                            x_low_,
+                            y_low_,
+                            color = current_color,
+                            marker = 'o',
+                            alpha = alpha_points
+                            )
+                    break
 
     print("x: ", x_low, " - ", x_high, "  ||  y: ", y_low, " - ", y_high)
     return x_low.T, x_high.T, y_low.T, y_high.T
@@ -125,8 +106,6 @@ def draw_plot(
         current_layer_number,
         current_master_layer_name,
         layers,
-        filter,
-        filter_keys,
         data,
         x_axes_quantities,
         y_axes_quantities,
@@ -196,8 +175,6 @@ def draw_plot(
                         current_layer_number + 1,
                         category,
                         layers,
-                        filter,
-                        filter_keys,
                         material_data,
                         x_axes_quantities,
                         y_axes_quantities,
@@ -240,8 +217,6 @@ def draw_plot(
         x_low, x_high, y_low, y_high = quantity_availability(   # read data
                 x_axes_quantities,
                 y_axes_quantities,
-                filter, 
-                filter_keys,
                 layers[current_layer_number]['alpha_points'],
                 layers[current_layer_number]['alpha_areas'],
                 current_color,

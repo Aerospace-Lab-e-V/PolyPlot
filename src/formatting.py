@@ -69,7 +69,7 @@ def create_legend(
     # plt.legend(        # ° legend above
     #     handles=handles,
     #     bbox_to_anchor = (0, 1.02, 1, 0.2),
-    #     loc  = 'lower left',        # & put Legend right of the plot
+    #     loc  = 'lower left',
     #     mode = 'expand',
     #     borderaxespad = 0,
     #     fontsize = 15,
@@ -116,33 +116,34 @@ def plotting_presets(figure_type:str = 'publication'):
         None.
     '''
     #Graphs in a separate window (run in Spyder)
-    if 'SPY_PYTHONPATH' in os.environ:
-        # see https://stackoverflow.com/questions/32538758/nameerror-name-get-ipython-is-not-defined
-        # running inside spyder!
-        #Graphs in a separate window
-        from IPython import get_ipython
-        get_ipython().run_line_magic('matplotlib', 'qt')
-        #Graphs inline (ala Jupyter notebook)
-        #get_ipython().run_line_magic('matplotlib', 'inline')
-    if figure_type.lower() == 'publication':
-        # Plot with serif, Times New Roman Font
-        plt.rc('font', family='serif')
-        plt.rc('font', serif='Times New Roman')
-        plt.rcParams.update({'font.size': 10})
-        plt.rc('text', usetex='True')
-    elif figure_type.lower() == 'presentation':
+    # if 'SPY_PYTHONPATH' in os.environ:
+    #     raise ValueError("Hi")
+    #     # see https://stackoverflow.com/questions/32538758/nameerror-name-get-ipython-is-not-defined
+    #     # running inside spyder!
+    #     #Graphs in a separate window
+    #     from IPython import get_ipython
+    #     get_ipython().run_line_magic('matplotlib', 'qt')
+    #     #Graphs inline (ala Jupyter notebook)
+    #     #get_ipython().run_line_magic('matplotlib', 'inline')
+    # if figure_type.lower() == 'publication':
+    #     # Plot with serif, Times New Roman Font
+    #     plt.rc('font', family='serif')
+    #     plt.rc('font', serif='Times New Roman')
+    #     plt.rcParams.update({'font.size': 10})
+    #     plt.rc('text', usetex='True')
+    # elif figure_type.lower() == 'presentation':
         #Plot with sans serif, Arial font
-        plt.rc('font', family='sans-serif')
-        plt.rcParams.update({'font.sans-serif':'Arial'})
-        plt.rcParams.update({'font.size': 18})
-        plt.rc('text',usetex='False')
-    else:
-        raise(ValueError,'Options for plotting_presets are publication or presentation')
+    plt.rc('font', family='sans-serif')
+    plt.rcParams.update({'font.sans-serif':'Arial'})
+    plt.rcParams.update({'font.size': 18})
+    plt.rc('text',usetex='False')
+    # else:
+    #     raise(ValueError,'Options for plotting_presets are publication or presentation')
 
-    # Use Latex to render all fonts (this may interfere with the svg font encoding)
-    # plt.rc('text', usetex='True')
-    #Use no svg font encoding such that they can be imported as text into inkscape
-    # FIXME grab the stack overflow link for this.
-    plt.rcParams['svg.fonttype'] = 'none'
-    #Modify marker size to make them readable
-    plt.rcParams['lines.markersize'] = 10
+    # # Use Latex to render all fonts (this may interfere with the svg font encoding)
+    # # plt.rc('text', usetex='True')
+    # #Use no svg font encoding such that they can be imported as text into inkscape
+    # # FIXME grab the stack overflow link for this.
+    # plt.rcParams['svg.fonttype'] = 'none'
+    # #Modify marker size to make them readable
+    # plt.rcParams['lines.markersize'] = 10

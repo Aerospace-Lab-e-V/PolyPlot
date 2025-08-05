@@ -20,7 +20,7 @@
     "log_x_flag":false,
     "log_y_flag":false,
 
-    "x_quantity":"deftemp",
+    "x_quantity":"dens",
     "y_quantity":"Rm",
     "language":"de",
     "legend_flag":true,
@@ -42,21 +42,20 @@
             "alpha_areas":  0.6
         }],
 
-    "filter":[],
+    "filter":{
+        "conjunction":"and",
+        "filterSet":[{
+            "fieldId":"Glasfaser",
+            "operator":"is",
+            "value":"Nein"
+            },{
+            "fieldId":"Kohlefaser",
+            "operator":"is",
+            "value":"Nein"
+            }
+        ]
+    },
 
-
-    "filter_keys":[{
-            "state":   true,
-            "entries": ["y","Y","✔","true", "true" ]
-        },{
-            "state":   false,
-            "entries": ["n","N","✘","false","false"]
-        },{
-            "state":   null,
-            "entries": ["", " ","-","null", "null" ]
-        }],
-
-    "guideline_flag":true,
     "guidelines":[{
             "x": 100,
             "y": 80,
@@ -70,7 +69,6 @@
             "string_padding": 4
         }],
 
-    "marker_flag":true,
     "markers":[{
             "Deflection Temperature at 1.8 MPa 264 psi":140,
             "Tensile Strength Ultimate":30,
@@ -90,7 +88,6 @@
         }],
         "marker_size": 400,
 
-    "annotation_flag":true,
     "annotations":[{
             "text": "PETG",
             "fontsize": 20,
@@ -107,7 +104,6 @@
             "headwidth": 10
         }],
 
-    "colored_areas_flag":true,
     "colored_areas":[{
             "x": [0, 300, 300, 80,  80, 0  ],
             "y": [0,   0,  50, 50, 200, 200],
@@ -155,9 +151,9 @@
         "de":"Zugfestigkeit $R_m$ [MPa]",
         "en":"Tensile Strength $R_m$ [MPa]"
     },{
-        "name":"dichte",
+        "name":"dens",
         "columns":["Density"],
-        "de":"Dichte",
-        "en":"Density"
+        "de":"Dichte $[\\frac{\\text{g}}{\\text{cm}^3}]$",
+        "en":"Density $[\\frac{\\text{g}}{\\text{cm}^3}]$"
     }]
 }
