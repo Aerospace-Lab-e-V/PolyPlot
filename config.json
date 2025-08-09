@@ -1,11 +1,14 @@
 {
-"frames":[{
-    "export_file_name":null,
+"API_Key": "Bearer teable_accEbwLnOPcALnjGJXU_Hp6iPPr5mn5WPOgMNfzqgAro1j9t1G0Vj6DjAJTMg+s=",
 
-    "import_database_url":null,
-    "import_file_name":"MatWeb_materials_export.xlsx",
+"frames":[{
+
+    "teable_url": null,
+    "import_file_name":"MatWeb_materials_export_tom_finaleDaten.xlsx",
     "import_sheet":0,
 
+
+    "export_file_name":null,
 
     "image_width":16,
     "image_height":9,
@@ -20,23 +23,26 @@
     "log_x_flag":false,
     "log_y_flag":false,
 
-    "x_quantity":"dens",
+    "x_quantity":"deftemp",
     "y_quantity":"Rm",
     "language":"de",
     "legend_flag":true,
     
     "layers":[{
-            "name": "Material",
-            "visible": false,
+            "name": "Gruppe",
             "whitelist_flag": false,
             "whitelist": [null],
             "alpha": 0.4
         },{
-            "name": "Hersteller",
-            "visible": false,
+            "name": "Material",
             "whitelist_flag": false,
             "whitelist": [null],
-            "alpha": 0.4
+            "alpha": null
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [null],
+            "alpha": null
         },{
             "alpha_points": 0.3,
             "alpha_areas":  0.6
@@ -96,23 +102,12 @@
             "txt_xy": [1700, 3],
             "arrow":0
         }],
-    "arrows":[{
-            "width": 3,
-            "shrink": 0.1,
-            "facecolor": "black",
-            "headlength": 10,
-            "headwidth": 10
-        }],
+
 
     "colored_areas":[{
             "x": [0, 300, 300, 80,  80, 0  ],
             "y": [0,   0,  50, 50, 200, 200],
             "color": "r",
-            "alpha": 0.2
-        },{
-            "x": [0, 100,  100, 0],
-            "y": [1,   100, 50, 5],
-            "color": "g",
             "alpha": 0.2
         }],
 
@@ -155,5 +150,14 @@
         "columns":["Density"],
         "de":"Dichte $[\\frac{\\text{g}}{\\text{cm}^3}]$",
         "en":"Density $[\\frac{\\text{g}}{\\text{cm}^3}]$"
+    }],
+
+
+"arrows":[{
+        "width": 3,
+        "shrink": 0.1,
+        "facecolor": "black",
+        "headlength": 10,
+        "headwidth": 10
     }]
 }

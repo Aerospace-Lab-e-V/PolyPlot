@@ -1,23 +1,74 @@
 import requests
+import os
 import json
 import pandas as pd
 
-url = "https://teable.aerospace-lab.de/api/table/tblFwalTJ3PyuZzyE43/record"
+def collums_list(columns, layers):  # returns a list of all columns that should be requested via API
+    wanted_fields = []
 
-headers = {
-    "Authorization": "Bearer teable_accEbwLnOPcALnjGJXU_Hp6iPPr5mn5WPOgMNfzqgAro1j9t1G0Vj6DjAJTMg+s=",
-    "Accept": "application/json"
-}
+    for layer in range(len(layers) -1):
+        wanted_fields.append(layers[layer]["name"])
+    for axes in columns:
+        for column in axes:
+            wanted_fields.append(column + " low" )
+            wanted_fields.append(column + " high")
 
-def import_teable(filter = None):
+    return wanted_fields
+
+
+
+def import_teable(teable_url, api_key, columns, layers, filter):
+    wanted_fields = collums_list(columns, layers)
+
     params = {
-        "viewId": "viw6Lttx16wtFhDAkbx",
-        "filter": json.dumps(filter)
+        "take": 1000,
+        "skip": 0,
+        "filter": json.dumps(filter),
+        "fields[]": wanted_fields
     }
-    
-    response = requests.get(url, params=params, headers=headers)
-    print(response)
-    # dataframe = pd.json_normalize(json.loads(response['results']))
-    dataframe = pd.DataFrame.from_dict(response, orient='index')
-    print(dataframe)
-    return pandas
+    url = teable_url
+
+    headers = {
+        "Authorization": api_key,
+        "Accept": "application/json"
+    }
+
+
+    status = requests.head(url, headers=headers)
+
+    if status.status_code == 200:
+        data = []
+        print("importing...")
+        while True:            
+            response = requests.get(url, params=params, headers=headers).json()
+            records = [rec["fields"] for rec in response["records"]]
+
+            if not records:
+                break
+
+            params["skip"] += params["take"] 
+
+            data.extend(records)
+
+        dataframe = pd.DataFrame(data, columns=wanted_fields)        # & raise error if _low or layer column not found
+
+        # print(dataframe)
+        print(f"data received successfully  (Total of {len(data)} points)")    
+        return dataframe
+    elif status == 403:
+        raise PermissionError("ERROR 403 - Teable API: kein Zugriffsrecht. Bitte API Key & URL prüfen")
+    else:
+        raise Exception(f"unknown Teable error {status.status_code}: {status.text}")
+
+
+
+def import_excel(import_file_name, import_sheet):      # & return export import from old commits
+    data = pd.read_excel(
+        os.path.join(
+            os.getcwd(),
+            'material_properties',
+            import_file_name,
+            ),
+        sheet_name = import_sheet
+    )
+    return data

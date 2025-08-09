@@ -26,6 +26,7 @@ import json
 
 from src.import_data import(
         import_teable,
+        import_excel
     )
 
 from src.plot_utilities import (
@@ -50,6 +51,8 @@ if __name__ == '__main__':
         config = json.load(file)
 
         for frame in config["frames"]:
+            print(f":::::::::::::::::::::: calculating frame {config["frames"].index(frame) +1 } / {len(config["frames"])} ::::::::::::::::::::::")
+
             # : axes :
             quantities = [None, None]
             labels     = [None, None]
@@ -67,6 +70,9 @@ if __name__ == '__main__':
             x_label,    y_label    = labels
             x_column,   y_column   = columns
 
+            if x_column == None or y_column == None:
+                raise KeyError("at least one axes has no column assigned to it. please check 'axes' 'x'/'y-quntity' in the config.json")
+
 
             # : General setup :
 
@@ -77,23 +83,21 @@ if __name__ == '__main__':
                 font_color = 'black'
 
 
-            #Create figure
-            plotting_presets(figure_type = 'presentation')
+            # Create figure & plotting presets
             figure_size = (frame["image_width"],frame["image_height"])
             fig, ax = plt.subplots(1,1, figsize=figure_size)
             plt.subplots_adjust(left=0.09, right=0.86)
 
+            plt.rc('font', family='sans-serif')
+            plt.rcParams.update({'font.sans-serif':'Arial'})
+            plt.rcParams.update({'font.size': 18})
+            plt.rc('text',usetex='False')
 
-            #load data
-            # data = pd.read_excel(
-            #     os.path.join(
-            #         os.getcwd(),
-            #         'material_properties',
-            #         frame["import_file_name"],
-            #         ),
-            #     sheet_name = frame["import_sheet"]
-            #     )
-            data = import_teable(frame["filter"])
+
+            if frame["teable_url"] != None:
+                data = import_teable(frame["teable_url"], config["API_Key"], columns, frame["layers"], frame["filter"])
+            else:
+                data = import_excel(frame["import_file_name"], frame["import_sheet"])
 
 
 
@@ -167,7 +171,7 @@ if __name__ == '__main__':
             try:
                 create_annotation(
                     frame["annotations"],
-                    frame["arrows"],
+                    config["arrows"],
                     ax = ax
                 )
             except:

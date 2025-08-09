@@ -161,9 +161,9 @@ def draw_plot(
             print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======")             
 
             if (category in layer_whitelist and layer_whitelist_flag == True) or (category not in layer_whitelist and layer_whitelist_flag == False):
-                if category in material_colors and category not in legend and layer_alpha > 0:   # ° color & legend entry handling
+                if category in material_colors and category not in legend and layer_alpha:   # ° color & legend entry handling
                     current_color = material_colors[category]
-                    legend.append(category)             # & ignores layer visibility
+                    legend.append(category)
                 elif current_color == 0:
                     if 'default' in material_colors:
                         current_color = material_colors['default']
@@ -183,14 +183,14 @@ def draw_plot(
                         current_color,
                         material_colors,
                     )
-
-                print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
+                # print(DATA)
+                # print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
                 if DATA.shape[0] > 1 and layer_alpha!= 0 and layer_alpha!= None          \
                 and not len(data.groupby(layer_name).groups.keys()) == 1       \
                 and plotted == False: # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
                     draw_hull(
                         DATA,
-                        scale = 1.05,
+                        scale = 1.04,
                         padding = 'scale',
                         n_interpolate = 100,
                         interpolation = 'cubic',
@@ -207,7 +207,7 @@ def draw_plot(
 
 
         if len(data.groupby(layer_name).groups.keys()) > 1:
-            plotted = False        # & plotted
+            plotted = False
                 
         return combined_DATA, legend, plotted
 

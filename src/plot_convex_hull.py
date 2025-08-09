@@ -108,22 +108,22 @@ def calculate_hull(
         interpolation="quadratic", 
         return_hull_points=False):
     """
-    Calculates a "smooth" hull around given points in `X`.
-    The different settings have different drawbacks but the given defaults work reasonably well.
-    Parameters
-    ----------
-    X : np.ndarray
-        2d-array with 2 columns and `n` rows
-    scale : float, optional
-        padding strength, by default 1.1
-    padding : str, optional
-        padding mode, by default "scale"
-    n_interpolate : int, optional
-        number of interpolation points, by default 100
-    interpolation : str or callable(ix,iy,x), optional
-        interpolation mode, by default "quadratic_periodic"
+        Calculates a "smooth" hull around given points in `X`.
+        The different settings have different drawbacks but the given defaults work reasonably well.
+        Parameters
+        ----------
+        X : np.ndarray
+            2d-array with 2 columns and `n` rows
+        scale : float, optional
+            padding strength, by default 1.1
+        padding : str, optional
+            padding mode, by default "scale"
+        n_interpolate : int, optional
+            number of interpolation points, by default 100
+        interpolation : str or callable(ix,iy,x), optional
+            interpolation mode, by default "quadratic_periodic"
 
-    Inspired by: https://stackoverflow.com/a/17557853/991496
+        Inspired by: https://stackoverflow.com/a/17557853/991496
     """
     
     if padding == "scale":
@@ -228,23 +228,22 @@ def draw_hull(
         plot_kwargs=None, 
         ax=None):
     """Uses `calculate_hull` to draw a hull around given points.
-
-    Parameters
-    ----------
-    X : np.ndarray
-        2d-array with 2 columns and `n` rows
-    scale : float, optional
-        padding strength, by default 1.1
-    padding : str, optional
-        padding mode, by default "scale"
-    n_interpolate : int, optional
-        number of interpolation points, by default 100
-    interpolation : str or callable(ix,iy,x), optional
-        interpolation mode, by default "quadratic_periodic"
-    plot_kwargs : dict, optional
-        `matplotlib.pyplot.plot` kwargs, by default None
-    ax : `matplotlib.axes.Axes`, optional
-        [description], by default None
+        Parameters
+        ----------
+        X : np.ndarray
+            2d-array with 2 columns and `n` rows
+        scale : float, optional
+            padding strength, by default 1.1
+        padding : str, optional
+            padding mode, by default "scale"
+        n_interpolate : int, optional
+            number of interpolation points, by default 100
+        interpolation : str or callable(ix,iy,x), optional
+            interpolation mode, by default "quadratic_periodic"
+        plot_kwargs : dict, optional
+            `matplotlib.pyplot.plot` kwargs, by default None
+        ax : `matplotlib.axes.Axes`, optional
+            [description], by default None
     """
 
     if plot_kwargs is None:
