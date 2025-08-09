@@ -24,7 +24,7 @@ def import_teable(teable_url, api_key, columns, layers, filter):
         "take": 1000,
         "skip": 0,
         "filter": json.dumps(filter),
-        "fields[]": wanted_fields
+        "fields": wanted_fields
     }
     url = teable_url
 
@@ -49,11 +49,11 @@ def import_teable(teable_url, api_key, columns, layers, filter):
             params["skip"] += params["take"] 
 
             data.extend(records)
-
         dataframe = pd.DataFrame(data, columns=wanted_fields)        # & raise error if _low or layer column not found
 
         # print(dataframe)
-        print(f"data received successfully  (Total of {len(data)} points)")    
+        print(f"data received successfully  (Total of {len(data)} points)")  
+  
         return dataframe
     elif status == 403:
         raise PermissionError("ERROR 403 - Teable API: kein Zugriffsrecht. Bitte API Key & URL prüfen")
@@ -62,7 +62,7 @@ def import_teable(teable_url, api_key, columns, layers, filter):
 
 
 
-def import_excel(import_file_name, import_sheet):      # & return export import from old commits
+def import_excel(import_file_name, import_sheet):      # & filter 
     data = pd.read_excel(
         os.path.join(
             os.getcwd(),

@@ -1,23 +1,3 @@
-'''
-    This script will plot various material properties in an 'Ashby-type' way (
-    i.e., convex hulls surrounding points of certain classes).
-
-    Input file format: one excel file, with either material property ranges or
-    single values defined.
-
-    Dependencies:
-        files: plot_convex_hull.py
-            rotation_aware_annotation.py
-            plot_utilities.py
-            math_utilities.py
-        python modules:
-            os (pre-installed)
-            pandas
-            numpy
-            matplotlib
-            scipy
-            sklearn
-'''
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -42,7 +22,6 @@ from src.plot_acessories import (
 from src.formatting import(
         create_legend,
         watermark,
-        plotting_presets,
     )
 
 
@@ -51,7 +30,7 @@ if __name__ == '__main__':
         config = json.load(file)
 
         for frame in config["frames"]:
-            print(f":::::::::::::::::::::: calculating frame {config["frames"].index(frame) +1 } / {len(config["frames"])} ::::::::::::::::::::::")
+            print(f":::::::::::::::::::::: creating frame {config["frames"].index(frame) +1 } / {len(config["frames"])} ::::::::::::::::::::::")
 
             # : axes :
             quantities = [None, None]
@@ -98,7 +77,8 @@ if __name__ == '__main__':
                 data = import_teable(frame["teable_url"], config["API_Key"], columns, frame["layers"], frame["filter"])
             else:
                 data = import_excel(frame["import_file_name"], frame["import_sheet"])
-
+            if len(data) == 0:
+                raise ValueError("No Vailid Data imported")
 
 
             # : Data plotting :
@@ -211,19 +191,18 @@ if __name__ == '__main__':
             # .plt.tight_layout(pad=2.5)
             # set x- and y-labels
             try:
-                ax.set_xlabel(x_label, color = font_color)
-                ax.set_ylabel(y_label, color = font_color)
+                ax.set_xlabel(x_label, color = font_color, fontsize = 18, labelpad=10)
+                ax.set_ylabel(y_label, color = font_color, fontsize = 18, labelpad=5 )
             except:
                 print("ERROR: Could not set correct x- and y-labels. continung...")
 
         # : export :
+        ax.tick_params(colors=font_color, labelsize=15)
+        ax.spines[:].set_color(font_color)
         if frame["export_file_name"] == None:
-            plt.title(title, loc='left', size=40)
+            plt.title(title, loc='center', size=40, pad=15)
             watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
             
             plt.show()
         else:
-            ax.tick_params(colors=font_color)
-            ax.spines[:].set_color(font_color)
-
             plt.savefig(os.path.join('export', frame["export_file_name"]), dpi=frame["image_dpi"], transparent=True)

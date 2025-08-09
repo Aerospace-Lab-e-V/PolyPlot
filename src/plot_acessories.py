@@ -157,7 +157,7 @@ def create_annotation(
         ax
     ):
     for annotation in annotations:
-        if annotation['arrow'] == 0:
+        if annotation['arrow'] == False or annotation['arrow'] == None:
             ax.text(
                 x        = annotation['txt_xy'][0],
                 y        = annotation['txt_xy'][1],
@@ -172,5 +172,5 @@ def create_annotation(
                 xytext =   annotation['txt_xy'],
                 color  =   annotation['txt_color'],
                 fontsize = annotation['fontsize'],
-                arrowprops = arrows[annotation['arrow']-1]
+                arrowprops = arrows[annotation['arrow']]
             )

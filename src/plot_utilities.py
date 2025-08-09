@@ -1,13 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Plot utilities script.
-Contains all the misc. functions to generate the ashby plot (not related to the actual ellipses).
-
-
-@author: Walgren
-edit by afffe
-"""
-
 import os
 import numpy as np
 import pandas as pd
@@ -185,7 +175,7 @@ def draw_plot(
                     )
                 # print(DATA)
                 # print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
-                if DATA.shape[0] > 1 and layer_alpha!= 0 and layer_alpha!= None          \
+                if DATA.shape[0] > 1 and layer_alpha != 0 and layer_alpha != None          \
                 and not len(data.groupby(layer_name).groups.keys()) == 1       \
                 and plotted == False: # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
                     draw_hull(

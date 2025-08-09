@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Apr 12 16:49:38 2024
 
-@author: Walgren
-"""
 import sklearn.preprocessing
 import sklearn.pipeline
 import scipy.spatial
@@ -146,7 +141,7 @@ def calculate_hull(
         hull_scaled = scipy.spatial.ConvexHull(points_scaled, incremental=True)
         hull_points_scaled = points_scaled[hull_scaled.vertices]
         
-        #old code (modified for log scaling)
+        # old code (modified for log scaling)
         hull_points= np.concatenate([hull_points_scaled,hull_points_scaled[:1]])
         
         #stackoverflow code
@@ -248,9 +243,14 @@ def draw_hull(
 
     if plot_kwargs is None:
         plot_kwargs = {}
+
+    line = False
+    # for i in [0,1]:
+    #     if min(X[:,i]) == min(X[:,i]):
+    #         line = True
+    #         print(X[:,i])
         
-    if np.sum(~np.isnan(X).any(axis=1)) <= 3: #if you have fewer than three data points, you cannot form a convex hull
-        
+    if np.sum(~np.isnan(X).any(axis=1)) <= 3 or line == True: #if you have fewer than three data points, you cannot form a convex hull
         draw_ellipses(
             x = X[:,0],
             y = X[:,1],
