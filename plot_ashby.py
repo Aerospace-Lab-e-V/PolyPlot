@@ -66,7 +66,8 @@ if __name__ == '__main__':
             # Create figure & plotting presets
             figure_size = (frame["image_width"],frame["image_height"])
             fig, ax = plt.subplots(1,1, figsize=figure_size)
-            plt.subplots_adjust(left=0.09, right=0.86)
+            if frame["legend_flag"] == True:
+                plt.subplots_adjust(left=0.09, right=0.86)
 
             plt.rc('font', family='sans-serif')
             plt.rcParams.update({'font.sans-serif':'Arial'})

@@ -54,15 +54,7 @@ def quantity_availability(
                         y_high = np.append(y_high,  y_high_)
 
                 # +  plot  + 
-                        if not alpha_areas != None and alpha_areas > 0: 
-                            linewidth = 1
-                            if pd.isna(x_high_):             # low = high for plotting points / lines
-                                x_high_ = x_low_
-                                linewidth = 3
-                            if pd.isna(y_high_):
-                                y_high_ = y_low_
-                                linewidth = 3
-
+                        if alpha_areas != None and alpha_areas > 0: 
                             draw_ellipses(
                                 x = [x_low_,  x_high_],
                                 y = [y_low_,  y_high_],
@@ -72,11 +64,9 @@ def quantity_availability(
                                         alpha=alpha_areas
                                         ),
                                     'edgecolor':current_color,
-                                    'linewidth': linewidth
                                     },
                                 ax = ax,
                                 )
-
                     elif alpha_points != None and alpha_points > 0:
                         ax.plot(
                             x_low_,
@@ -181,7 +171,6 @@ def draw_plot(
                     draw_hull(
                         DATA,
                         scale = 1.04,
-                        padding = 'scale',
                         n_interpolate = 100,
                         interpolation = 'cubic',
                         ax = ax,

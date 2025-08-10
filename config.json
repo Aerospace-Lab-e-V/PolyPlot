@@ -7,7 +7,6 @@
     "import_file_name":"MatWeb_materials_export_tom_finaleDaten.xlsx",
     "import_sheet":0,
 
-
     "export_file_name":null,
 
     "image_width":16,
@@ -23,8 +22,8 @@
     "log_x_flag":false,
     "log_y_flag":false,
 
-    "x_quantity":"Rm",
-    "y_quantity":"deftemp",
+    "x_quantity":"deftemp",
+    "y_quantity":"Rm",
     "language":"de",
     "legend_flag":true,
     
