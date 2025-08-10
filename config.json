@@ -23,8 +23,8 @@
     "log_x_flag":false,
     "log_y_flag":false,
 
-    "x_quantity":"deftemp",
-    "y_quantity":"Rm",
+    "x_quantity":"Rm",
+    "y_quantity":"deftemp",
     "language":"de",
     "legend_flag":true,
     

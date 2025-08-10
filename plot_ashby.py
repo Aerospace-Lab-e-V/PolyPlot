@@ -22,6 +22,7 @@ from src.plot_acessories import (
 from src.formatting import(
         create_legend,
         watermark,
+        plot_padding
     )
 
 
@@ -113,7 +114,7 @@ if __name__ == '__main__':
                     ax = ax
                 )
             except:
-                print("Error drawing colored areas. Check config.json! continuing...")
+                print("❗ERROR drawing colored areas. Check config.json! continuing...")
 
             try:
                 if frame["automatic_Display_Area_flag"]:
@@ -135,7 +136,7 @@ if __name__ == '__main__':
                             ax = ax,
                         )
             except:
-                print("Error drawing guideline. Check config.json! continuing...")
+                print("❗ERROR drawing guideline. Check config.json! continuing...")
 
             try:
                 create_marker(
@@ -146,7 +147,7 @@ if __name__ == '__main__':
                     ax = ax
                 )
             except:
-                print("Error drawing marker. Check config.json! continuing...")
+                print("❗ERROR drawing marker. Check config.json! continuing...")
 
             try:
                 create_annotation(
@@ -155,24 +156,20 @@ if __name__ == '__main__':
                     ax = ax
                 )
             except:
-                print("Error printing annotation. Check config.json! continuing...")
+                print("❗ERROR printing annotation. Check config.json! continuing...")
 
 
             # : Figure manipulation :
             #set axes limits
             if frame["automatic_Display_Area_flag"]:
+                # .ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
+                x_lim = plot_padding(float(np.nanmin(DATA[:,0])), float(np.nanmax(DATA[:,0])), frame["log_x_flag"], frame["automatic_Display_Area_margin"])
+                y_lim = plot_padding(float(np.nanmin(DATA[:,1])), float(np.nanmax(DATA[:,1])), frame["log_y_flag"], frame["automatic_Display_Area_margin"])
+            else:
                 x_lim = frame["x_lim"]
                 y_lim = frame["y_lim"]
-                # .ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
-                x_low  = float(np.nanmin(DATA[:,0]))
-                x_high = float(np.nanmax(DATA[:,0]))
-                y_low  = float(np.nanmin(DATA[:,1]))
-                y_high = float(np.nanmax(DATA[:,1]))
-                x_lim[0] = x_low  - (x_high - x_low) * frame["automatic_Display_Area_margin"]    # & edit for log
-                x_lim[1] = x_high + (x_high - x_low) * frame["automatic_Display_Area_margin"]
-                y_lim[0] = y_low  - (y_high - y_low) * frame["automatic_Display_Area_margin"]
-                y_lim[1] = y_high + (y_high - y_low) * frame["automatic_Display_Area_margin"]
             ax.set(xlim=x_lim, ylim=y_lim)
+
             
 
             #toggle log in plot
@@ -189,12 +186,12 @@ if __name__ == '__main__':
                     zorder = 0.5,
                 )
             # .plt.tight_layout(pad=2.5)
-            # set x- and y-labels
-            try:
+            
+            try: # set x- and y-labels
                 ax.set_xlabel(x_label, color = font_color, fontsize = 18, labelpad=10)
                 ax.set_ylabel(y_label, color = font_color, fontsize = 18, labelpad=5 )
             except:
-                print("ERROR: Could not set correct x- and y-labels. continung...")
+                print("❗ERROR: Could not set correct x- and y-labels. continung...")
 
         # : export :
         ax.tick_params(colors=font_color, labelsize=15)

@@ -245,10 +245,10 @@ def draw_hull(
         plot_kwargs = {}
 
     line = False
-    # for i in [0,1]:
-    #     if min(X[:,i]) == min(X[:,i]):
-    #         line = True
-    #         print(X[:,i])
+    for i in [0,1]:
+        if min(X[:,i]) == max(X[:,i]):
+            line = True
+            print(X[:,i])
         
     if np.sum(~np.isnan(X).any(axis=1)) <= 3 or line == True: #if you have fewer than three data points, you cannot form a convex hull
         draw_ellipses(

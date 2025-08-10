@@ -96,3 +96,16 @@ def watermark(fig, alpha, pos, size):
     logo_ax = fig.add_axes([pos[0], pos[1], size, size], anchor='SE', zorder=101, )
     logo_ax.imshow(img_array)
     logo_ax.axis('off')
+
+
+def plot_padding(low, high, log_flag, margin):
+    if log_flag:
+        low_log  = np.log10(low )
+        high_log = np.log10(high)
+        diff = (high_log - low_log) * margin
+        lower_limit = 10 ** (low_log  - diff)
+        upper_limit = 10 ** (high_log + diff)
+    else:
+        lower_limit = low  - (high - low) * margin
+        upper_limit = high + (high - low) * margin
+    return [lower_limit, upper_limit]
