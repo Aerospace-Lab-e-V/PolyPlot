@@ -122,8 +122,8 @@ def calculate_hull(
     
 
     if interpolation == 'alpha':
-        hashape.alphashape(hull_points, .02)
-        coords = np.column_stack(hull_poly.exterior.xy)
+        hull_polynome = alphashape.alphashape(hull_points, .02)
+        coords = np.column_stack(hull_polynome.exterior.xy)
         t = np.linspace(0, 1, len(x))
         tck, _ = splprep([coords[:,0], coords[:,1]], s=0.001, per=True)
         u_fine = np.linspace(0, 1, 500)
