@@ -26,6 +26,7 @@
     "y_quantity":"Rm",
     "language":"de",
     "legend_flag":true,
+    "title":"Plot",
     
     "layers":[{
             "name": "Gruppe",
@@ -132,18 +133,24 @@
 "axes":[{
         "name":"deftemp",
         "columns":["Deflection Temperature at 1.8 MPa 264 psi"],
-        "de":"Verformungstemperatur [°C] @ 1,8 MPa",
-        "en":"Deflection Temperature $HDT$ [°C] @ 1.8 MPa"
+        "labels":{
+            "de":"Verformungstemperatur [°C] @ 1,8 MPa",
+            "en":"Deflection Temperature $HDT$ [°C] @ 1.8 MPa"
+        }
     },{
         "name":"Rm",
         "columns":["Tensile Strength Yield", "Tensile Strength Ultimate", "Tensile Strength at Break", "Tensile Strength"],
-        "de":"Zugfestigkeit $R_m$ [MPa]",
-        "en":"Tensile Strength $R_m$ [MPa]"
+        "labels":{
+            "de":"Zugfestigkeit $R_m$ [MPa]",
+            "en":"Tensile Strength $R_m$ [MPa]"
+        }
     },{
         "name":"dens",
         "columns":["Density"],
-        "de":"Dichte $[\\frac{\\text{g}}{\\text{cm}^3}]$",
-        "en":"Density $[\\frac{\\text{g}}{\\text{cm}^3}]$"
+        "labels":{
+            "de":"Dichte $[\\frac{\\text{g}}{\\text{cm}^3}]$",
+            "en":"Density $[\\frac{\\text{g}}{\\text{cm}^3}]$"
+        }
     }],
 
 
