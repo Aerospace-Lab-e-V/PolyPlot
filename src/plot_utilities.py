@@ -131,14 +131,20 @@ def draw_plot(
 
     # +       recursive repetition       +
     if current_layer_number < len(layers) - 1:
-        layer_name           = layers[current_layer_number]['name']
-        layer_whitelist      = layers[current_layer_number]['whitelist']
-        layer_whitelist_flag = layers[current_layer_number]['whitelist_flag']
-        layer_alpha          = layers[current_layer_number]['alpha']
-        combined_DATA        = np.zeros(shape=(0,2))
+        try:
+            layer_name           = layers[current_layer_number]['name']
+            layer_whitelist      = layers[current_layer_number]['whitelist']
+            layer_whitelist_flag = layers[current_layer_number]['whitelist_flag']
+            layer_alpha          = layers[current_layer_number]['alpha']
+            combined_DATA        = np.zeros(shape=(0,2))
+            plotted = False
+        except:
+            raise KeyError(f"could not import layer {current_layer_number +1}. Check config.json!")
 
         for category, material_data in data.groupby(layer_name):
-            print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======")             
+            print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======") 
+
+            if pd.isna(category): category == None            
 
             if (category in layer_whitelist and layer_whitelist_flag == True) or (category not in layer_whitelist and layer_whitelist_flag == False):
                 if category in material_colors and category not in legend and layer_alpha:   # ° color & legend entry handling
@@ -164,7 +170,7 @@ def draw_plot(
                         material_colors,
                     )
                 # print(DATA)
-                # print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
+                print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
                 if DATA.shape[0] > 1 and layer_alpha != 0 and layer_alpha != None          \
                 and not len(data.groupby(layer_name).groups.keys()) == 1       \
                 and plotted == False: # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
@@ -172,7 +178,7 @@ def draw_plot(
                         DATA,
                         scale = 1.04,
                         n_interpolate = 100,
-                        interpolation = 'cubic',
+                        interpolation = 'alpha',
                         ax = ax,
                         plot_kwargs = {
                             'color': current_color,
@@ -193,7 +199,7 @@ def draw_plot(
             
     # +       recursive exit       +
     else:
-        x_low, x_high, y_low, y_high = quantity_availability(   # read data
+        x_low, x_high, y_low, y_high = quantity_availability(   # plot individual points
                 x_axes_quantities,
                 y_axes_quantities,
                 layers[current_layer_number]['alpha_points'],

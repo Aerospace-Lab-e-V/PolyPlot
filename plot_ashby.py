@@ -31,7 +31,7 @@ if __name__ == '__main__':
         config = json.load(file)
 
         for frame in config["frames"]:
-            print(f":::::::::::::::::::::: creating frame {config["frames"].index(frame) +1 } / {len(config["frames"])} ::::::::::::::::::::::")
+            print(f":::::::::::::::::::::: creating frame {config["frames"].index(frame) +1} / {len(config["frames"])} ::::::::::::::::::::::")
 
             # : axes :
             quantities = [None, None]
@@ -41,7 +41,7 @@ if __name__ == '__main__':
                 for axe in config["axes"]:
                     if axe["name"] == quantity:
                         quantities[i] = axe["name"]
-                        labels[i]     = axe[frame["language"]]
+                        labels[i]     = axe["labels"][frame["language"]]
                         columns[i]    = axe["columns"]
                         break
             if None in quantities:
@@ -59,7 +59,7 @@ if __name__ == '__main__':
             if frame["export_file_name"] != None:
                 font_color = 'white'
             else:
-                title = "Ashbyplot"
+                title = frame["title"]
                 font_color = 'black'
 
 
@@ -110,10 +110,11 @@ if __name__ == '__main__':
                 )
 
             try:
-                draw_colored_areas(
-                    frame["colored_areas"],
-                    ax = ax
-                )
+                if len(frame["colored_areas"]) > 0:
+                    draw_colored_areas(
+                        frame["colored_areas"],
+                        ax = ax
+                    )
             except:
                 print("❗ERROR drawing colored areas. Check config.json! continuing...")
 
@@ -128,36 +129,39 @@ if __name__ == '__main__':
                             ax = ax,
                         )
                 else:
-                    draw_guideline(
-                            frame["guidelines"],
-                            x_min = x_lim[0],
-                            x_max = x_lim[1],
-                            y_min = y_lim[0],
-                            y_max = y_lim[1],
-                            ax = ax,
-                        )
+                    if len(frame["guidelines"]) > 0:
+                        draw_guideline(
+                                frame["guidelines"],
+                                x_min = x_lim[0],
+                                x_max = x_lim[1],
+                                y_min = y_lim[0],
+                                y_max = y_lim[1],
+                                ax = ax,
+                            )
             except:
-                print("❗ERROR drawing guideline. Check config.json! continuing...")
+                print("❗ERROR drawing guidelines. Check config.json! continuing...")
 
             try:
-                create_marker(
-                    frame["markers"],
-                    x_column,
-                    y_column,
-                    frame["marker_size"],
-                    ax = ax
-                )
+                if len(frame["markers"]) > 0:
+                    create_marker(
+                        frame["markers"],
+                        x_column,
+                        y_column,
+                        frame["marker_size"],
+                        ax = ax
+                    )
             except:
-                print("❗ERROR drawing marker. Check config.json! continuing...")
+                print("❗ERROR plotting markers. Check config.json! continuing...")
 
             try:
-                create_annotation(
-                    frame["annotations"],
-                    config["arrows"],
-                    ax = ax
-                )
+                if len(frame["annotations"]) > 0:
+                    create_annotation(
+                        frame["annotations"],
+                        config["arrows"],
+                        ax = ax
+                    )
             except:
-                print("❗ERROR printing annotation. Check config.json! continuing...")
+                print("❗ERROR printing annotations. Check config.json! continuing...")
 
 
             # : Figure manipulation :
@@ -204,3 +208,4 @@ if __name__ == '__main__':
             plt.show()
         else:
             plt.savefig(os.path.join('export', frame["export_file_name"]), dpi=frame["image_dpi"], transparent=True)
+            print(f"⇒ plot saved as ./export/{frame["export_file_name"]}")
