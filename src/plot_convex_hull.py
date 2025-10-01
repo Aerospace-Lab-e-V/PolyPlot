@@ -16,7 +16,7 @@ import matplotlib.colors as colors
 
 
 
-def draw_ellipses(
+def draw_ellipses(   # & vereinfachen
         x,
         y,
         ax,
@@ -37,7 +37,7 @@ def draw_ellipses(
         # ell_scaling = ax.transScale.transform((r_x, r_y))
 
 
-    if data_type == 'values':      
+    if data_type == 'values':      # & wird nei aufgerufen, entfernen?? angle calc
         plot_kwargs['facecolor'] = colors.to_rgba(  # & Übergeabeparameter
                 plot_kwargs['color'],
                 alpha=0.25

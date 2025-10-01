@@ -13,73 +13,65 @@ from src.plot_convex_hull import(
 
 
 def quantity_availability(
-        x_axes_quantities,
-        y_axes_quantities,
+        columns,
+        modes,
         alpha_points,
         alpha_areas,
         current_color,
         data,
         ax
     ):
-    x_low  = np.zeros(shape=(0))
-    x_high = np.zeros(shape=(0))
-    y_low  = np.zeros(shape=(0))
-    y_high = np.zeros(shape=(0))
+    point_list = np.zeros((2, 2, 0))     # [x, y][low, high][datapoints]
+    length_col = max(len(columns[:][0]), len(columns[:][1]))
 
-    x_high_short = np.zeros(shape=(0))
-    y_high_short = np.zeros(shape=(0))
+    for data_point in range(len(data)):
+        point  = np.full((2, 2, length_col), np.nan)
+        coords = np.full((2, 2, 1), np.nan)
+        index  = np.full(2, -1)
+        for axis, column in enumerate([columns[0], columns[1]]):
+            for quantity, quantity_data in enumerate(column):
+                if not pd.isna(data[quantity_data + ' low'].iloc[data_point]):
+                    point[axis, 0, quantity] = data[quantity_data + ' low' ].iloc[data_point].copy()  # low
+                    point[axis, 1, quantity] = data[quantity_data + ' high'].iloc[data_point].copy()  # high
 
-    for pos in range(len(data)):                   # cycling position in matereial data for each name
-        x_low_temp = None
-        for quantity in x_axes_quantities:         # cycling possible names per axes
-            if not pd.isna(data[quantity + ' low'].iloc[pos]):
-                x_low_temp  = data[quantity + ' low' ].iloc[pos].copy()
-                x_high_temp = data[quantity + ' high'].iloc[pos].copy()
-                break
-        if x_low_temp != None:                     # checking only for y-value if x-value exists
-            for quantity in y_axes_quantities:     # cycling possible names per axes
-                if not pd.isna(data[quantity + ' low'].iloc[pos]):
-                    x_low_      = x_low_temp
-                    y_low_      = data[quantity + ' low' ].iloc[pos].copy()
-                    y_high_temp = data[quantity + ' high'].iloc[pos].copy()
+            if   modes[axis] == "max":
+                 index[axis] = np.nanargmax(point[axis, 0, :])
+            elif modes[axis] == "min":
+                 index[axis] = np.nanargmin(point[axis, 0, :]) 
+            else:
+                 index[axis] = np.argmax(~np.isnan(point[axis, 0, :]))
 
-                    x_low  = np.append(x_low,   x_low_)
-                    y_low  = np.append(y_low,   y_low_)
+        if np.all(index[:] >= 0):
+            coords[0, :, 0] = point[0, :, index[0]]
+            coords[1, :, 0] = point[1, :, index[1]]
 
-                    if not( pd.isna(x_high_temp) or pd.isna(x_high_temp)):
-                        x_high_ = x_high_temp
-                        y_high_ = y_high_temp
+            point_list = np.append(point_list, coords, axis=2)   # & np.dstack → remoove 3rd dimension
 
-                        x_high = np.append(x_high,  x_high_)
-                        y_high = np.append(y_high,  y_high_)
+    # + plot  + 
+            if (not np.isnan(point[0, 0, index[0]]) or not np.isnan(point[0, 0, index[0]])) and (alpha_areas != None and alpha_areas > 0): 
+                draw_ellipses(
+                    x = coords[0, :, 0],
+                    y = coords[1, :, 0],
+                    plot_kwargs = {
+                        'facecolor':colors.to_rgba(
+                            current_color,
+                            alpha=alpha_areas
+                            ),
+                        'edgecolor':current_color,
+                        },
+                    ax = ax,
+                    )
+            elif alpha_points != None and alpha_points > 0:
+                ax.plot(
+                    coords[0, :, 0],
+                    coords[1, :, 0],
+                    color = current_color,
+                    marker = 'o',
+                    alpha = alpha_points
+                    )
 
-                # +  plot  + 
-                        if alpha_areas != None and alpha_areas > 0: 
-                            draw_ellipses(
-                                x = [x_low_,  x_high_],
-                                y = [y_low_,  y_high_],
-                                plot_kwargs = {
-                                    'facecolor':colors.to_rgba(
-                                        current_color,
-                                        alpha=alpha_areas
-                                        ),
-                                    'edgecolor':current_color,
-                                    },
-                                ax = ax,
-                                )
-                    elif alpha_points != None and alpha_points > 0:
-                        ax.plot(
-                            x_low_,
-                            y_low_,
-                            color = current_color,
-                            marker = 'o',
-                            alpha = alpha_points
-                            )
-                    break
-
-    print("x: ", x_low, " - ", x_high, "  ||  y: ", y_low, " - ", y_high)
-    return x_low.T, x_high.T, y_low.T, y_high.T
-
+    print(point_list)
+    return point_list
 
 
 def draw_plot(
@@ -87,8 +79,8 @@ def draw_plot(
         current_master_layer_name,
         layers,
         data,
-        x_axes_quantities,
-        y_axes_quantities,
+        columns,
+        modes,
         legend,
         ax,
         current_color,
@@ -136,7 +128,7 @@ def draw_plot(
             layer_whitelist      = layers[current_layer_number]['whitelist']
             layer_whitelist_flag = layers[current_layer_number]['whitelist_flag']
             layer_alpha          = layers[current_layer_number]['alpha']
-            combined_DATA        = np.zeros(shape=(0,2))
+            combined_DATA        = np.zeros(shape=(1,2))
             plotted = False
         except:
             raise KeyError(f"could not import layer {current_layer_number +1}. Check config.json!")
@@ -162,8 +154,8 @@ def draw_plot(
                         category,
                         layers,
                         material_data,
-                        x_axes_quantities,
-                        y_axes_quantities,
+                        columns,
+                        modes,
                         legend,
                         ax,
                         current_color,
@@ -178,7 +170,7 @@ def draw_plot(
                         DATA,
                         scale = 1.04,
                         n_interpolate = 100,
-                        interpolation = 'alpha',
+                        interpolation = 'alpha',    # alpha or cubic
                         ax = ax,
                         plot_kwargs = {
                             'color': current_color,
@@ -186,7 +178,7 @@ def draw_plot(
                             }
                         )
                     plotted = True
-
+                print(combined_DATA, DATA)
                 combined_DATA = np.vstack((combined_DATA, DATA))
                 # print("-- Layer ", current_layer_number, " DATA: ", DATA, " combined_DATA: ", combined_DATA) # . combined_DATA[~np.isnan(combined_DATA)]
 
@@ -199,9 +191,9 @@ def draw_plot(
             
     # +       recursive exit       +
     else:
-        x_low, x_high, y_low, y_high = quantity_availability(   # plot individual points
-                x_axes_quantities,
-                y_axes_quantities,
+        point_list = quantity_availability(   # plot individual points
+                columns,
+                modes,
                 layers[current_layer_number]['alpha_points'],
                 layers[current_layer_number]['alpha_areas'],
                 current_color,
@@ -209,7 +201,7 @@ def draw_plot(
                 ax
             )
 
-        X = np.append(x_low, x_high)
-        Y = np.append(y_low, y_high)
-        DATA = np.column_stack((X,Y))
+        DATA = np.hstack((point_list[:, 0, :], point_list[:, 1, :]))
+        DATA = np.transpose(DATA.reshape((DATA.shape[0], -1)))
+
         return DATA, legend, False

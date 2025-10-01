@@ -1,6 +1,7 @@
 Thumbs.db
 test.py
 
+
 Python
 =======
 *.pyc
@@ -8,3 +9,4 @@ Python
 Specific folders
 ===============
 unit_cell_data/*
+.venv/*

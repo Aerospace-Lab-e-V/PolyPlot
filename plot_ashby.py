@@ -26,29 +26,33 @@ from src.formatting import(
     )
 
 
+
 if __name__ == '__main__':
     with open('config.json', 'r', encoding="utf-8") as file:
         config = json.load(file)
 
         for frame in config["frames"]:
-            print(f":::::::::::::::::::::: creating frame {config["frames"].index(frame) +1} / {len(config["frames"])} ::::::::::::::::::::::")
+            print(f":::::::::::::::::::::: creating frame {config['frames'].index(frame) + 1} / {len(config['frames'])} ::::::::::::::::::::::")
 
             # : axes :
             quantities = [None, None]
             labels     = [None, None]
             columns    = [None, None]
+            modes      = [None, None]
             for i, quantity in enumerate([frame["x_quantity"], frame["y_quantity"]]):
-                for axe in config["axes"]:
-                    if axe["name"] == quantity:
-                        quantities[i] = axe["name"]
-                        labels[i]     = axe["labels"][frame["language"]]
-                        columns[i]    = axe["columns"]
+                for axe in frame['axes']:
+                    if axe['name'] == quantity:
+                        quantities[i] = axe['name']
+                        labels[i]     = axe['labels'][frame['language']]
+                        columns[i]    = axe['columns']
+                        modes[i]      = axe['mode']
                         break
             if None in quantities:
                 raise ValueError("quantity not found. please check the config.json")
             x_quantity, y_quantity = quantities
             x_label,    y_label    = labels
             x_column,   y_column   = columns
+            x_mode,     y_mode     = modes
 
             if x_column == None or y_column == None:
                 raise KeyError("at least one axes has no column assigned to it. please check 'axes' 'x'/'y-quntity' in the config.json")
@@ -76,7 +80,7 @@ if __name__ == '__main__':
 
 
             if frame["teable_url"] != None:
-                data = import_teable(frame["teable_url"], config["API_Key"], columns, frame["layers"], frame["filter"])
+                data = import_teable(frame["teable_url"], frame["API_Key"], columns, frame["layers"], frame["filter"])
             else:
                 data = import_excel(frame["import_file_name"], frame["import_sheet"])
             if len(data) == 0:
@@ -89,16 +93,16 @@ if __name__ == '__main__':
                     None,   # current_master_layer_name
                     frame["layers"],
                     data,
-                    x_column,
-                    y_column,
+                    columns,
+                    modes,
                     [],     # legend_items
                     ax,
                     0,      # current_color
                     frame["material_colors"]
                 )
 
-            if not len(DATA):
-                raise ValueError("No Data plotet. Please check the .xlcs & config.json.")
+            if not len(DATA) or not np.all(np.sum(~np.isnan(DATA), axis=0) >= 2):
+                raise ValueError("No Data plotted. Please check the config.json. and your data source (Excel/Teable)")
 
 
             if frame["legend_flag"]:
@@ -157,7 +161,7 @@ if __name__ == '__main__':
                 if len(frame["annotations"]) > 0:
                     create_annotation(
                         frame["annotations"],
-                        config["arrows"],
+                        frame["arrows"],
                         ax = ax
                     )
             except:
@@ -208,4 +212,4 @@ if __name__ == '__main__':
             plt.show()
         else:
             plt.savefig(os.path.join('export', frame["export_file_name"]), dpi=frame["image_dpi"], transparent=True)
-            print(f"⇒ plot saved as ./export/{frame["export_file_name"]}")
+            print(f"⇒ plot saved as ./export/{frame['export_file_name']}")
