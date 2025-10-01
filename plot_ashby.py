@@ -101,8 +101,9 @@ if __name__ == '__main__':
                     frame["material_colors"]
                 )
 
-            if not len(DATA) or not np.all(np.sum(~np.isnan(DATA), axis=0) >= 2):
+            if not len(DATA):
                 raise ValueError("No Data plotted. Please check the config.json. and your data source (Excel/Teable)")
+            print(DATA)
 
 
             if frame["legend_flag"]:
