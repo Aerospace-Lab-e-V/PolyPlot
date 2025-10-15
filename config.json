@@ -5,10 +5,10 @@
         "API_Key": "Bearer teable_accEbwLnOPcALnjGJXU_Hp6iPPr5mn5WPOgMNfzqgAro1j9t1G0Vj6DjAJTMg+s=",
         "teable_url":null,
         "teable_url__": "https://teable.aerospace-lab.de/api/table/tblMYoRyrN4FrwdAiH6/record",
-        "import_file_name":"MatWeb_materials_export_tom_finaleDaten.xlsx",
+        "import_file_name":"MatWeb_materials_export.xlsx",
         "import_sheet":0,
     
-        "export_file_name":null,
+        "export_file_name": null,
     
         "image_width":16,
         "image_height":9,
@@ -23,8 +23,8 @@
         "log_x_flag":false,
         "log_y_flag":false,
     
-        "x_quantity":"deftemp",
-        "y_quantity":"Rm",
+        "x_quantity":"HDT 1.8",
+        "y_quantity":"melt",
         "language":"de",
         "legend_flag":true,
         "title":"Plot",
@@ -59,87 +59,58 @@
         },
     
         "axes":[{
-            "name":"deftemp",
+            "name":"HDT 1.8",
             "columns":["Deflection Temperature at 1.8 MPa 264 psi"],
-            "mode":"min",
+            "mode":"default",
             "labels":{
                 "de":"Verformungstemperatur [°C] @ 1,8 MPa",
                 "en":"Deflection Temperature $HDT$ [°C] @ 1.8 MPa"
             }
         },{
+            "name":"melt",
+            "columns":["Melting Point", "Processing Temperature"],
+            "mode":"default",
+            "labels":{
+                "de":"Schmelztemperatur [°C]",
+                "en":"melting point [°C]"
+            }
+        },{
             "name":"Rm",
-            "columns":["Tensile Strength Yield", "Tensile Strength Ultimate", "Tensile Strength at Break", "Tensile Strength"],
+            "columns":["Tensile Strength at Break", "Tensile Strength Ultimate", "Tensile Strength", "Tensile Strength Yield"],
             "mode":"max",
             "labels":{
                 "de":"Zugfestigkeit $R_m$ [MPa]",
                 "en":"Tensile Strength $R_m$ [MPa]"
             }
         },{
+            "name":"E-Mod",
+            "columns":["Tensile Modulus", "Modulus of Elasticity"],
+            "mode":"def",
+            "labels":{
+                "de":"E-Modul [GPa]",
+                "en":"E-Modulus [GPa]"
+            }
+        },{
             "name":"dens",
             "columns":["Density"],
-            "mode":"order",
+            "mode":"def",
             "labels":{
-                "de":"Dichte $[\\frac{\\text{g}}{\\text{cm}^3}]$",
-                "en":"Density $[\\frac{\\text{g}}{\\text{cm}^3}]$"
+                "de":"Dichte",
+                "en":"Density"
             }
         }],
     
     
-        "guidelines":[{
-                "x": 100,
-                "y": 80,
-                "m": 0.4,
-                "linestyle": "--",
-                "color":"green",
-                "linewidth": 4,
-                "fontsize": 22,
-                "string":"$\\frac{Latex}{Test} = ✔$",
-                "string_above": true,
-                "string_padding": 4
-            }],
+        "guidelines":[],
     
-        "markers":[{
-                "Deflection Temperature at 1.8 MPa 264 psi":140,
-                "Tensile Strength Ultimate":30,
-                "Density":400,
-                "name":"Foam",
-                "color":"b",
-                "marker": "*",
-                "size_factor":1
-            },{
-                "Young Modulus":2.009,
-                "Poisson":0.3,
-                "Density":1300,
-                "name":"PLA",
-                "color":"r",
-                "marker":".",
-                "size_factor":1
-            }],
+        "markers":[],
             "marker_size": 400,
     
-        "annotations":[{
-                "text": "PETG",
-                "fontsize": 20,
-                "txt_color": "black",
-                "tip_xy": [2000, 4],
-                "txt_xy": [1700, 3],
-                "arrow":0
-            }],
+        "annotations":[],
             
-        "arrows":[{
-            "width": 3,
-            "shrink": 0.1,
-            "facecolor": "black",
-            "headlength": 10,
-            "headwidth": 10
-        }],
+        "arrows":[],
     
-        "colored_areas":[{
-                "x": [0, 300, 300, 80,  80, 0  ],
-                "y": [0,   0,  50, 50, 200, 200],
-                "color": "r",
-                "alpha": 0.2
-            }],
+        "colored_areas":[],
     
         "material_colors":{
             "ABS": "#219DD3",	

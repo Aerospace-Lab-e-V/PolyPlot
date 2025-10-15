@@ -1,5 +1,6 @@
 Thumbs.db
 test.py
+.~lock*
 
 
 Python
@@ -8,5 +9,5 @@ Python
 
 Specific folders
 ===============
-unit_cell_data/*
-.venv/*
+/.venv/*
+/export/*
