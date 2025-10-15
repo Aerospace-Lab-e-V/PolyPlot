@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
 
             # : Data plotting :
-            DATA, legend_items, _ = draw_plot(
+            DATA, legend_items, _, skipped_points = draw_plot(
                     0,      # current_layer_number
                     None,   # current_master_layer_name
                     frame["layers"],
@@ -170,7 +170,7 @@ if __name__ == '__main__':
 
 
             # : Figure manipulation :
-            # ~ set axes limits
+            # ~ set axes limits 
             if frame["automatic_Display_Area_flag"]:
                 # .ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
                 x_lim = plot_padding(float(np.nanmin(DATA[:,0])), float(np.nanmax(DATA[:,0])), frame["log_x_flag"], frame["automatic_Display_Area_margin"])
@@ -182,13 +182,13 @@ if __name__ == '__main__':
 
             
 
-            # ~ toggle log in plot
+            # ~ toggle log in plot 
             if frame["log_x_flag"]:
                 ax.set_xscale('log')
             if frame["log_y_flag"]:
                 ax.set_yscale('log')
 
-            # ~ add grid lines
+            # ~ add grid lines 
             ax.grid(
                     which = 'major',
                     axis = 'both',
@@ -196,11 +196,14 @@ if __name__ == '__main__':
                 )
             # .plt.tight_layout(pad=2.5)
             
-            try: # ~ set x- and y-labels
+            try: # ~ set x- and y-labels 
                 ax.set_xlabel(x_label, color = font_color, fontsize = 18, labelpad=10)
                 ax.set_ylabel(y_label, color = font_color, fontsize = 18, labelpad=5 )
             except:
                 print("❗ERROR: Could not set correct x- and y-labels. continung...")
+
+            # ~ general info 
+            print(f"skipped a total of {skipped_points} Datapoints due to missing entries. {DATA.shape[0]} were plotted.")
 
             # : export :
             ax.tick_params(colors=font_color, labelsize=15)
@@ -210,7 +213,7 @@ if __name__ == '__main__':
                 watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
 
                 plt.show(block=False)
-                print(f"⇒ plot opened")
+                print(f"⇒ plot displayed")
             else:
                 plt.savefig(os.path.join('export', frame["export_file_name"]), dpi=frame["image_dpi"], transparent=True)
                 print(f"⇒ plot saved as ./export/{frame['export_file_name']}")

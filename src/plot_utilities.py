@@ -12,7 +12,7 @@ from src.plot_convex_hull import(
     )         
 
 
-def quantity_availability(
+def property_availability(
         columns,
         modes,
         alpha_points,
@@ -23,23 +23,29 @@ def quantity_availability(
     ):
     point_list = np.full((1, 2), np.nan)     # [x, y][low, high][datapoints]  # & leer erstelen?
     length_col = max(len(columns[:][0]), len(columns[:][1]))
+    skipped_points = 0
 
     for data_point in range(len(data)):
         point  = np.full((2, 2, length_col), np.nan)
         coords = np.full((2, 2), np.nan)
         index  = np.full(2, -1)
         for axis, column in enumerate([columns[0], columns[1]]):
-            for quantity, quantity_data in enumerate(column):
-                if not pd.isna(data[quantity_data + ' low'].iloc[data_point]):
-                    point[axis, 0, quantity] = data[quantity_data + ' low' ].iloc[data_point].copy()  # low
-                    point[axis, 1, quantity] = data[quantity_data + ' high'].iloc[data_point].copy()  # high
+            for property, property_data in enumerate(column):
+                if not pd.isna(data[property_data + ' low'].iloc[data_point]):
+                    point[axis, 0, property] = data[property_data + ' low' ].iloc[data_point].copy()  # low
+                    point[axis, 1, property] = data[property_data + ' high'].iloc[data_point].copy()  # high
+            
+            if not np.all(np.isnan(point[axis, 0, :])):
+                if   modes[axis] == "max":      # & ignoring high value
+                    index[axis] = np.nanargmax(point[axis, 0, :])
+                elif modes[axis] == "min":
+                    index[axis] = np.nanargmin(point[axis, 0, :]) 
+                else:
+                    index[axis] = np.argmax(~np.isnan(point[axis, 0, :]))
+        if np.any(index[:] == -1): 
+            skipped_points += 1
+            print(point)
 
-            if   modes[axis] == "max":      # & ignoring high value
-                 index[axis] = np.nanargmax(point[axis, 0, :])
-            elif modes[axis] == "min":
-                 index[axis] = np.nanargmin(point[axis, 0, :]) 
-            else:
-                 index[axis] = np.argmax(~np.isnan(point[axis, 0, :]))
 
         if np.all(index[:] >= 0):
             coords[0, :] = point[0, :, index[0]]
@@ -76,7 +82,7 @@ def quantity_availability(
     print("x: ", np.transpose(point_list[:, 0]))
     print("y: ", np.transpose(point_list[:, 1]))
 
-    return point_list
+    return point_list, skipped_points
 
 
 def draw_plot(
@@ -109,10 +115,10 @@ def draw_plot(
             dataframe with all material data to be plotted.
             Note that this dataframe must include the column 'Category;'
             which is case sensitive!
-        x_axes_quantity : str
-            quantity you would like to plot on the x-axes.
-        y_axes_quantity : str
-            quantity you would like to plot on the y-axes.
+        x_axes_property : str
+            property you would like to plot on the x-axes.
+        y_axes_property : str
+            property you would like to plot on the y-axes.
         ax : matplotlib.pyplot.axes
             figure axes on which you would like to plot
         material_colors : dict
@@ -135,6 +141,7 @@ def draw_plot(
             layer_alpha          = layers[current_layer_number]['alpha']
             combined_DATA        = np.full((1, 2), np.nan)      # & leer erstelen?
             plotted = False
+            total_skipped_points = 0
         except:
             raise KeyError(f"could not import layer {current_layer_number +1}. Check config.json!")
 
@@ -154,7 +161,7 @@ def draw_plot(
                         raise ValueError('You have material categories that have not been assigned a color and no default value. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)                    
                            
 
-                DATA, legend, plotted = draw_plot(      
+                DATA, legend, plotted, skipped_points = draw_plot(      
                         current_layer_number + 1,
                         category,
                         layers,
@@ -167,7 +174,7 @@ def draw_plot(
                         material_colors,
                     )
                 # print(DATA)
-                print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
+                # print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
                 if DATA.shape[0] > 1 and layer_alpha > 0 and layer_alpha != None          \
                 and not len(data.groupby(layer_name).groups.keys()) == 1       \
                 and plotted == False: # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
@@ -175,7 +182,7 @@ def draw_plot(
                         DATA,
                         scale = 1.04,
                         n_interpolate = 100,
-                        interpolation = 'alpha',    # alpha or cubic
+                        interpolation = 'cubic',    # alpha or cubic
                         ax = ax,
                         plot_kwargs = {
                             'color': current_color,
@@ -184,18 +191,20 @@ def draw_plot(
                         )
                     plotted = True
                 combined_DATA = np.vstack((combined_DATA, DATA))
+                print(f"skipped {skipped_points} Datapoints due to missing entries")
+                total_skipped_points += skipped_points
                 # print("-- Layer ", current_layer_number, " DATA: ", DATA, " combined_DATA: ", combined_DATA) # . combined_DATA[~np.isnan(combined_DATA)]
 
 
         if len(data.groupby(layer_name).groups.keys()) > 1:
             plotted = False
                 
-        return combined_DATA[1:,:], legend, plotted
+        return combined_DATA[1:,:], legend, plotted, total_skipped_points
 
             
     # +       recursive exit       +
     else:
-        DATA = quantity_availability(   # plot individual points
+        DATA, skipped_points = property_availability(   # plot individual points
                 columns,
                 modes,
                 layers[current_layer_number]['alpha_points'],
@@ -204,4 +213,4 @@ def draw_plot(
                 data,
                 ax
             )
-        return DATA, legend, False
+        return DATA, legend, False, skipped_points
