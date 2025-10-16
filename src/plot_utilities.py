@@ -5,14 +5,39 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 from types import SimpleNamespace
 
-
 from src.plot_convex_hull import(
     draw_ellipses,
     draw_hull,
     )         
 
-
 def property_availability(
+        data_point,
+        columns, 
+        modes, 
+        data,
+        length_col
+    ):
+    point  = np.full((2, 2, length_col), np.nan)
+    index  = np.full(2, -1)
+
+    for axis, column in enumerate([columns[0], columns[1]]):
+        for property, property_data in enumerate(column):
+            if not pd.isna(data[property_data + ' low'].iloc[data_point]):
+                point[axis, 0, property] = data[property_data + ' low' ].iloc[data_point].copy()  # low
+                point[axis, 1, property] = data[property_data + ' high'].iloc[data_point].copy()  # high
+        
+        if not np.all(np.isnan(point[axis, 0, :])):
+            if   modes[axis] == "max":      # & ignoring high value
+                index[axis] = np.nanargmax(point[axis, 0, :])
+            elif modes[axis] == "min":
+                index[axis] = np.nanargmin(point[axis, 0, :]) 
+            else:
+                index[axis] = np.argmax(~np.isnan(point[axis, 0, :]))
+    return index, point
+
+
+
+def single_values(
         columns,
         modes,
         alpha_points,
@@ -21,62 +46,51 @@ def property_availability(
         data,
         ax
     ):
-    point_list = np.full((1, 2), np.nan)     # [x, y][low, high][datapoints]  # & leer erstelen?
     length_col = max(len(columns[:][0]), len(columns[:][1]))
+    point_list = np.full((1, 2), np.nan)     # [x, y][low, high][datapoints]
     skipped_points = 0
 
     for data_point in range(len(data)):
-        point  = np.full((2, 2, length_col), np.nan)
         coords = np.full((2, 2), np.nan)
-        index  = np.full(2, -1)
-        for axis, column in enumerate([columns[0], columns[1]]):
-            for property, property_data in enumerate(column):
-                if not pd.isna(data[property_data + ' low'].iloc[data_point]):
-                    point[axis, 0, property] = data[property_data + ' low' ].iloc[data_point].copy()  # low
-                    point[axis, 1, property] = data[property_data + ' high'].iloc[data_point].copy()  # high
-            
-            if not np.all(np.isnan(point[axis, 0, :])):
-                if   modes[axis] == "max":      # & ignoring high value
-                    index[axis] = np.nanargmax(point[axis, 0, :])
-                elif modes[axis] == "min":
-                    index[axis] = np.nanargmin(point[axis, 0, :]) 
-                else:
-                    index[axis] = np.argmax(~np.isnan(point[axis, 0, :]))
-        if np.any(index[:] == -1): 
-            skipped_points += 1
-            print(point)
+        index, point = property_availability(data_point, columns, modes, data, length_col)
 
+        if False: # & specific data  (/density)
+            index_rel, point_rel = property_availability(data_point, columns, modes, data)
+            # & / ...
 
-        if np.all(index[:] >= 0):
-            coords[0, :] = point[0, :, index[0]]
-            coords[1, :] = point[1, :, index[1]]
+        else:
+            if np.any(index[:] == -1): 
+                skipped_points += 1
+                print("⚠ skip")
+            else:
+                coords[0, :] = point[0, :, index[0]] # x
+                coords[1, :] = point[1, :, index[1]] # y
 
-            point_list = np.vstack((point_list, coords[:,0])) # add low
-            if not np.all(pd.isna(coords[:, 1])):
-                point_list = np.vstack((point_list, coords[:,1]))
+                point_list = np.vstack((point_list, coords[:,0]))  # add low
+                if not np.all(pd.isna(coords[:, 1])):
+                    point_list = np.vstack((point_list, coords[:,1]))   # add high if not empty in both dimensions
 
-    # + plot  + 
-                if alpha_areas != None and alpha_areas > 0: 
-                    draw_ellipses(
-                        x = coords[0, :],
-                        y = coords[1, :],
-                        plot_kwargs = {
-                            'facecolor':colors.to_rgba(
-                                current_color,
-                                alpha=alpha_areas
-                                ),
-                            'edgecolor':current_color,
-                            },
-                        ax = ax,
+                # + plot  + 
+                    if alpha_areas != None and alpha_areas > 0: 
+                        draw_ellipses(
+                            coords,
+                            plot_kwargs = {
+                                'facecolor':colors.to_rgba(
+                                    current_color,
+                                    alpha=alpha_areas
+                                    ),
+                                'edgecolor':current_color,
+                                },
+                            ax = ax,
+                            )
+                elif alpha_points != None and alpha_points > 0:
+                    ax.plot(
+                        coords[0, :],
+                        coords[1, :],
+                        color = current_color,
+                        marker = 'o',
+                        alpha = alpha_points
                         )
-            elif alpha_points != None and alpha_points > 0:
-                ax.plot(
-                    coords[0, :],
-                    coords[1, :],
-                    color = current_color,
-                    marker = 'o',
-                    alpha = alpha_points
-                    )
 
     point_list = point_list[1: ,:]
     print("x: ", np.transpose(point_list[:, 0]))
@@ -191,7 +205,7 @@ def draw_plot(
                         )
                     plotted = True
                 combined_DATA = np.vstack((combined_DATA, DATA))
-                print(f"skipped {skipped_points} Datapoints due to missing entries")
+                # print(f"skipped {skipped_points} Datapoints due to missing entries")
                 total_skipped_points += skipped_points
                 # print("-- Layer ", current_layer_number, " DATA: ", DATA, " combined_DATA: ", combined_DATA) # . combined_DATA[~np.isnan(combined_DATA)]
 
@@ -204,7 +218,7 @@ def draw_plot(
             
     # +       recursive exit       +
     else:
-        DATA, skipped_points = property_availability(   # plot individual points
+        DATA, skipped_points = single_values(   # plot individual points
                 columns,
                 modes,
                 layers[current_layer_number]['alpha_points'],
