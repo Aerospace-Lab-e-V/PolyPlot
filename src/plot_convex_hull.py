@@ -16,51 +16,30 @@ import matplotlib.colors as colors
 
 
 
-def draw_ellipses(   # & vereinfachen
-        x,
-        y,
+def draw_ellipses(
+        X,
         ax,
-        data_type = 'ranges',
         scale = 1.02,
         plot_kwargs = None):
 
+    center = (X[0,:] + X[1,:]) /2
 
-    center_x = (min(x) + max(x))/2
-    center_y = (min(y) + max(y))/2
+    r_x = (X[1,0] - X[0,0])
+    r_y = (X[1,1] - X[0,1])
 
-    r_x = (max(x) - min(x)) * scale
-    r_y = (max(y) - min(y)) * scale
-
-        #FIXME add log flag
-        # ell_offset = ScaledTranslation(center_x, center_y,ax.transScale)
-        # ell_tform = ell_offset + ax.transLimits + ax.transAxes
-        # ell_scaling = ax.transScale.transform((r_x, r_y))
-
-
-    if data_type == 'values':      # & wird nei aufgerufen, entfernen?? angle calc
-        plot_kwargs['facecolor'] = colors.to_rgba(  # & Übergeabeparameter
-                plot_kwargs['color'],
-                alpha=0.25
-            )
-        plot_kwargs['edgecolor'] = plot_kwargs['color']
-        del plot_kwargs['color']
-        del plot_kwargs['alpha']
-        
-        if r_x > r_y:
-            angle = np.rad2deg(np.arctan((r_y)/(r_x)))
-        else:
-            angle = np.rad2deg(np.arctan((r_x)/(r_y)))
-    else: # datatype == 'ranges'
-        angle = 0
-
+    r_1 = np.sqrt(r_x**2 + r_y**2) * scale
+    r_2 = r_1 / 4
+       
+    angle = np.rad2deg(np.arctan2(r_y, r_x))
+    print(f"angle: {angle} - r_x/y: {r_x}, {r_y}  - r_1/2: {r_1}, {r_2}")
+ 
     if r_x == 0 or r_y == 0:
         plot_kwargs['linewidth'] = 5
 
-
     ellipse = patches.Ellipse(
-            xy = (center_x,center_y),
-            width = r_x,
-            height = r_y,
+            xy = center,
+            width = r_1,
+            height = r_2,
             angle = angle,
             **plot_kwargs,
         )
@@ -90,7 +69,12 @@ def calculate_hull(
 
         Inspired by: https://stackoverflow.com/a/17557853/991496
     """
-    
+    for pos, entry in enumerate(X):
+        if np.isnan(entry[0]):
+            entry[0] = X[pos-1,0]
+        elif np.isnan(entry[1]):
+            entry[1] = X[pos-1,1]
+
     scaler = sklearn.pipeline.make_pipeline(
         # sklearn.preprocessing.MaxAbsScaler()
         # sklearn.preprocessing.RobustScaler(quantile_range = (25,75))
@@ -101,6 +85,7 @@ def calculate_hull(
         sklearn.preprocessing.StandardScaler(with_std=False),
         )
     points_scaled = scaler.fit_transform(X) * scale
+    # np.linalg.matrix_rank(points_scaled - points_scaled[0]) < 2 → check if in a line
     
     points_scaled = points_scaled[~np.isnan(points_scaled[:, 0])]
     points_scaled = points_scaled[~np.isnan(points_scaled[:, 1])]
@@ -148,7 +133,7 @@ def calculate_hull(
 
 
 def draw_hull(
-        X, 
+        X,
         scale=1.1, 
         n_interpolate=100, 
         interpolation="quadratic_periodic",
@@ -171,19 +156,19 @@ def draw_hull(
             [description], by default None
     """
 
-    if plot_kwargs is None:
+    if plot_kwargs is None: # & ?
         plot_kwargs = {}
 
     line = False
-    for i in [0,1]:
+    for i in [0,1]:     # check if all entries a in one straight line which makes hul creation impossible # & check only horizontal / vertical
         if min(X[:,i]) == max(X[:,i]):
             line = True
             print(f"X: {X}")
         
-    if np.sum(~np.isnan(X).any(axis=1)) <= 3 or line == True: #if you have fewer than three data points, you cannot form a convex hull
+    # if np.sum(~np.isnan(X).any(axis=1)) <= 3 or line == True: #if you have fewer than three data points, you cannot form a convex hull
+    if X.shape[0] <= 2 or line == True:
         draw_ellipses(
-            x = X[:,0],
-            y = X[:,1],
+            X,
             ax = ax,
             scale = scale,
             plot_kwargs = plot_kwargs
