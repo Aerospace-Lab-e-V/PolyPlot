@@ -37,12 +37,12 @@
             },{
                 "name": "Material",
                 "whitelist_flag": false,
-                "whitelist": [null],
+                "whitelist": [],
                 "alpha": 0
             },{
                 "name": "Hersteller",
                 "whitelist_flag": false,
-                "whitelist": [null],
+                "whitelist": [],
                 "alpha": 0
             },{
                 "alpha_points": 0.3,
@@ -59,6 +59,22 @@
         },
     
         "axes":[{
+            "name":"nr",
+            "columns":["nr"],
+            "mode":"default",
+            "labels":{
+                "de":"",
+                "en":""
+            }
+        },{
+            "name":"HDT 0.46",
+            "columns":["Deflection Temperature at 0.46 MPa 66 psi"],
+            "mode":"default",
+            "labels":{
+                "de":"Verformungstemperatur [°C] @ 0.46 MPa",
+                "en":"Deflection Temperature $HDT$ [°C] @ 0.46 MPa"
+            }
+        },{
             "name":"HDT 1.8",
             "columns":["Deflection Temperature at 1.8 MPa 264 psi"],
             "mode":"default",
@@ -68,8 +84,8 @@
             }
         },{
             "name":"melt",
-            "columns":["Melting Point", "Processing Temperature"],
-            "mode":"default",
+            "columns":["Melting Point", "Melt Temperature", "Processing Temperature"],
+            "mode":"def",
             "labels":{
                 "de":"Schmelztemperatur [°C]",
                 "en":"melting point [°C]"
@@ -92,11 +108,27 @@
             }
         },{
             "name":"dens",
-            "columns":["Density"],
+            "columns":["Density","Specific Gravity"],
             "mode":"def",
             "labels":{
                 "de":"Dichte",
                 "en":"Density"
+            }
+        },{
+            "name":"vicat",
+            "columns":["Vicat Softening Point"],
+            "mode":"def",
+            "labels":{
+                "de":"Vicat",
+                "en":"Vicat Softening Point"
+            }
+        },{
+            "name":"Tg",
+            "columns":["Glass Transition Temp Tg"],
+            "mode":"def",
+            "labels":{
+                "de":"Glassübergangstemperatur $T_g$ [°C]",
+                "en":"Glass Transition Temperature $T_g$ [°C]"
             }
         }],
     

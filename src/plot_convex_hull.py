@@ -19,30 +19,57 @@ def draw_ellipses(
         X,      # [:,x/y]
         ax,
         scale = 1.02,
+        value_ranges=False,
         plot_kwargs = None
     ):
 
+    angle = np.rad2deg(np.arctan2(X[1,1]-X[0,1], X[1,0]-X[0,0]))
+
     center_x = (np.max(X[0,0]) + np.min(X[1,0])) / 2
     center_y = (np.max(X[0,1]) + np.min(X[1,1])) / 2
+    center = [center_x, center_y]
 
     r_x = (np.max(X[:,0]) - np.min(X[:,0]))
     r_y = (np.max(X[:,1]) - np.min(X[:,1]))
 
     r_1 = np.sqrt(r_x**2 + r_y**2) * scale
-    r_2 = r_1 / 7
-       
-    angle = np.rad2deg(np.arctan2(X[1,1]-X[0,1], X[1,0]-X[0,0]))
-    print(f"angle: {angle} - center: ({center_x}|{center_y}) - r_x/y: {r_x}, {r_y}  - r_1/2: {r_1}, {r_2}  | {X[0,1],X[1,1], X[0,0],X[1,0]}")
 
-        
-    ellipse = patches.Ellipse(
-            xy = (center_x, center_y),
+    if not value_ranges:
+        r_2 = r_1 / 8
+        ellipse = patches.Ellipse(
+            xy = center,
             width = r_1,
             height = r_2,
             angle = angle,
             **plot_kwargs,
         )
-    ax.add_patch(ellipse)
+        ax.add_patch(ellipse)
+
+    else:
+        ax.add_patch(patches.Rectangle(
+                        xy=center,
+                        width=r_1/2,
+                        height=1,
+                        angle=angle,
+                        rotation_point="xy",
+                        linestyle="",
+                        **plot_kwargs
+                    ))
+        ax.add_patch(patches.Rectangle(
+                        xy=center,
+                        width=-r_1/2,
+                        height=1,
+                        angle=angle,
+                        rotation_point="xy",
+                        linestyle="",
+                        **plot_kwargs
+                    ))
+    
+       
+    # print(f"angle: {angle} - center: ({center_x}|{center_y}) - r_x/y: {r_x}, {r_y}  - r_1/2: {r_1}, {r_2}  | {X[0,1],X[1,1], X[0,0],X[1,0]}")
+
+        
+
 
 
 def calculate_hull(

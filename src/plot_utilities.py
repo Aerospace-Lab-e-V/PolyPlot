@@ -78,6 +78,7 @@ def single_values(
                         draw_ellipses(
                             np.transpose(coords),
                             scale = 1,
+                            value_ranges=True,
                             plot_kwargs = {
                                 'facecolor':colors.to_rgba(
                                     current_color,
