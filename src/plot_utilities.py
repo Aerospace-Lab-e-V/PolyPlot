@@ -71,9 +71,13 @@ def single_values(
                     point_list = np.vstack((point_list, coords[:,1]))   # add high if not empty in both dimensions
 
                 # + plot  + 
-                    if alpha_areas != None and alpha_areas > 0: 
+                    if alpha_areas != None and alpha_areas > 0:
+                        if np.isnan(coords[0,1]): coords[0,1] = coords[0,0]
+                        if np.isnan(coords[1,1]): coords[1,1] = coords[1,0]
+
                         draw_ellipses(
-                            coords,
+                            np.transpose(coords),
+                            scale = 1,
                             plot_kwargs = {
                                 'facecolor':colors.to_rgba(
                                     current_color,
@@ -89,10 +93,11 @@ def single_values(
                         coords[1, :],
                         color = current_color,
                         marker = 'o',
-                        alpha = alpha_points
+                        alpha = alpha_points,
+                        picker = 5
                         )
 
-    point_list = point_list[1: ,:]
+    point_list = point_list[1: ,:] # remove placeholder on beginning
     print("x: ", np.transpose(point_list[:, 0]))
     print("y: ", np.transpose(point_list[:, 1]))
 

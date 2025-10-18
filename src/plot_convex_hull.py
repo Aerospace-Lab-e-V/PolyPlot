@@ -1,4 +1,3 @@
-
 import sklearn.preprocessing
 import sklearn.pipeline
 import scipy.spatial
@@ -17,27 +16,27 @@ import matplotlib.colors as colors
 
 
 def draw_ellipses(
-        X,
+        X,      # [:,x/y]
         ax,
         scale = 1.02,
-        plot_kwargs = None):
+        plot_kwargs = None
+    ):
 
-    center = (X[0,:] + X[1,:]) /2
+    center_x = (np.max(X[0,0]) + np.min(X[1,0])) / 2
+    center_y = (np.max(X[0,1]) + np.min(X[1,1])) / 2
 
-    r_x = (X[1,0] - X[0,0])
-    r_y = (X[1,1] - X[0,1])
+    r_x = (np.max(X[:,0]) - np.min(X[:,0]))
+    r_y = (np.max(X[:,1]) - np.min(X[:,1]))
 
     r_1 = np.sqrt(r_x**2 + r_y**2) * scale
-    r_2 = r_1 / 4
+    r_2 = r_1 / 7
        
-    angle = np.rad2deg(np.arctan2(r_y, r_x))
-    print(f"angle: {angle} - r_x/y: {r_x}, {r_y}  - r_1/2: {r_1}, {r_2}")
- 
-    if r_x == 0 or r_y == 0:
-        plot_kwargs['linewidth'] = 5
+    angle = np.rad2deg(np.arctan2(X[1,1]-X[0,1], X[1,0]-X[0,0]))
+    print(f"angle: {angle} - center: ({center_x}|{center_y}) - r_x/y: {r_x}, {r_y}  - r_1/2: {r_1}, {r_2}  | {X[0,1],X[1,1], X[0,0],X[1,0]}")
 
+        
     ellipse = patches.Ellipse(
-            xy = center,
+            xy = (center_x, center_y),
             width = r_1,
             height = r_2,
             angle = angle,
@@ -69,12 +68,6 @@ def calculate_hull(
 
         Inspired by: https://stackoverflow.com/a/17557853/991496
     """
-    for pos, entry in enumerate(X):
-        if np.isnan(entry[0]):
-            entry[0] = X[pos-1,0]
-        elif np.isnan(entry[1]):
-            entry[1] = X[pos-1,1]
-
     scaler = sklearn.pipeline.make_pipeline(
         # sklearn.preprocessing.MaxAbsScaler()
         # sklearn.preprocessing.RobustScaler(quantile_range = (25,75))
@@ -128,16 +121,15 @@ def calculate_hull(
     X_hull = np.exp(X_hull)
     X_hull = X_hull[~np.isnan(X_hull).any(axis=1)]
         
-
     return X_hull
 
 
 def draw_hull(
-        X,
+        X,      # [:,x/y]
         scale=1.1, 
         n_interpolate=100, 
-        interpolation="quadratic_periodic",
-        plot_kwargs=None, 
+        interpolation="quadratic_periodic",  # & remoove
+        plot_kwargs={}, 
         ax=None):
     """Uses `calculate_hull` to draw a hull around given points.
         Parameters
@@ -156,22 +148,29 @@ def draw_hull(
             [description], by default None
     """
 
-    if plot_kwargs is None: # & ?
-        plot_kwargs = {}
+    for pos, entry in enumerate(X):     # replace nan with value incase of range in onlY one dimension
+        if np.isnan(entry[0]):          
+            entry[0] = X[pos-1,0]
+        elif np.isnan(entry[1]):
+            entry[1] = X[pos-1,1]
+    
+    # print(np.transpose(X))
 
-    line = False
-    for i in [0,1]:     # check if all entries a in one straight line which makes hul creation impossible # & check only horizontal / vertical
-        if min(X[:,i]) == max(X[:,i]):
-            line = True
-            print(f"X: {X}")
-        
-    # if np.sum(~np.isnan(X).any(axis=1)) <= 3 or line == True: #if you have fewer than three data points, you cannot form a convex hull
-    if X.shape[0] <= 2 or line == True:
+    line = True
+    angle = np.atan2(X[0,1]-X[1,1], X[0,0]-X[1,0])
+    print(angle)
+    for pos, entry in enumerate(X):          # checks if all entries are in one line which makes calculating a hull impossible
+        print(entry, pos, X[0,1], X[pos,1],  X[1,0], X[pos,0],   np.atan2(X[0,1]-X[pos,1], X[0,0]-X[pos,0]))
+        if abs(angle - np.atan2(X[0,1]-X[pos,1], X[0,0]-X[pos,0])) > 0.01 and np.all(X[0,:] != X[pos,:]):  # not same angle and not identical
+            line = False
+            break
+
+    if line == True:
         draw_ellipses(
-            X,
-            ax = ax,
-            scale = scale,
-            plot_kwargs = plot_kwargs
+                X,
+                ax = ax,
+                scale = scale,
+                plot_kwargs = plot_kwargs
             )
     else:
         X_hull = calculate_hull(
