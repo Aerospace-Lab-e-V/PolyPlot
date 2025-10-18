@@ -4,27 +4,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 
-from src.import_data import(
+from import_data import(
         import_teable,
         import_excel
     )
-
-from src.plot_utilities import (
-        draw_plot,
-    )
-
-from src.plot_acessories import (
-        draw_guideline,
-        draw_colored_areas,
-        create_marker,
-        create_annotation,
-    )
-from src.formatting import(
-        create_legend,
-        watermark,
-        plot_padding
-    )
-
+from plotting import *
+from eventhandling import *
 
 
 if __name__ == '__main__':
@@ -32,7 +17,7 @@ if __name__ == '__main__':
         config = json.load(file)
 
         for frame in config["frames"]:
-            print(f"\n\n:::::::::::::::::::::::::::: creating frame {config['frames'].index(frame) + 1} / {len(config['frames'])} :::::::::::::::::::::::::::: \n")
+            print(f"\n\n:::::::::::::::::::::::::::: creating frame {config['frames'].index(frame) + 1} of {len(config['frames'])} :::::::::::::::::::::::::::: \n")
 
             # : axes :
             quantities = [None, None]
@@ -67,7 +52,7 @@ if __name__ == '__main__':
                 font_color = 'black'
 
 
-            # Create figure & plotting presets
+            # ~ Create figure & plotting presets
             figure_size = (frame["image_width"],frame["image_height"])
             fig, ax = plt.subplots(1,1, figsize=figure_size)
             if frame["legend_flag"] == True:
@@ -88,17 +73,20 @@ if __name__ == '__main__':
 
 
             # : Data plotting :
-            DATA, legend_items, _, skipped_points = draw_plot(
+            DATA, legend_items, _, point_count = draw_plot(
                     0,      # current_layer_number
                     None,   # current_master_layer_name
+                    0,      # current_color
+                    frame["material_colors"],
                     frame["layers"],
                     data,
                     columns,
                     modes,
                     [],     # legend_items
+                    frame["algorithm"],
+                    [0,0],      # point_count [skipped, plotted]
                     ax,
-                    0,      # current_color
-                    frame["material_colors"]
+
                 )
 
             if not len(DATA):
@@ -107,11 +95,12 @@ if __name__ == '__main__':
 
 
             if frame["legend_flag"]:
-                create_legend(
+                legend, legend_handles = create_legend(
                     legend_items,
                     language = frame["language"],
                     material_colors = frame["material_colors"],
-                    font_color = font_color
+                    font_color = font_color,
+                    fig = fig
                 )
 
             try:
@@ -203,7 +192,7 @@ if __name__ == '__main__':
                 print("❗ERROR: Could not set correct x- and y-labels. continung...")
 
             # ~ general info 
-            print(f"skipped a total of {skipped_points} Datapoints due to missing entries. {DATA.shape[0]} were plotted.")
+            print(f"skipped a total of {point_count[0]} Datapoints due to missing entries and {data.shape[0]-point_count[0]-point_count[1]} due to filters set in the config.\n{point_count[1]} were plotted.")  # & low & high ≙ 2 Values
 
             # : export :
             ax.tick_params(colors=font_color, labelsize=15)
@@ -212,12 +201,15 @@ if __name__ == '__main__':
                 plt.title(title, loc='center', size=40, pad=15)
                 watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
 
+                # + event handling + 
+                pick_event_handing(fig, ax, legend, legend_handles)
+                # +                + 
+
                 plt.show(block=False)
-                print(f"⇒ plot displayed")
+                print(f"⇒ plot displayed \n")
             else:
                 plt.savefig(os.path.join('export', frame["export_file_name"]), dpi=frame["image_dpi"], transparent=True)
-                print(f"⇒ plot saved as ./export/{frame['export_file_name']}")
+                print(f"⇒ plot saved as ./export/{frame['export_file_name']} \n")
                 plt.close()
-            plt.pause(.5)
-
+            plt.pause(.4)
         plt.show()

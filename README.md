@@ -30,3 +30,7 @@ Um den Code ganz auf unsere Bedürfnisse anpassen zu können, haben wir ihn auf 
 3. Excel-Tabelle in .\material_properties\ ablegen
 4. Einstellungen in **config.json** anpassen ([siehe Wiki](https://wiki.aerospace-lab.de/spaces/RPS/pages/235667472/ASHBY-Plots))
 5. plot_ashby.py ausführen
+
+
+## Hinweise
+- bei logarhitmischer Darstellung sihet der "alphashype" Algorytmus besser aus, sonst tendenziell eher der "cubic"

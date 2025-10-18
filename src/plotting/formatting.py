@@ -5,11 +5,13 @@ from PIL import Image
 import numpy as np
 
 
+
 def create_legend(
         legend_items,
         language,
         material_colors,
-        font_color
+        font_color,
+        fig
         ):
     '''
         Creates a legend located outside the plot bounding box. Currently
@@ -66,6 +68,7 @@ def create_legend(
         )
     plt.setp(legend.get_title(), color=font_color)  # legend title color
 
+
     # plt.legend(        # ° legend above
     #     handles=handles,
     #     bbox_to_anchor = (0, 1.02, 1, 0.2),
@@ -77,6 +80,7 @@ def create_legend(
     #     facecolor = 'none',
     #     edgecolor = 'none',
     #     ncol = 5)
+    return legend, handles
 
 
 def watermark(fig, alpha, pos, size):

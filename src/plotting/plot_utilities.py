@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 from types import SimpleNamespace
 
-from src.plot_convex_hull import(
-    draw_ellipses,
-    draw_hull,
+from plotting.plot_convex_hull import(
+        draw_ellipses,
+        draw_hull,
     )         
 
 def property_availability(
@@ -43,12 +43,12 @@ def single_values(
         alpha_points,
         alpha_areas,
         current_color,
+        point_count,
         data,
         ax
     ):
     length_col = max(len(columns[:][0]), len(columns[:][1]))
     point_list = np.full((1, 2), np.nan)     # [x, y][low, high][datapoints]
-    skipped_points = 0
 
     for data_point in range(len(data)):
         coords = np.full((2, 2), np.nan)
@@ -60,9 +60,11 @@ def single_values(
 
         else:
             if np.any(index[:] == -1): 
-                skipped_points += 1
+                point_count[0] += 1
                 print("⚠ skip")
             else:
+                point_count[1] += 1
+
                 coords[0, :] = point[0, :, index[0]] # x
                 coords[1, :] = point[1, :, index[1]] # y
 
@@ -80,11 +82,10 @@ def single_values(
                             scale = 1,
                             value_ranges=True,
                             plot_kwargs = {
-                                'facecolor':colors.to_rgba(
-                                    current_color,
-                                    alpha=alpha_areas
-                                    ),
-                                'edgecolor':current_color,
+                                # 'facecolor':colors.to_rgba(current_color,alpha=alpha_areas),
+                                'color':current_color,
+                                'alpha':alpha_areas,
+                                'picker':8
                                 },
                             ax = ax,
                             )
@@ -95,27 +96,29 @@ def single_values(
                         color = current_color,
                         marker = 'o',
                         alpha = alpha_points,
-                        picker = 5
+                        picker = 8
                         )
 
     point_list = point_list[1: ,:] # remove placeholder on beginning
     print("x: ", np.transpose(point_list[:, 0]))
     print("y: ", np.transpose(point_list[:, 1]))
-
-    return point_list, skipped_points
+    return point_list, point_count
 
 
 def draw_plot(
         current_layer_number,
         current_master_layer_name,
+        current_color,
+        material_colors,
         layers,
         data,
         columns,
         modes,
         legend,
+        algorithm,
+        point_count,
         ax,
-        current_color,
-        material_colors,
+
     ):
     '''
         Plots both the data points (either ellipses if material upper and lower
@@ -161,7 +164,6 @@ def draw_plot(
             layer_alpha          = layers[current_layer_number]['alpha']
             combined_DATA        = np.full((1, 2), np.nan)      # & leer erstelen?
             plotted = False
-            total_skipped_points = 0
         except:
             raise KeyError(f"could not import layer {current_layer_number +1}. Check config.json!")
 
@@ -181,17 +183,19 @@ def draw_plot(
                         raise ValueError('You have material categories that have not been assigned a color and no default value. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)                    
                            
 
-                DATA, legend, plotted, skipped_points = draw_plot(      
+                DATA, legend, plotted, point_count = draw_plot(      
                         current_layer_number + 1,
                         category,
+                        current_color,
+                        material_colors,
                         layers,
                         material_data,
                         columns,
                         modes,
                         legend,
+                        algorithm,
+                        point_count,
                         ax,
-                        current_color,
-                        material_colors,
                     )
                 # print(DATA)
                 # print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
@@ -202,7 +206,7 @@ def draw_plot(
                         DATA,
                         scale = 1.04,
                         n_interpolate = 100,
-                        interpolation = 'cubic',    # alpha or cubic
+                        interpolation = algorithm,    # alpha or cubic
                         ax = ax,
                         plot_kwargs = {
                             'color': current_color,
@@ -211,26 +215,26 @@ def draw_plot(
                         )
                     plotted = True
                 combined_DATA = np.vstack((combined_DATA, DATA))
-                # print(f"skipped {skipped_points} Datapoints due to missing entries")
-                total_skipped_points += skipped_points
-                # print("-- Layer ", current_layer_number, " DATA: ", DATA, " combined_DATA: ", combined_DATA) # . combined_DATA[~np.isnan(combined_DATA)]
 
+                # print("-- Layer ", current_layer_number, " DATA: ", DATA, " combined_DATA: ", combined_DATA) # . combined_DATA[~np.isnan(combined_DATA)]
+                print(point_count)
 
         if len(data.groupby(layer_name).groups.keys()) > 1:
             plotted = False
                 
-        return combined_DATA[1:,:], legend, plotted, total_skipped_points
+        return combined_DATA[1:,:], legend, plotted, point_count
 
             
     # +       recursive exit       +
     else:
-        DATA, skipped_points = single_values(   # plot individual points
+        DATA, point_count = single_values(   # plot individual points
                 columns,
                 modes,
                 layers[current_layer_number]['alpha_points'],
                 layers[current_layer_number]['alpha_areas'],
                 current_color,
+                point_count,
                 data,
                 ax
             )
-        return DATA, legend, False, skipped_points
+        return DATA, legend, False, point_count

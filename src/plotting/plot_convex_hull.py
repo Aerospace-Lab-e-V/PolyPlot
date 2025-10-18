@@ -46,24 +46,7 @@ def draw_ellipses(
         ax.add_patch(ellipse)
 
     else:
-        ax.add_patch(patches.Rectangle(
-                        xy=center,
-                        width=r_1/2,
-                        height=1,
-                        angle=angle,
-                        rotation_point="xy",
-                        linestyle="",
-                        **plot_kwargs
-                    ))
-        ax.add_patch(patches.Rectangle(
-                        xy=center,
-                        width=-r_1/2,
-                        height=1,
-                        angle=angle,
-                        rotation_point="xy",
-                        linestyle="",
-                        **plot_kwargs
-                    ))
+        ax.plot(X[:,0], X[:,1], linewidth=5, **plot_kwargs)
     
        
     # print(f"angle: {angle} - center: ({center_x}|{center_y}) - r_x/y: {r_x}, {r_y}  - r_1/2: {r_1}, {r_2}  | {X[0,1],X[1,1], X[0,0],X[1,0]}")
@@ -185,15 +168,13 @@ def draw_hull(
 
     line = True
     angle = np.atan2(X[0,1]-X[1,1], X[0,0]-X[1,0])
-    print(angle)
     for pos, entry in enumerate(X):          # checks if all entries are in one line which makes calculating a hull impossible
-        print(entry, pos, X[0,1], X[pos,1],  X[1,0], X[pos,0],   np.atan2(X[0,1]-X[pos,1], X[0,0]-X[pos,0]))
         if abs(angle - np.atan2(X[0,1]-X[pos,1], X[0,0]-X[pos,0])) > 0.01 and np.all(X[0,:] != X[pos,:]):  # not same angle and not identical
             line = False
             break
 
     if line == True:
-        draw_ellipses(
+        patch = draw_ellipses(
                 X,
                 ax = ax,
                 scale = scale,
@@ -212,7 +193,7 @@ def draw_hull(
         if ax is None:
             ax= plt.gca()
             
-        plt.fill(
+        patch = plt.fill(
             X_hull[:,0],
             X_hull[:,1],
             **plot_kwargs,
@@ -228,3 +209,5 @@ def draw_hull(
             X_hull[:,1],
             **plot_kwargs
             )
+
+    return patch

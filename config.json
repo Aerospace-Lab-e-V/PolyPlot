@@ -21,18 +21,20 @@
         "y_lim":[20, 150],
     
         "log_x_flag":false,
-        "log_y_flag":false,
+        "log_y_flag":true,
     
         "x_quantity":"HDT 1.8",
-        "y_quantity":"melt",
+        "y_quantity":"Elong_br",
         "language":"de",
         "legend_flag":true,
         "title":"Plot",
+
+        "algorithm":"alpha",
         
         "layers":[{
                 "name": "Gruppe",
                 "whitelist_flag": false,
-                "whitelist": [],
+                "whitelist": ["POM","PP"],
                 "alpha": 0.4
             },{
                 "name": "Material",
@@ -46,7 +48,7 @@
                 "alpha": 0
             },{
                 "alpha_points": 0.3,
-                "alpha_areas":  0.6
+                "alpha_areas":  0.5
             }],
     
         "filter":{
@@ -105,6 +107,14 @@
             "labels":{
                 "de":"E-Modul [GPa]",
                 "en":"E-Modulus [GPa]"
+            }
+        },{
+            "name":"Elong_br",
+            "columns":["Elongation at Break"],
+            "mode":"def",
+            "labels":{
+                "de":"Bruchdehnung [%]",
+                "en":"Elongation at Break [%]"
             }
         },{
             "name":"dens",
