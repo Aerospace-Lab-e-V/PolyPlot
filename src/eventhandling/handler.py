@@ -14,14 +14,13 @@ class pick_event_handing:
         self.annotations = []
         self.btn = Button(plt.axes([.9,0.02,0.05,0.05]), "clear")
         self.btn.on_clicked(self.clr_button)
+        print("event handler setup successful")
 
         fig.canvas.mpl_connect('pick_event', self.handler) 
 
     def handler(self, event):
         entity = event.artist
-        ind = event.ind
-
-        print(entity, ind)
+        ind = getattr(event, "ind", None)
 
         if entity  in self.entries:
             self.toggle_visibility(event)
@@ -43,11 +42,12 @@ class pick_event_handing:
         self.fig.canvas.draw_idle()
 
 
-    # ~ visivolity toggling from legend 
+    # ~ visibility toggling from legend 
     def toggle_visibility(self, event):
         entry = event.artist
         
         item = self.map[entry]
+        print(item)
 
         visible = item.get_visible()
         item.set_visible(not visible)
@@ -57,4 +57,4 @@ class pick_event_handing:
 
 
 
-# & for ui: clear class if tab closed
+# & for ui: clear class instance if tab closed

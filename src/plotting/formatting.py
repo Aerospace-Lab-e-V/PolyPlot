@@ -68,7 +68,6 @@ def create_legend(
         )
     plt.setp(legend.get_title(), color=font_color)  # legend title color
 
-
     # plt.legend(        # ° legend above
     #     handles=handles,
     #     bbox_to_anchor = (0, 1.02, 1, 0.2),

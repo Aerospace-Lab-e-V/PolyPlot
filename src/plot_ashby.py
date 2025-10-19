@@ -6,7 +6,8 @@ import json
 
 from import_data import(
         import_teable,
-        import_excel
+        import_excel,
+        fill_config_with_default,
     )
 from plotting import *
 from eventhandling import *
@@ -18,6 +19,8 @@ if __name__ == '__main__':
 
         for frame in config["frames"]:
             print(f"\n\n:::::::::::::::::::::::::::: creating frame {config['frames'].index(frame) + 1} of {len(config['frames'])} :::::::::::::::::::::::::::: \n")
+
+            fill_config_with_default(frame)
 
             # : axes :
             quantities = [None, None]
@@ -44,26 +47,26 @@ if __name__ == '__main__':
 
 
             # : General setup :
-
             if frame["export_file_name"] != None:
                 font_color = 'white'
             else:
                 title = frame["title"]
                 font_color = 'black'
 
-
-            # ~ Create figure & plotting presets
             figure_size = (frame["image_width"],frame["image_height"])
             fig, ax = plt.subplots(1,1, figsize=figure_size)
             if frame["legend_flag"] == True:
                 plt.subplots_adjust(left=0.09, right=0.86)
+            
+            ax.tick_params(colors=font_color, labelsize=15)
+            ax.spines[:].set_color(font_color)
 
             plt.rc('font', family='sans-serif')
             plt.rcParams.update({'font.sans-serif':'Arial'})
             plt.rcParams.update({'font.size': 18})
             plt.rc('text',usetex='False')
 
-
+            # ~ import data 
             if frame["teable_url"] != None:
                 data = import_teable(frame["teable_url"], frame["API_Key"], columns, frame["layers"], frame["filter"])
             else:
@@ -195,14 +198,12 @@ if __name__ == '__main__':
             print(f"skipped a total of {point_count[0]} Datapoints due to missing entries and {data.shape[0]-point_count[0]-point_count[1]} due to filters set in the config.\n{point_count[1]} were plotted.")  # & low & high ≙ 2 Values
 
             # : export :
-            ax.tick_params(colors=font_color, labelsize=15)
-            ax.spines[:].set_color(font_color)
             if frame["export_file_name"] == None:
                 plt.title(title, loc='center', size=40, pad=15)
                 watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
 
                 # + event handling + 
-                pick_event_handing(fig, ax, legend, legend_handles)
+                handler = pick_event_handing(fig, ax, legend, legend_handles)
                 # +                + 
 
                 plt.show(block=False)

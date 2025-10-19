@@ -72,3 +72,7 @@ def import_excel(import_file_name, import_sheet):      # & filter
         sheet_name = import_sheet
     )
     return data
+
+
+def fill_config_with_default(frame):
+    pass
