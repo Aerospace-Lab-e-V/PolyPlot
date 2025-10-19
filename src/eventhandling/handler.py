@@ -2,25 +2,27 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 
 class pick_event_handing:
-    def __init__(self, fig, ax, legend, handles):
+    def __init__(self, fig, ax, plot, legend, handles):
+        self.graphics = plot
         self.fig = fig
         self.ax  = ax
         # legend
-        self.entries = legend.legend_handles + legend.get_lines()
-        self.map = dict(zip(self.entries, handles))
+        self.entries = legend.legend_handles # + legend.get_lines()
+        self.legend_map = dict(zip(self.entries, handles))
         for entry in self.entries:
             entry.set_picker(True)
         # points
         self.annotations = []
         self.btn = Button(plt.axes([.9,0.02,0.05,0.05]), "clear")
         self.btn.on_clicked(self.clr_button)
-        print("event handler setup successful")
+        print("Event handler setup successful")
 
-        fig.canvas.mpl_connect('pick_event', self.handler) 
+        self.fig.canvas.mpl_connect('pick_event', self.handler) 
 
     def handler(self, event):
         entity = event.artist
         ind = getattr(event, "ind", None)
+
 
         if entity  in self.entries:
             self.toggle_visibility(event)

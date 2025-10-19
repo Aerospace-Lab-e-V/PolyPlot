@@ -76,20 +76,20 @@ if __name__ == '__main__':
 
 
             # : Data plotting :
-            DATA, legend_items, _, point_count = draw_plot(
-                    0,      # current_layer_number
-                    None,   # current_master_layer_name
-                    0,      # current_color
-                    frame["material_colors"],
-                    frame["layers"],
+            graphics = plotter_graphics(ax)
+
+            DATA, legend_items, _ = draw_plot(
+                    graphics,
                     data,
                     columns,
                     modes,
-                    [],     # legend_items
+                    frame["material_colors"],
+                    frame["layers"],
                     frame["algorithm"],
-                    [0,0],      # point_count [skipped, plotted]
-                    ax,
-
+                    0,          # current_layer_number
+                    None,       # current_master_layer_name
+                    frame['material_colors']['default'],
+                    [],         # legend_items
                 )
 
             if not len(DATA):
@@ -195,7 +195,8 @@ if __name__ == '__main__':
                 print("❗ERROR: Could not set correct x- and y-labels. continung...")
 
             # ~ general info 
-            print(f"skipped a total of {point_count[0]} Datapoints due to missing entries and {data.shape[0]-point_count[0]-point_count[1]} due to filters set in the config.\n{point_count[1]} were plotted.")  # & low & high ≙ 2 Values
+            skipped_points, plotted_points = graphics.get_point_count()
+            print(f"skipped a total of {skipped_points} Datapoints due to missing entries.  {plotted_points} were plotted.")  # & low & high ≙ 2 Values
 
             # : export :
             if frame["export_file_name"] == None:
@@ -203,7 +204,7 @@ if __name__ == '__main__':
                 watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
 
                 # + event handling + 
-                handler = pick_event_handing(fig, ax, legend, legend_handles)
+                handler = pick_event_handing(fig, ax, graphics, legend, legend_handles)
                 # +                + 
 
                 plt.show(block=False)

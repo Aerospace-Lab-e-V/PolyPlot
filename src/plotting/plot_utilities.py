@@ -5,16 +5,12 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 from types import SimpleNamespace
 
-from plotting.plot_convex_hull import(
-        draw_ellipses,
-        draw_hull,
-    )         
 
 def property_availability(
+        data,
         data_point,
         columns, 
         modes, 
-        data,
         length_col
     ):
     point  = np.full((2, 2, length_col), np.nan)
@@ -38,21 +34,20 @@ def property_availability(
 
 
 def single_values(
+        graphics,
+        data,
         columns,
         modes,
         alpha_points,
         alpha_areas,
         current_color,
-        point_count,
-        data,
-        ax
     ):
     length_col = max(len(columns[:][0]), len(columns[:][1]))
     point_list = np.full((1, 2), np.nan)     # [x, y][low, high][datapoints]
 
     for data_point in range(len(data)):
         coords = np.full((2, 2), np.nan)
-        index, point = property_availability(data_point, columns, modes, data, length_col)
+        index, point = property_availability(data, data_point, columns, modes, length_col)
 
         if False: # & specific data  (/density)
             index_rel, point_rel = property_availability(data_point, columns, modes, data)
@@ -60,10 +55,10 @@ def single_values(
 
         else:
             if np.any(index[:] == -1): 
-                point_count[0] += 1
+                graphics.add_point_skipped()
                 print("⚠ skip")
             else:
-                point_count[1] += 1
+                graphics.add_point_plotted()
 
                 coords[0, :] = point[0, :, index[0]] # x
                 coords[1, :] = point[1, :, index[1]] # y
@@ -77,47 +72,45 @@ def single_values(
                         if np.isnan(coords[0,1]): coords[0,1] = coords[0,0]
                         if np.isnan(coords[1,1]): coords[1,1] = coords[1,0]
 
-                        draw_ellipses(
-                            np.transpose(coords),
-                            scale = 1,
-                            value_ranges=True,
-                            plot_kwargs = {
-                                # 'facecolor':colors.to_rgba(current_color,alpha=alpha_areas),
-                                'color':current_color,
-                                'alpha':alpha_areas,
-                                'picker':8
-                                },
-                            ax = ax,
+                        graphics.draw_ellipses(
+                                np.transpose(coords),
+                                scale = 1,
+                                value_ranges=True,
+                                plot_kwargs = {
+                                    # 'facecolor':colors.to_rgba(current_color,alpha=alpha_areas),
+                                    'color':current_color,
+                                    'alpha':alpha_areas,
+                                    'picker':8
+                                    },
                             )
                 elif alpha_points != None and alpha_points > 0:
-                    ax.plot(
-                        coords[0, :],
-                        coords[1, :],
-                        color = current_color,
-                        marker = 'o',
-                        alpha = alpha_points,
-                        picker = 8
+                    graphics.plot(
+                            coords[0, :],
+                            coords[1, :],
+                            color = current_color,
+                            marker = 'o',
+                            alpha = alpha_points,
+                            picker = 8
                         )
 
     point_list = point_list[1: ,:] # remove placeholder on beginning
     print("x: ", np.transpose(point_list[:, 0]))
     print("y: ", np.transpose(point_list[:, 1]))
-    return point_list, point_count
+    return point_list
 
 
 def draw_plot(
-        current_layer_number,
-        current_master_layer_name,
-        current_color,
-        material_colors,
-        layers,
-        data,
-        columns,
-        modes,
-        legend,
-        algorithm,
-        point_count,
-        ax,
+    graphics,
+    data,
+    columns,
+    modes,
+    material_colors,
+    layers,
+    algorithm,
+    current_layer_number,
+    category,
+    current_color,
+    legend,
 
     ):
     '''
@@ -159,8 +152,8 @@ def draw_plot(
     if current_layer_number < len(layers) - 1:
         try:
             layer_name           = layers[current_layer_number]['name']
-            layer_whitelist      = layers[current_layer_number]['whitelist']
             layer_whitelist_flag = layers[current_layer_number]['whitelist_flag']
+            layer_whitelist      = layers[current_layer_number]['whitelist']
             layer_alpha          = layers[current_layer_number]['alpha']
             combined_DATA        = np.full((1, 2), np.nan)      # & leer erstelen?
             plotted = False
@@ -172,69 +165,75 @@ def draw_plot(
 
             if pd.isna(category): category == None            
 
-            if (category in layer_whitelist and layer_whitelist_flag == True) or (category not in layer_whitelist and layer_whitelist_flag == False):
+            if (category     in layer_whitelist and layer_whitelist_flag == True) or \
+               (category not in layer_whitelist and layer_whitelist_flag == False):
                 if category in material_colors and category not in legend and layer_alpha:   # ° color & legend entry handling
                     current_color = material_colors[category]
                     legend.append(category)
-                elif current_color == 0:
-                    if 'default' in material_colors:
-                        current_color = material_colors['default']
-                    else:
-                        raise ValueError('You have material categories that have not been assigned a color and no default value. Please add a color to the material_colors dictionary (common_definitions function) and name it "default" or ' + category)                    
-                           
+   
 
-                DATA, legend, plotted, point_count = draw_plot(      
-                        current_layer_number + 1,
-                        category,
-                        current_color,
-                        material_colors,
-                        layers,
+                DATA, legend, plotted = draw_plot(
+                        graphics,
                         material_data,
                         columns,
                         modes,
-                        legend,
+                        material_colors,
+                        layers,
                         algorithm,
-                        point_count,
-                        ax,
+                        current_layer_number + 1,
+                        category,
+                        current_color,
+                        legend,
                     )
+
                 # print(DATA)
                 # print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
                 if DATA.shape[0] > 1 and layer_alpha > 0 and layer_alpha != None          \
                 and not len(data.groupby(layer_name).groups.keys()) == 1       \
                 and plotted == False: # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
-                    draw_hull(
+                    graphics.draw_hull(
                         DATA,
                         scale = 1.04,
                         n_interpolate = 100,
                         interpolation = algorithm,    # alpha or cubic
-                        ax = ax,
                         plot_kwargs = {
                             'color': current_color,
-                            'alpha': layer_alpha
+                            'alpha': layer_alpha,
+                            'label': category
                             }
                         )
                     plotted = True
                 combined_DATA = np.vstack((combined_DATA, DATA))
 
                 # print("-- Layer ", current_layer_number, " DATA: ", DATA, " combined_DATA: ", combined_DATA) # . combined_DATA[~np.isnan(combined_DATA)]
-                print(point_count)
+
 
         if len(data.groupby(layer_name).groups.keys()) > 1:
             plotted = False
                 
-        return combined_DATA[1:,:], legend, plotted, point_count
+        return combined_DATA[1:,:], legend, plotted
 
             
     # +       recursive exit       +
     else:
-        DATA, point_count = single_values(   # plot individual points
+        DATA = single_values(   # plot individual points
+                graphics,
+                data,
                 columns,
                 modes,
                 layers[current_layer_number]['alpha_points'],
                 layers[current_layer_number]['alpha_areas'],
                 current_color,
-                point_count,
-                data,
-                ax
             )
-        return DATA, legend, False, point_count
+        return DATA, legend, False
+
+
+
+
+""" 
+class:
+    skipped & plotted count ++
+    additional data per point
+
+
+"""
