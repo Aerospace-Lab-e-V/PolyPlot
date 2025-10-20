@@ -5,81 +5,62 @@ from PIL import Image
 import numpy as np
 
 
+class legend():
+    def __init__(self):       
+        self.handles = []
+        self.map = {}
 
-def create_legend(
-        legend_items,
-        language,
-        material_colors,
-        font_color,
-        fig
-        ):
-    '''
-        Creates a legend located outside the plot bounding box. Currently
-        set to the top of the plot.
-
-        Important references:
-            Extracting an iterable from a pandas groupby:
-                https://stackoverflow.com/questions/28844535/python-pandas-groupby-get-list-of-groups
-            Manual legend creation:
-                https://stackoverflow.com/questions/39500265/how-to-manually-create-a-legend
-            Plotting legends outside the bounding box:
-                https://stackoverflow.com/questions/4700614/how-to-put-the-legend-outside-the-plot
-
-        Parameters
-        ----------
-        material_classes : Iterable list or dict_keys object
-            The list of different material classes you wish to display in the
-            legend. Commonly found via data.groupby("Category").groups.keys()
-        material_colors : DICT
-            Dictionary that references the material class to the color you
-            wish to display it as.
-        Returns
-        -------
-        None.
-    '''
-    handles = []
-
-    for item in legend_items:
+    def append_category(self, item, color):
         patch = patches.Patch(
-            color = material_colors[item],
-            label = item
+                color  = color,
+                label  = item,
+                picker = True,
             )
-        handles.append(patch)
+        self.handles.append(patch)
+        self.map[item] = [patch]
 
-    if language == "de":
-        title = "Materialien:"
-    else:
-        title = "materials:"
-    
-    legend = plt.legend(
-            handles=handles,
-            bbox_to_anchor = (1, 0, 1, 1),
-            title= title,
-            loc  = 'center left',
-            labelspacing = 1.05,
-            mode = 'expand',
-            fontsize = 15,
-            alignment = 'left',
-            labelcolor = font_color,
-            facecolor = 'none',
-            edgecolor = 'none',
-            ncol = 1,
-            # draggable = True
-        )
-    plt.setp(legend.get_title(), color=font_color)  # legend title color
+    def append_content(self, category, item):
+        # for patch in self.map:
+        #     if patch.get_label() == category:
+        #         self.map[patch].extend(item)
+        #         return
+        self.map[category].extend(item)
 
-    # plt.legend(        # ° legend above
-    #     handles=handles,
-    #     bbox_to_anchor = (0, 1.02, 1, 0.2),
-    #     loc  = 'lower left',
-    #     mode = 'expand',
-    #     borderaxespad = 0,
-    #     fontsize = 15,
-    #     labelcolor = font_color,
-    #     facecolor = 'none',
-    #     edgecolor = 'none',
-    #     ncol = 5)
-    return legend, handles
+    def create_legend(self, language, font_color):
+        if language == "de":
+            title = "Materialien:"
+        else:
+            title = "materials:"
+        
+        self.legend = plt.legend(
+                handles=self.handles,
+                bbox_to_anchor = (1, 0, 1, 1),
+                title= title,
+                loc  = 'center left',
+                labelspacing = 1.05,
+                mode = 'expand',
+                fontsize = 15,
+                alignment = 'left',
+                labelcolor = font_color,
+                facecolor = 'none',
+                edgecolor = 'none',
+                ncol = 1,
+                # draggable = True
+            )
+        plt.setp(self.legend.get_title(), color=font_color)  # legend title color
+
+        # ° legend above
+            # plt.legend(        
+            #     handles=handles,
+            #     bbox_to_anchor = (0, 1.02, 1, 0.2),
+            #     loc  = 'lower left',
+            #     mode = 'expand',
+            #     borderaxespad = 0,
+            #     fontsize = 15,
+            #     labelcolor = font_color,
+            #     facecolor = 'none',
+            #     edgecolor = 'none',
+            #     ncol = 5)
 
 
 def watermark(fig, alpha, pos, size):

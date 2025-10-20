@@ -78,7 +78,7 @@ if __name__ == '__main__':
             # : Data plotting :
             graphics = plotter_graphics(ax)
 
-            DATA, legend_items, _ = draw_plot(
+            DATA, _ = draw_plot(
                     graphics,
                     data,
                     columns,
@@ -87,7 +87,7 @@ if __name__ == '__main__':
                     frame["layers"],
                     frame["algorithm"],
                     0,          # current_layer_number
-                    None,       # current_master_layer_name
+                    None,         # current_layer_name
                     frame['material_colors']['default'],
                     [],         # legend_items
                 )
@@ -96,14 +96,10 @@ if __name__ == '__main__':
                 raise ValueError("No Data plotted. Please check the config.json. and your data source (Excel/Teable)")
             print(DATA)
 
-
             if frame["legend_flag"]:
-                legend, legend_handles = create_legend(
-                    legend_items,
+                graphics.legend.create_legend(
                     language = frame["language"],
-                    material_colors = frame["material_colors"],
                     font_color = font_color,
-                    fig = fig
                 )
 
             try:
@@ -204,7 +200,7 @@ if __name__ == '__main__':
                 watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
 
                 # + event handling + 
-                handler = pick_event_handing(fig, ax, graphics, legend, legend_handles)
+                handler = pick_event_handing(fig, ax, graphics)
                 # +                + 
 
                 plt.show(block=False)

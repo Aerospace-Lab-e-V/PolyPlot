@@ -12,7 +12,7 @@ from .plot_acessories import (
     )
 
 from .formatting import(
-        create_legend,
+        legend,
         watermark,
         plot_padding,
     )

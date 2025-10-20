@@ -12,9 +12,11 @@ import matplotlib.pyplot as plt
 from matplotlib import patches
 import matplotlib.colors as colors
 
+from .formatting import legend
 
 class plotter_graphics():
     def __init__(self, ax):
+        self.legend = legend()
         self.point_count    = [0,0]        # [skipped, plotted]
         self.hulls          = []
         self.splines        = []
@@ -38,49 +40,32 @@ class plotter_graphics():
     def get_point_count(self):
         return self.point_count
     
-
-
-
-    
+   
 
     # : plot content :
-    def plot(self, x, y, color, marker, alpha, picker=8):
+    def plot(self, x, y, color, alpha, category):
         points = self.ax.plot(
                         x,
                         y,
                         color  = color,
                         marker = 'o',
                         alpha  = alpha,
-                        picker = picker,
+                        picker = 8,
                         zorder = 5,
                     )
-        self.points.append(points)
+        # self.points.append(points)
+        self.legend.append_content(category, points)
 
 
     def draw_hull(
             self,
             X,      # [:,x/y]
-            scale=1.1, 
-            n_interpolate=100, 
-            interpolation="quadratic_periodic",  # & remoove
+            category,
+            interpolation,
+            scale,
             plot_kwargs={}, 
         ):
-        """Uses `calculate_hull` to draw a hull around given points.
-            Parameters
-            ----------
-            X : np.ndarray
-                2d-array with 2 columns and `n` rows
-            scale : float, optional
-                padding strength, by default 1.1
-            n_interpolate : int, optional
-                number of interpolation points, by default 100
-            interpolation : str or callable(ix,iy,x), optional
-                interpolation mode, by default "quadratic_periodic"
-            plot_kwargs : dict, optional
-                `matplotlib.pyplot.plot` kwargs, by default None
-            ax : `matplotlib.axes.Axes`, optional
-                [description], by default None
-        """
+        n_interpolate = 120
 
         for pos, entry in enumerate(X):     # replace nan with value incase of range in onlY one dimension
             if np.isnan(entry[0]):          
@@ -100,39 +85,39 @@ class plotter_graphics():
         if line == True:
             self.draw_ellipses(
                     X,
-                    scale = scale,
+                    category,
+                    scale,
                     plot_kwargs = plot_kwargs
                 )
         else:
             X_hull = self.calculate_hull(
                     X,
-                    scale=scale,
+                    scale,
                     n_interpolate=n_interpolate,
-                    interpolation=interpolation
+                    interpolation=interpolation,
                 )
             # ell_tform = ax.transScale + ax.transLimits + ax.transAxes
             # new_hull = ell_tform.transform(X_hull)
             
-                
             patch = plt.fill(
-                X_hull[:,0],
-                X_hull[:,1],
-                **plot_kwargs,
+                    X_hull[:,0],
+                    X_hull[:,1],
+                    scale,
+                    **plot_kwargs,
                 )
                         
-            try: 
-                del plot_kwargs['hatch']
-            except:
-                pass
-            
             spline = plt.plot(
-                X_hull[:,0],
-                X_hull[:,1],
-                **plot_kwargs
+                    X_hull[:,0],
+                    X_hull[:,1],
+                    scale,
+                    **plot_kwargs
                 )
             
-            self.hulls.append(patch)
-            self.splines.append(spline)
+            self.legend.append_content(category, patch)
+            self.legend.append_content(category, spline)
+
+            # self.hulls.append(patch)
+            # self.splines.append(spline)
 
 
 
@@ -140,9 +125,10 @@ class plotter_graphics():
     def draw_ellipses(
             self,
             X,      # [:,x/y]
-            scale = 1.02,
-            value_ranges=False,
-            plot_kwargs = None
+            category,
+            scale,
+            plot_kwargs = None,
+            value_ranges = False
         ):
 
         angle = np.rad2deg(np.arctan2(X[1,1]-X[0,1], X[1,0]-X[0,0]))
@@ -180,7 +166,7 @@ class plotter_graphics():
             X, 
             scale=1.1, 
             n_interpolate=100, 
-            interpolation="quadratic"):
+            interpolation='cubic'):
         """
             Calculates a "smooth" hull around given points in `X`.
             The different settings have different drawbacks but the given defaults work reasonably well.

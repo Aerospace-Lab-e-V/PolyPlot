@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 from types import SimpleNamespace
 
+from .plot_hull import plotter_graphics
+from .formatting import legend
+
 
 def property_availability(
         data,
@@ -41,6 +44,7 @@ def single_values(
         alpha_points,
         alpha_areas,
         current_color,
+        category,
     ):
     length_col = max(len(columns[:][0]), len(columns[:][1]))
     point_list = np.full((1, 2), np.nan)     # [x, y][low, high][datapoints]
@@ -59,6 +63,7 @@ def single_values(
                 print("⚠ skip")
             else:
                 graphics.add_point_plotted()
+                # label = graphics.create_label(category[...]) 
 
                 coords[0, :] = point[0, :, index[0]] # x
                 coords[1, :] = point[1, :, index[1]] # y
@@ -74,23 +79,23 @@ def single_values(
 
                         graphics.draw_ellipses(
                                 np.transpose(coords),
-                                scale = 1,
-                                value_ranges=True,
+                                category,
+                                scale = 1.05,
                                 plot_kwargs = {
                                     # 'facecolor':colors.to_rgba(current_color,alpha=alpha_areas),
                                     'color':current_color,
                                     'alpha':alpha_areas,
-                                    'picker':8
+                                    'picker':8,
                                     },
+                                value_ranges = True
                             )
                 elif alpha_points != None and alpha_points > 0:
                     graphics.plot(
                             coords[0, :],
                             coords[1, :],
                             color = current_color,
-                            marker = 'o',
                             alpha = alpha_points,
-                            picker = 8
+                            category = category,
                         )
 
     point_list = point_list[1: ,:] # remove placeholder on beginning
@@ -161,18 +166,21 @@ def draw_plot(
             raise KeyError(f"could not import layer {current_layer_number +1}. Check config.json!")
 
         for category, material_data in data.groupby(layer_name):
+            if pd.isna(category): category == None            
             print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======") 
 
-            if pd.isna(category): category == None            
 
             if (category     in layer_whitelist and layer_whitelist_flag == True) or \
                (category not in layer_whitelist and layer_whitelist_flag == False):
                 if category in material_colors and category not in legend and layer_alpha:   # ° color & legend entry handling
                     current_color = material_colors[category]
+                    graphics.legend.append_category(category, current_color)
                     legend.append(category)
-   
 
-                DATA, legend, plotted = draw_plot(
+    
+
+
+                DATA, plotted = draw_plot(
                         graphics,
                         material_data,
                         columns,
@@ -192,17 +200,18 @@ def draw_plot(
                 and not len(data.groupby(layer_name).groups.keys()) == 1       \
                 and plotted == False: # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
                     graphics.draw_hull(
-                        DATA,
-                        scale = 1.04,
-                        n_interpolate = 100,
-                        interpolation = algorithm,    # alpha or cubic
-                        plot_kwargs = {
-                            'color': current_color,
-                            'alpha': layer_alpha,
-                            'label': category
-                            }
+                            DATA,
+                            category,
+                            interpolation = algorithm,    # alpha or cubic
+                            scale = 1.05,
+                            plot_kwargs = {
+                                'color': current_color,
+                                'alpha': layer_alpha,
+                                'label': category,
+                                },
                         )
                     plotted = True
+
                 combined_DATA = np.vstack((combined_DATA, DATA))
 
                 # print("-- Layer ", current_layer_number, " DATA: ", DATA, " combined_DATA: ", combined_DATA) # . combined_DATA[~np.isnan(combined_DATA)]
@@ -211,7 +220,7 @@ def draw_plot(
         if len(data.groupby(layer_name).groups.keys()) > 1:
             plotted = False
                 
-        return combined_DATA[1:,:], legend, plotted
+        return combined_DATA[1:,:], plotted
 
             
     # +       recursive exit       +
@@ -224,8 +233,9 @@ def draw_plot(
                 layers[current_layer_number]['alpha_points'],
                 layers[current_layer_number]['alpha_areas'],
                 current_color,
+                legend[-1]
             )
-        return DATA, legend, False
+        return DATA, False
 
 
 

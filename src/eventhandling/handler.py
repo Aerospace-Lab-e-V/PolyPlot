@@ -1,62 +1,56 @@
 import matplotlib.pyplot as plt 
 from matplotlib.widgets import Button
 
+
 class pick_event_handing:
-    def __init__(self, fig, ax, plot, legend, handles):
-        self.graphics = plot
+    def __init__(self, fig, ax, graphics):
         self.fig = fig
         self.ax  = ax
+
         # legend
-        self.entries = legend.legend_handles # + legend.get_lines()
-        self.legend_map = dict(zip(self.entries, handles))
-        for entry in self.entries:
+        self.entries = graphics.legend.handles      #+ legend.get_lines()
+        self.map_legend = graphics.legend.map       # dict(zip(self.entries, handles))
+        for entry in graphics.legend.legend.legend_handles:
             entry.set_picker(True)
+
         # points
-        self.annotations = []
-        self.btn = Button(plt.axes([.9,0.02,0.05,0.05]), "clear")
-        self.btn.on_clicked(self.clr_button)
+        self.annotations = None
         print("Event handler setup successful")
 
         self.fig.canvas.mpl_connect('pick_event', self.handler) 
+
 
     def handler(self, event):
         entity = event.artist
         ind = getattr(event, "ind", None)
 
-
-        if entity  in self.entries:
-            self.toggle_visibility(event)
+        if entity.get_label() in self.map_legend:  # frame['colors'] - label
+            self.toggle_visibility(entity)
         else:
             self.pick_point(entity, ind)
 
         self.fig.canvas.draw_idle()
 
+
     # ~ display coordinates on click 
     def pick_point(self, point, ind):
         x = point.get_xdata()[ind][0]
         y = point.get_ydata()[ind][0]
-        self.annotations.append(self.ax.annotate(f"({x} I {y})", xy=(x,y), fontsize=12))
+        if self.annotations != None:
+            self.annotations.remove()
+        self.annotations = self.ax.annotate(f"({x} I {y})", xy=(x,y), fontsize=12)
 
-    def clr_button(self, event):
-        for annotation in self.annotations:
-            annotation.remove()
-        self.annotations.clear()
-        self.fig.canvas.draw_idle()
 
 
     # ~ visibility toggling from legend 
-    def toggle_visibility(self, event):
-        entry = event.artist
-        
-        item = self.map[entry]
-        print(item)
+    def toggle_visibility(self, entry):
+        group = self.map_legend[entry.get_label()]
 
-        visible = item.get_visible()
-        item.set_visible(not visible)
+        visible = group[0].get_visible()
         entry.set_alpha(0.3 if visible else 1)
 
-        self.fig.canvas.draw_idle()
-
+        for item in group:
+            item.set_visible(not visible)
 
 
 # & for ui: clear class instance if tab closed
