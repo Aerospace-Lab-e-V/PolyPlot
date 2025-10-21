@@ -10,8 +10,8 @@
     
         "export_file_name": null,
     
-        "image_width":16,
-        "image_height":9,
+        "image_width":1.6,
+        "image_height":0.9,
         "image_dpi":300,
     
     
@@ -43,6 +43,11 @@
                 "alpha": 0
             },{
                 "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
                 "whitelist_flag": false,
                 "whitelist": [],
                 "alpha": 0

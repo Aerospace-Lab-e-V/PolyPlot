@@ -40,7 +40,6 @@ if __name__ == '__main__':
             x_quantity, y_quantity = quantities
             x_label,    y_label    = labels
             x_column,   y_column   = columns
-            x_mode,     y_mode     = modes
 
             if x_column == None or y_column == None:
                 raise KeyError("at least one axes has no column assigned to it. please check 'axes' 'x'/'y-quntity' in the config.json")
@@ -75,22 +74,16 @@ if __name__ == '__main__':
                 raise ValueError("No Vailid Data imported")
 
 
+            # : class init :
+            graphics = plotter_graphics(ax, 
+                                    frame["algorithm"])
+            sorted_data = data_handling(graphics, 
+                                    columns, 
+                                    modes, 
+                                    frame)
             # : Data plotting :
-            graphics = plotter_graphics(ax)
+            DATA, _ = sorted_data.plot(data)
 
-            DATA, _ = draw_plot(
-                    graphics,
-                    data,
-                    columns,
-                    modes,
-                    frame["material_colors"],
-                    frame["layers"],
-                    frame["algorithm"],
-                    0,          # current_layer_number
-                    None,         # current_layer_name
-                    frame['material_colors']['default'],
-                    [],         # legend_items
-                )
 
             if not len(DATA):
                 raise ValueError("No Data plotted. Please check the config.json. and your data source (Excel/Teable)")
@@ -167,7 +160,6 @@ if __name__ == '__main__':
                 x_lim = frame["x_lim"]
                 y_lim = frame["y_lim"]
             ax.set(xlim=x_lim, ylim=y_lim)
-
             
 
             # ~ toggle log in plot 
@@ -191,7 +183,7 @@ if __name__ == '__main__':
                 print("❗ERROR: Could not set correct x- and y-labels. continung...")
 
             # ~ general info 
-            skipped_points, plotted_points = graphics.get_point_count()
+            skipped_points, plotted_points = sorted_data.point_count
             print(f"skipped a total of {skipped_points} Datapoints due to missing entries.  {plotted_points} were plotted.")  # & low & high ≙ 2 Values
 
             # : export :
@@ -202,7 +194,6 @@ if __name__ == '__main__':
                 # + event handling + 
                 handler = pick_event_handing(fig, ax, graphics)
                 # +                + 
-
                 plt.show(block=False)
                 print(f"⇒ plot displayed \n")
             else:

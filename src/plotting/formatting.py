@@ -20,11 +20,8 @@ class legend():
         self.map[item] = [patch]
 
     def append_content(self, category, item):
-        # for patch in self.map:
-        #     if patch.get_label() == category:
-        #         self.map[patch].extend(item)
-        #         return
-        self.map[category].extend(item)
+        self.map[category].append(item)
+
 
     def create_legend(self, language, font_color):
         if language == "de":

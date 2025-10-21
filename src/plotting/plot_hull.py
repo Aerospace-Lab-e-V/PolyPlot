@@ -14,15 +14,23 @@ import matplotlib.colors as colors
 
 from .formatting import legend
 
+class plot_unit_props():
+    def __init__(self, legend, element, x,y, category, hirachie = []): #, alpha, color
+        self.element   = element
+        self.hirachie  = hirachie
+        self.legend    = legend
+        self.label     = category
+
+        legend.append_content(category, self)
+            
+
 class plotter_graphics():
-    def __init__(self, ax):
-        self.legend = legend()
-        self.point_count    = [0,0]        # [skipped, plotted]
-        self.hulls          = []
-        self.splines        = []
-        self.ellipses       = []
-        self.points         = []
+    def __init__(self, ax, algorithm):
         self.ax = ax
+        self.legend      = legend()
+        self.point_count = [0,0]        # [skipped, plotted]
+        self.points      = []
+        self.algorithm   = algorithm
     
     def __str__(self):
         print(f"Hulls:    {self.hulls   }")
@@ -36,32 +44,31 @@ class plotter_graphics():
         self.point_count[0] +=1
     def add_point_plotted(self):
         self.point_count[1] +=1
-    
     def get_point_count(self):
         return self.point_count
     
-   
 
     # : plot content :
-    def plot(self, x, y, color, alpha, category):
+    def plot(self, x, y, color, alpha, category, hirachie):
         points = self.ax.plot(
                         x,
                         y,
                         color  = color,
                         marker = 'o',
                         alpha  = alpha,
-                        picker = 8,
+                        picker = 5,
                         zorder = 5,
                     )
-        # self.points.append(points)
-        self.legend.append_content(category, points)
+        # self.legend.append_content(category, points)
+        point = plot_unit_props(self.legend, points, x,y+4, category, hirachie)
+        self.points.append(point)
+        
 
 
     def draw_hull(
             self,
             X,      # [:,x/y]
             category,
-            interpolation,
             scale,
             plot_kwargs={}, 
         ):
@@ -75,6 +82,9 @@ class plotter_graphics():
         
         # print(np.transpose(X))
 
+        if len(X) == 1:
+            raise("can't plot Hull, only one Point", X) # & falls nur ein Punkt & alpha_points = None 
+
         line = True
         angle = np.atan2(X[0,1]-X[1,1], X[0,0]-X[1,0])
         for pos, entry in enumerate(X):          # checks if all entries are in one line which makes calculating a hull impossible
@@ -83,7 +93,7 @@ class plotter_graphics():
                 break
 
         if line == True:
-            self.draw_ellipses(
+            ellipsis = self.draw_ellipses(
                     X,
                     category,
                     scale,
@@ -94,31 +104,19 @@ class plotter_graphics():
                     X,
                     scale,
                     n_interpolate=n_interpolate,
-                    interpolation=interpolation,
                 )
             # ell_tform = ax.transScale + ax.transLimits + ax.transAxes
-            # new_hull = ell_tform.transform(X_hull)
+            # new_hull  = ell_tform.transform(X_hull)
             
             patch = plt.fill(
                     X_hull[:,0],
                     X_hull[:,1],
                     scale,
                     **plot_kwargs,
-                )
-                        
-            spline = plt.plot(
-                    X_hull[:,0],
-                    X_hull[:,1],
-                    scale,
-                    **plot_kwargs
-                )
+            )
             
-            self.legend.append_content(category, patch)
-            self.legend.append_content(category, spline)
-
-            # self.hulls.append(patch)
-            # self.splines.append(spline)
-
+            # self.legend.append_content(category, patch)
+            plot_unit_props(self.legend, patch, None,None, category)
 
 
 
@@ -156,8 +154,9 @@ class plotter_graphics():
         else:
             ellipse = self.ax.plot(X[:,0], X[:,1], linewidth=5, **plot_kwargs)
         
-        self.ellipses.append(ellipse)
+        # self.ellipses.append(ellipse)
         # print(f"angle: {angle} - center: ({center_x}|{center_y}) - r_x/y: {r_x}, {r_y}  - r_1/2: {r_1}, {r_2}  | {X[0,1],X[1,1], X[0,0],X[1,0]}")
+        plot_unit_props(self.legend, ellipse, center_x+2,center_y+2, category)
 
             
 
@@ -166,7 +165,7 @@ class plotter_graphics():
             X, 
             scale=1.1, 
             n_interpolate=100, 
-            interpolation='cubic'):
+            ):
         """
             Calculates a "smooth" hull around given points in `X`.
             The different settings have different drawbacks but the given defaults work reasonably well.
@@ -215,15 +214,14 @@ class plotter_graphics():
         
         x, y = hull_points[:,0], hull_points[:,1]
         
-
-        if interpolation == 'alpha':
+        if self.algorithm == 'alpha':
             hull_polynome = alphashape.alphashape(hull_points, .02)
             coords = np.column_stack(hull_polynome.exterior.xy)
             t = np.linspace(0, 1, len(x))
             tck, _ = splprep([coords[:,0], coords[:,1]], s=0.001, per=True)
             u_fine = np.linspace(0, 1, 500)
             x2, y2 = splev(u_fine, tck)
-        elif interpolation == 'cubic':
+        elif self.algorithm == 'cubic':
             t = np.zeros(x.shape)
             t[1:] = np.sqrt((x[1:] - x[:-1])**2 + (y[1:] - y[:-1])**2)
             t = np.cumsum(t)
