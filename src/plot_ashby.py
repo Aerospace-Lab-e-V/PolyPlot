@@ -189,6 +189,7 @@ if __name__ == '__main__':
             # : export :
             if frame["export_file_name"] == None:
                 plt.title(title, loc='center', size=40, pad=15)
+                fig.canvas.manager.set_window_title(frame.get('# name', f"Figure {config['frames'].index(frame) + 1}"))
                 watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
 
                 # + event handling + 
