@@ -192,14 +192,14 @@ if __name__ == '__main__':
                 fig.canvas.manager.set_window_title(frame.get('# name', f"Figure {config['frames'].index(frame) + 1}"))
                 watermark(fig, alpha=0.7, pos=[0.72, 0.13], size=.13)
 
-                # + event handling + 
+                # + event handling +
                 handler = pick_event_handing(fig, ax, graphics)
-                # +                + 
+                # +                +
                 plt.show(block=False)
                 print(f"⇒ plot displayed \n")
             else:
                 plt.savefig(os.path.join('export', frame["export_file_name"]), dpi=frame["image_dpi"], transparent=True)
                 print(f"⇒ plot saved as ./export/{frame['export_file_name']} \n")
                 plt.close()
-            plt.pause(.4)
+            plt.pause(.3)
         plt.show()

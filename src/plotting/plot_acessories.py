@@ -132,7 +132,7 @@ def create_marker(
     ):
     for marker in markers:
         values = [None, None]
-        for i, axes in enumerate([x_axis_quantities, y_axis_quantities]):
+        for i, axes in enumerate([x_axis_quantities, y_axis_quantities]): # & from name
             for quantity in axes:
                 try:
                     values[i] =  marker[quantity]
@@ -149,6 +149,7 @@ def create_marker(
                 marker = marker['marker'],
                 s = marker_size * marker['size_factor'],
                 )
+            # & label
 
 
 def create_annotation(
@@ -167,10 +168,10 @@ def create_annotation(
             )
         else:
             ax.annotate(
-                s        = annotation['text'],
-                xy =       annotation['tip_xy'],
-                xytext =   annotation['txt_xy'],
-                color  =   annotation['txt_color'],
-                fontsize = annotation['fontsize'],
+                s          = annotation['text'],
+                xy         = annotation['tip_xy'],
+                xytext     = annotation['txt_xy'],
+                color      = annotation['txt_color'],
+                fontsize   = annotation['fontsize'],
                 arrowprops = arrows[annotation['arrow']]
             )

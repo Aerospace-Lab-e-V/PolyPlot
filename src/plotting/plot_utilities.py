@@ -6,7 +6,6 @@ from matplotlib import colors
 from types import SimpleNamespace
 
 from .plot_hull import plotter_graphics
-from .formatting import legend
 
 class data_handling(): 
     def __init__(self, graphics, columns, modes, frame):
@@ -18,7 +17,7 @@ class data_handling():
         self.material_colors = frame['material_colors']
         self.layers          = frame['layers']
         self.len_layers      = len(self.layers) 
-        self.legend          = None
+        self.legend          = ['default']
         self.point_count     = [0,0]        # [skipped, plotted]
         self.alpha_points    = self.layers[-1]['alpha_points']
         self.alpha_areas     = self.layers[-1]['alpha_areas' ]
@@ -27,13 +26,12 @@ class data_handling():
         return self.recursive_preparation(
                             data,
                             current_layer_number = 0,
-                            legend               = None,
                             hirachie             = [],
                             current_color        = self.frame['material_colors']['default'],
                         )
 
 
-    def recursive_preparation(self, data, current_layer_number, legend, hirachie, current_color):
+    def recursive_preparation(self, data, current_layer_number, hirachie, current_color):
         # +       recursive repetition       +
         if current_layer_number < self.len_layers - 1:
             try:
@@ -51,15 +49,14 @@ class data_handling():
 
                 if (category  in layer_whitelist and layer_whitelist_flag == True) or \
                 (category not in layer_whitelist and layer_whitelist_flag == False):
-                    if category in self.material_colors and category != self.legend and layer_alpha:   # ° color & legend entry handling
+                    if category in self.material_colors and category not in self.legend and layer_alpha:   # ° color & legend entry handling
                         current_color = self.material_colors [category]
                         self.graphics.legend.append_category(category, current_color)
-                        self.legend = category
+                        self.legend.append(category)
 
                     DATA, plotted = self.recursive_preparation(
                             material_data,
                             current_layer_number + 1,
-                            self.legend,
                             hirachie + [category],
                             current_color,
                         )
@@ -72,6 +69,7 @@ class data_handling():
                         self.graphics.draw_hull(
                                 DATA,
                                 category,
+                                hirachie,
                                 scale = 1.05,
                                 plot_kwargs = {
                                     'color': current_color,
@@ -97,7 +95,6 @@ class data_handling():
             DATA = self.single_values(   # plot individual points
                     data,
                     current_color,
-                    legend,
                     hirachie,
                 )
             return DATA, False
@@ -132,7 +129,6 @@ class data_handling():
             self,
             data,
             current_color,
-            category,
             hirachie,
         ):
         point_list = np.full((1, 2), np.nan)     # [x, y][low, high][datapoints]
@@ -166,7 +162,8 @@ class data_handling():
 
                             self.graphics.draw_ellipses(
                                     np.transpose(coords),
-                                    category,
+                                    self.legend[-1],
+                                    hirachie,
                                     scale = 1.05,
                                     plot_kwargs = {
                                         'color':current_color,
@@ -181,8 +178,8 @@ class data_handling():
                                 coords[1, :],
                                 color = current_color,
                                 alpha = self.alpha_points,
-                                category = category,
-                                hirachie = hirachie
+                                hirachie = hirachie,
+                                legend_item = self.legend[-1]
                             )
 
         point_list = point_list[1: ,:] # remove placeholder on beginning

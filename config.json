@@ -10,21 +10,21 @@
     
         "export_file_name": null,
     
-        "image_width":1.6,
-        "image_height":0.9,
-        "image_dpi":300,
+        "image_width":16,
+        "image_height":9,
+        "image_dpi":200,
     
     
         "automatic_Display_Area_flag":true,
         "automatic_Display_Area_margin": 0.1,
-        "x_lim":[20, 250],
-        "y_lim":[20, 150],
+        "x_lim":[0, 250],
+        "y_lim":[0, 150],
     
         "log_x_flag":false,
         "log_y_flag":true,
     
-        "x_quantity":"HDT 1.8",
-        "y_quantity":"Elong_br",
+        "x_quantity":"melt",
+        "y_quantity":"Rm",
         "language":"de",
         "legend_flag":true,
         "title":"Plot",
@@ -40,7 +40,7 @@
                 "name": "Material",
                 "whitelist_flag": false,
                 "whitelist": [],
-                "alpha": 0
+                "alpha": 0.2
             },{
                 "name": "Hersteller",
                 "whitelist_flag": false,
@@ -150,7 +150,22 @@
     
         "guidelines":[],
     
-        "markers":[],
+        "markers":[{
+            "Deflection Temperature at 1.8 MPa 264 psi":235,
+            "Tensile Strength":87,
+            "Tensile Modulus":8.23,
+            "name":"Bambu PPS",
+            "color":"b",
+            "marker": "*",
+            "size_factor":1
+        },{
+            "Deflection Temperature at 1.8 MPa 264 psi":162,
+            "Tensile Modulus":21.4,
+            "name":"Ensinger",
+            "color":"yellow",
+            "marker": "*",
+            "size_factor":1
+        }],
             "marker_size": 400,
     
         "annotations":[],

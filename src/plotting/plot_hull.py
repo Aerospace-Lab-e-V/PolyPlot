@@ -15,41 +15,46 @@ import matplotlib.colors as colors
 from .formatting import legend
 
 class plot_unit_props():
-    def __init__(self, legend, element, x,y, category, hirachie = []): #, alpha, color
-        self.element   = element
-        self.hirachie  = hirachie
-        self.legend    = legend
-        self.label     = category
+    def __init__(self, legend, element, x,y, hirachie, legend_item = None, label="", picker=False, picker_nvis=False, alpha=1):
+        self.element     = element
+        self.hirachie    = hirachie
+        self.legend      = legend
+        self.label       = label
+        self.label_pos   = [x,y]
+        self.picker      = picker
+        self.picker_nvis = picker_nvis
+        self.alpha       = alpha    
+        self.visible     = True
+        print(self.hirachie)
 
-        legend.append_content(category, self)
+        legend.append_content(legend_item, self)
             
 
 class plotter_graphics():
     def __init__(self, ax, algorithm):
         self.ax = ax
         self.legend      = legend()
-        self.point_count = [0,0]        # [skipped, plotted]
         self.points      = []
+        self.hulls       = []
         self.algorithm   = algorithm
     
     def __str__(self):
-        print(f"Hulls:    {self.hulls   }")
-        print(f"Splines:  {self.splines }")
-        print(f"Ellipses: {self.ellipses}")
-        print(f"Points:   {self.points  }")
+        print(f"Hulls:  {self.hulls }")
+        print(f"Points: {self.points}")
         return ""
-
-
-    def add_point_skipped(self):
-        self.point_count[0] +=1
-    def add_point_plotted(self):
-        self.point_count[1] +=1
-    def get_point_count(self):
-        return self.point_count
+    
+    def make_label(self, hirachie, append=""):
+        label = ""
+        for category in hirachie:
+            label += f"{category}, "
+        label += append
+        return label 
     
 
     # : plot content :
-    def plot(self, x, y, color, alpha, category, hirachie):
+    # ~ Point 
+    def plot(self, x, y, color, alpha, hirachie, legend_item):
+        label = self.make_label(hirachie, (f"\n({x[0]} I {y[0]})") )
         points = self.ax.plot(
                         x,
                         y,
@@ -60,15 +65,16 @@ class plotter_graphics():
                         zorder = 5,
                     )
         # self.legend.append_content(category, points)
-        point = plot_unit_props(self.legend, points, x,y+4, category, hirachie)
+        point = plot_unit_props(self.legend, points, x[0],y[0]+4, hirachie, legend_item, label, picker=5, alpha=alpha)
         self.points.append(point)
+
         
-
-
+    # ~ Hull 
     def draw_hull(
             self,
             X,      # [:,x/y]
-            category,
+            legend_item,
+            hirachie,
             scale,
             plot_kwargs={}, 
         ):
@@ -93,11 +99,12 @@ class plotter_graphics():
                 break
 
         if line == True:
-            ellipsis = self.draw_ellipses(
+            patch = self.draw_ellipses(
                     X,
-                    category,
+                    legend_item,
+                    hirachie,
                     scale,
-                    plot_kwargs = plot_kwargs
+                    plot_kwargs = plot_kwargs,
                 )
         else:
             X_hull = self.calculate_hull(
@@ -105,8 +112,7 @@ class plotter_graphics():
                     scale,
                     n_interpolate=n_interpolate,
                 )
-            # ell_tform = ax.transScale + ax.transLimits + ax.transAxes
-            # new_hull  = ell_tform.transform(X_hull)
+
             
             patch = plt.fill(
                     X_hull[:,0],
@@ -116,19 +122,19 @@ class plotter_graphics():
             )
             
             # self.legend.append_content(category, patch)
-            plot_unit_props(self.legend, patch, None,None, category)
+            self.hulls.append(plot_unit_props(self.legend, patch, None,None, hirachie, legend_item, picker=None, picker_nvis=None, alpha=plot_kwargs['alpha']))
+            print(f"⋅⋅ {len(self.hulls) - 1} hull:     {self.hulls[-1].element}")
 
-
-
+    # ~ Ellipses 
     def draw_ellipses(
             self,
             X,      # [:,x/y]
-            category,
+            legend_item,
+            hirachie,
             scale,
             plot_kwargs = None,
-            value_ranges = False
+            value_ranges = False,
         ):
-
         angle = np.rad2deg(np.arctan2(X[1,1]-X[0,1], X[1,0]-X[0,0]))
 
         center_x = (np.max(X[0,0]) + np.min(X[1,0])) / 2
@@ -140,8 +146,26 @@ class plotter_graphics():
 
         r_1 = np.sqrt(r_x**2 + r_y**2) * scale
 
-        if not value_ranges:
-            r_2 = r_1 / 8
+
+        if value_ranges == True:
+            ellipse = self.ax.plot(X[:,0], X[:,1], linewidth=5, **plot_kwargs)
+            # self.ax.add_patch(ellipse)
+
+            if X[0,0] != X[1,0]:
+                x = f"{X[0,0]} - {X[1,0]}"
+            else: 
+                x = f"{X[0,0]}"
+            if X[0,1] != X[1,1]:
+                y = f"{X[0,1]} - {X[1,1]}"
+            else: 
+                y = f"{X[0,1]}"
+            label = self.make_label(hirachie, f"\n({x} I {y})")
+            self.points.append(plot_unit_props(self.legend, ellipse, center_x,center_y+2, hirachie, legend_item, label, picker=getattr(plot_kwargs, 'picker', False), picker_nvis=None, alpha=plot_kwargs['alpha']))
+            print(f"⋅⋅ {len(self.points) - 1} ranges:   {self.points[-1].element}")
+            # self.points.append(ellipse)
+        else:
+            r_2 = r_1 / 10
+
             ellipse = patches.Ellipse(
                 xy = center,
                 width = r_1,
@@ -149,16 +173,12 @@ class plotter_graphics():
                 angle = angle,
                 **plot_kwargs,
             )
-            ax.add_patch(ellipse)
+            self.ax.add_patch(ellipse)
 
-        else:
-            ellipse = self.ax.plot(X[:,0], X[:,1], linewidth=5, **plot_kwargs)
-        
-        # self.ellipses.append(ellipse)
-        # print(f"angle: {angle} - center: ({center_x}|{center_y}) - r_x/y: {r_x}, {r_y}  - r_1/2: {r_1}, {r_2}  | {X[0,1],X[1,1], X[0,0],X[1,0]}")
-        plot_unit_props(self.legend, ellipse, center_x+2,center_y+2, category)
+            label = self.make_label(hirachie)
+            self.hulls.append(plot_unit_props(self.legend, ellipse, center_x+2,center_y+2, hirachie, legend_item, picker=None, picker_nvis=None, alpha=plot_kwargs['alpha']))
+            print(f"⋅⋅ {len(self.hulls) - 1} ellipses: {self.hulls[-1].element}")
 
-            
 
     def calculate_hull(
             self,

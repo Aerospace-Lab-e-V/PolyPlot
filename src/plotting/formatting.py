@@ -12,9 +12,8 @@ class legend():
 
     def append_category(self, item, color):
         patch = patches.Patch(
-                color  = color,
-                label  = item,
-                picker = True,
+                color   = color,
+                label   = item,
             )
         self.handles.append(patch)
         self.map[item] = [patch]
@@ -24,11 +23,12 @@ class legend():
 
 
     def create_legend(self, language, font_color):
-        if language == "de":
-            title = "Materialien:"
-        else:
-            title = "materials:"
-        
+        match language:
+            case "de":
+                title = "Materialien:"
+            case _:
+                title = "materials:"
+
         self.legend = plt.legend(
                 handles=self.handles,
                 bbox_to_anchor = (1, 0, 1, 1),
@@ -44,6 +44,10 @@ class legend():
                 ncol = 1,
                 # draggable = True
             )
+
+        for entry in self.legend.legend_handles: # edit copy
+            entry.set_picker(True)
+
         plt.setp(self.legend.get_title(), color=font_color)  # legend title color
 
         # ° legend above
