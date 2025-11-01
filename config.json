@@ -17,14 +17,19 @@
     
         "automatic_Display_Area_flag":true,
         "automatic_Display_Area_margin": 0.1,
-        "x_lim":[0, 250],
-        "y_lim":[0, 150],
     
-        "log_x_flag":false,
-        "log_y_flag":true,
-    
+
         "x_quantity":"melt",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[0, 250],
+
         "y_quantity":"Rm",
+        "y_rel_quantity":"dens",
+        "log_y_flag":false,
+        "y_lim":[0, 150],
+
+
         "language":"de",
         "legend_flag":true,
         "title":"Plot",
@@ -92,7 +97,7 @@
         },{
             "name":"melt",
             "columns":["Melting Point", "Melt Temperature", "Processing Temperature"],
-            "mode":"def",
+            "mode":"default",
             "labels":{
                 "de":"Schmelztemperatur [°C]",
                 "en":"melting point [°C]"

@@ -22,28 +22,6 @@ if __name__ == '__main__':
 
             fill_config_with_default(frame)
 
-            # : axes :
-            quantities = [None, None]
-            labels     = [None, None]
-            columns    = [None, None]
-            modes      = [None, None]
-            for i, quantity in enumerate([frame["x_quantity"], frame["y_quantity"]]):
-                for axe in frame['axes']:
-                    if axe['name'] == quantity:
-                        quantities[i] = axe['name']
-                        labels[i]     = axe['labels'][frame['language']]
-                        columns[i]    = axe['columns']
-                        modes[i]      = axe['mode']
-                        break
-            if None in quantities:
-                raise ValueError("quantity not found. please check the config.json")
-            x_quantity, y_quantity = quantities
-            x_label,    y_label    = labels
-            x_column,   y_column   = columns
-
-            if x_column == None or y_column == None:
-                raise KeyError("at least one axes has no column assigned to it. please check 'axes' 'x'/'y-quntity' in the config.json")
-
 
             # : General setup :
             if frame["export_file_name"] != None:
@@ -76,18 +54,17 @@ if __name__ == '__main__':
 
             # : class init :
             graphics = plotter_graphics(ax, 
-                                    frame["algorithm"])
-            sorted_data = data_handling(graphics, 
-                                    columns, 
-                                    modes, 
-                                    frame)
+                                        frame["algorithm"])
+            sorted_data = data_handling(graphics= graphics, 
+                                        frame   = frame,
+                                        )
             # : Data plotting :
             DATA, _ = sorted_data.plot(data)
 
-
             if not len(DATA):
-                raise ValueError("No Data plotted. Please check the config.json. and your data source (Excel/Teable)")
+                raise ValueError("No Data plotted. Please check the config.json and your data source (Excel/Teable)")
             print(DATA)
+
 
             if frame["legend_flag"]:
                 graphics.legend.create_legend(
@@ -104,6 +81,7 @@ if __name__ == '__main__':
             except:
                 print("❗ERROR drawing colored areas. Check config.json! continuing...")
 
+            # & fkt to get x/y, min/max and check if empty → guideline & automatic display area
             try:
                 if frame["automatic_Display_Area_flag"]:
                     draw_guideline(
