@@ -9,7 +9,8 @@ class pick_event_handing:
         self.graphics = graphics
         self.hulls          = graphics.hulls
         self.map_legend     = graphics.legend.map       # dict(zip(self.entries, handles))
-        self.point_label    = point_label(ax, graphics.points)
+        self.point_label    = point_label(ax)
+        self.find           = find(graphics.points, graphics.legend.handles)
 
         self.fig.canvas.mpl_connect('pick_event', self.handler)
         print("Event handler setup successful")
@@ -17,21 +18,21 @@ class pick_event_handing:
 
     def handler(self, event):
         entity = event.artist
-        point = self.point_label.find_point(entity)
-        print(entity, point)
+        point = self.find.point(entity)
+        patch = self.find.legend_patch(entity)
         
-        if point == None:  # visibility togleing from legend
-            self.toggle_visibility(entity)
-        else:                                      # point labeling
+        if point != None:
             self.point_label.change_point(point)
+        elif patch != None:
+            self.toggle_visibility(patch)
 
         self.fig.canvas.draw_idle()
         
 
 
     # : visibility toggling from legend :
-    def toggle_visibility(self, entry):
-        label = entry.get_label()
+    def toggle_visibility(self, patch):
+        label = patch.get_label()
         group   = self.map_legend[label][1:]
         new_state = not group[0].visible  # bool
         for handle in self.graphics.legend.legend.legend_handles:
@@ -45,6 +46,7 @@ class pick_event_handing:
                 if new_state == True:
                     item.element[i].set_picker(item.picker)
                 else:
+                    print(item, item.element[i]._picker, item.picker_nvis)
                     item.element[i].set_picker(item.picker_nvis)
 
         group[0].visible = new_state
@@ -52,11 +54,10 @@ class pick_event_handing:
 
     # : display coordinates on click :
 class point_label():
-    def __init__(self, ax, point_list):
+    def __init__(self, ax):
         self.ax = ax
         self.last_point = None
         self.annotation = None
-        self.point_list = point_list
 
     def change_point(self, point):
         if self.last_point == point:
@@ -73,15 +74,27 @@ class point_label():
             self.last_point = point
     
     def rm_last_point(self):
-        self.annotation.remove()
+        if self.annotation: 
+                self.annotation.remove()
         self.annotation = None
         self.last_point.element[0]._alpha = self.last_point.alpha
 
 
-    def find_point(self, clicked_point):
+
+class find():
+    def __init__(self, point_list, legend_handles):
+        self.point_list     = point_list
+        self.legend_handles = legend_handles
+
+    def point(self, clicked_point):
         for points in self.point_list:
             for point in points.element:
                 if point == clicked_point:
                     return points
+        return None
 
+    def legend_patch(self, clicked_patch):
+        for patch in self.legend_handles:
+            if patch.get_label() == clicked_patch.get_label():
+                return patch
         return None

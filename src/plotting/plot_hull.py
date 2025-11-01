@@ -130,7 +130,7 @@ class plotter_graphics():
                     scale,
                     **plot_kwargs,
             )
-            self.hulls.append(plot_unit_props(self.legend, patch, None,None, hirachie, legend_item, picker=None, picker_nvis=None, alpha=plot_kwargs['alpha']))
+            self.hulls.append(plot_unit_props(self.legend, patch, None,None, hirachie, legend_item, alpha=plot_kwargs['alpha']))
 
 
     # ~ Ellipses 
@@ -159,7 +159,7 @@ class plotter_graphics():
             ellipse = self.ax.plot(X[:,0], X[:,1], linewidth=5, **plot_kwargs)
 
             label = self.make_label(hirachie, [[X[0,0],X[1,0]], [X[0,1],X[1,1]]])
-            self.points.append(plot_unit_props(self.legend, ellipse, center_x,center_y+2, hirachie, legend_item, label, picker=getattr(plot_kwargs, 'picker', False), picker_nvis=None, alpha=plot_kwargs['alpha']))
+            self.points.append(plot_unit_props(self.legend, ellipse, center_x,center_y+2, hirachie, legend_item, label, picker=getattr(plot_kwargs, 'picker', False), alpha=plot_kwargs['alpha']))
 
         else:
             r_2 = r_1 / 10
@@ -174,7 +174,7 @@ class plotter_graphics():
             self.ax.add_patch(ellipse)
 
             label = self.make_label(hirachie)
-            self.hulls.append(plot_unit_props(self.legend, ellipse, center_x+2,center_y+2, hirachie, legend_item, picker=None, picker_nvis=None, alpha=plot_kwargs['alpha']))
+            self.hulls.append(plot_unit_props(self.legend, ellipse, center_x+2,center_y+2, hirachie, legend_item, alpha=plot_kwargs['alpha']))
             # print(f"⋅⋅ {len(self.hulls) - 1} ellipses: {self.hulls[-1].element}")
 
 

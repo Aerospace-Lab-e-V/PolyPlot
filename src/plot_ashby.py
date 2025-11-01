@@ -109,8 +109,8 @@ if __name__ == '__main__':
                 if len(frame["markers"]) > 0:
                     create_marker(
                         frame["markers"],
-                        x_column,
-                        y_column,
+                        sorted_data.absolute.columns[0],    # x
+                        sorted_data.absolute.columns[1],    # y
                         frame["marker_size"],
                         ax = ax
                     )
@@ -155,6 +155,7 @@ if __name__ == '__main__':
             # .plt.tight_layout(pad=2.5)
             
             try: # ~ set x- and y-labels 
+                x_label, y_label = sorted_data.absolute.labels      # & incorrect for rellative values
                 ax.set_xlabel(x_label, color = font_color, fontsize = 18, labelpad=10)
                 ax.set_ylabel(y_label, color = font_color, fontsize = 18, labelpad=5 )
             except:
