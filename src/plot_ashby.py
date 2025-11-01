@@ -162,8 +162,7 @@ if __name__ == '__main__':
                 print("❗ERROR: Could not set correct x- and y-labels. continung...")
 
             # ~ general info 
-            skipped_points, plotted_points = sorted_data.point_count
-            print(f"skipped a total of {skipped_points} Datapoints due to missing entries.  {plotted_points} were plotted.")  # & low & high ≙ 2 Values
+            print(f"skipped a total of {sorted_data.point_count['skipped']} Datapoints due to missing entries.  {sorted_data.point_count['plotted']} were plotted.")  # & low & high ≙ 2 Values
 
             # : export :
             if frame["export_file_name"] == None:

@@ -19,13 +19,13 @@
         "automatic_Display_Area_margin": 0.1,
     
 
-        "x_quantity":"melt",
+        "x_quantity":"HDT 1.8",
         "x_rel_quantity":null,
         "log_x_flag":false,
         "x_lim":[0, 250],
 
         "y_quantity":"Rm",
-        "y_rel_quantity":"dens",
+        "y_rel_quantity":null,
         "log_y_flag":false,
         "y_lim":[0, 150],
 
@@ -39,7 +39,7 @@
         "layers":[{
                 "name": "Gruppe",
                 "whitelist_flag": false,
-                "whitelist": ["POM","PP"],
+                "whitelist": [],
                 "alpha": 0.4
             },{
                 "name": "Material",

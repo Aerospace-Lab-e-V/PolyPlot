@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt 
+from matplotlib import patches
 from matplotlib.widgets import Button
 
 
@@ -46,7 +47,6 @@ class pick_event_handing:
                 if new_state == True:
                     item.element[i].set_picker(item.picker)
                 else:
-                    print(item, item.element[i]._picker, item.picker_nvis)
                     item.element[i].set_picker(item.picker_nvis)
 
         group[0].visible = new_state
@@ -94,7 +94,8 @@ class find():
         return None
 
     def legend_patch(self, clicked_patch):
-        for patch in self.legend_handles:
-            if patch.get_label() == clicked_patch.get_label():
-                return patch
+        if isinstance(clicked_patch, patches.Rectangle):
+            for patch in self.legend_handles:
+                if patch.get_label() == clicked_patch.get_label():
+                    return patch
         return None

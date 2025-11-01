@@ -17,8 +17,7 @@ class data_handling():
         self.layers          = frame['layers']
         self.len_layers      = len(self.layers) 
         self.legend          = ['default']
-        self.point_count     = [0,0]        # [skipped, plotted]
-        # point_count = {} → point_count['skipped'] += 1
+        self.point_count     = {'skipped':0, 'plotted':0}     # [skipped, plotted]
         self.alpha_points    = self.layers[-1]['alpha_points']
         self.alpha_areas     = self.layers[-1]['alpha_areas' ]
 
@@ -110,10 +109,10 @@ class data_handling():
                 coords[dim, :] = self.point_per_axis(data, data_point, dim)
 
             if np.any(coords[:] == None): 
-                self.point_count[0] += 1
+                self.point_count['skipped'] += 1
                 print("⚠ skipped Point")
             else:
-                self.point_count[1] += 1
+                self.point_count['plotted'] += 1
                 self.plot_point(coords, point_list, hirachie, current_color)
                 point_list = np.vstack((point_list, coords[:,0]))  # add low
                 if not np.all(pd.isna(coords[:, 1])):
