@@ -78,7 +78,7 @@ def draw_guideline(
             x_text,
             y_text, 
             guideline['string'], 
-            fontsize=guideline["fontsize"],
+            fontsize=guideline['fontsize'],
             rotation=np.rad2deg(label_angle), 
             rotation_mode='anchor',
             transform_rotates_text=True)
@@ -123,55 +123,84 @@ def draw_colored_areas(
             alpha = alpha
             )
 
-def create_marker(
-        markers,
-        x_axis_quantities,
-        y_axis_quantities,
-        marker_size,
-        ax
-    ):
-    for marker in markers:
-        values = [None, None]
-        for i, axes in enumerate([x_axis_quantities, y_axis_quantities]): # & from name
-            for quantity in axes:
-                try:
-                    values[i] =  marker[quantity]
-                    break
-                except:
-                    pass
 
-        if values[:] != None:
-            ax.scatter(
-                values[0],
-                values[1],
-                c = marker['color'],
-                edgecolors ='k',
-                marker = marker['marker'],
-                s = marker_size * marker['size_factor'],
+# :  MARKER  : 
+class marker:
+    def __init__(self, annotations, material_colors, plotted_axes, ax):
+        self.annotations_raw = annotations[1:]
+        self.annotations     = []
+        self.material_colors = material_colors
+        self.font_size       = annotations[0]['font_size'  ]
+        self.marker_size     = annotations[0]['marker_size']
+        self.ax = ax
+        self.annotation_position(plotted_axes)
+
+    def annotation_position(self, plotted_axes):
+        for annotation in self.annotations_raw:
+            values = [None, None]
+            for key, value in annotation['axes'].items():
+                for axe in plotted_axes:
+                    if axe == key:
+                        values[plotted_axes.index(axe)] = value
+
+            if values[0] != None and values[1] != None:
+                annotation['values'] = values
+                self.annotations.append(annotation)    
+
+
+    def create_annotation(self, plot_scale):
+        print(self.annotations)
+        for annotation in self.annotations: 
+            values = annotation['values']
+
+            if values[0] != None and values[1] != None:
+                marker = annotation['marker']
+                if marker != None:     # ~ Marker 
+                    color = self.get_color(marker['color'])
+
+                    self.ax.scatter(
+                        values[0],
+                        values[1],
+                        c = color,
+                        marker = marker.get('marker_symbol','+'),
+                        s = self.marker_size * marker.get('size_factor', 1),
+                    )
+                                    
+            text = annotation['text']
+            color = self.get_color(text['color'])
+            arrow = annotation.get('arrow', None)
+            if arrow == None:           # ~ Label 
+                self.ax.text(
+                    x        = text['rel_pos'][0] * plot_scale[0] + values[0],
+                    y        = text['rel_pos'][1] * plot_scale[1] + values[1],
+                    s        = text['name'],
+                    color    = color,
+                    fontsize = self.font_size,
+                    ha       = "center"
                 )
-            # & label
+            else:                        # ~ Arrow 
+                self.ax.annotate(
+                    s           = text['name'],
+                    xy          = values,
+                    xytext      = text['rel_pos'] * plot_scale + values,
+                    color       = color,
+                    fontsize    = self.font_size,
+                    arrowprops  = arrows[arrow],
+                    plot_kwargs = {'ha': 'center'}
+                )
+            print(f"marker: {text['name']} @ {values}")
 
 
-def create_annotation(
-        annotations,
-        arrows,
-        ax
-    ):
-    for annotation in annotations:
-        if annotation['arrow'] == False or annotation['arrow'] == None:
-            ax.text(
-                x        = annotation['txt_xy'][0],
-                y        = annotation['txt_xy'][1],
-                s        = annotation['text'],
-                color    = annotation['txt_color'],
-                fontsize = annotation['fontsize'],
-            )
+    def get_color(self, color):
+        if color in self.material_colors:
+            return self.material_colors[color] 
         else:
-            ax.annotate(
-                s          = annotation['text'],
-                xy         = annotation['tip_xy'],
-                xytext     = annotation['txt_xy'],
-                color      = annotation['txt_color'],
-                fontsize   = annotation['fontsize'],
-                arrowprops = arrows[annotation['arrow']]
-            )
+            return color
+    
+    def limits(self, dim):
+        ret = [np.nan, np.nan]
+        for annotation in self.annotations:
+            ret[0] = np.nanmin([ret[0], annotation['values'][dim]])
+            ret[1] = np.nanmax([ret[1], annotation['values'][dim]])
+
+        return ret

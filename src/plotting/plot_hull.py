@@ -33,7 +33,7 @@ class plot_unit_props():
 class plotter_graphics():
     def __init__(self, ax, algorithm):
         self.ax = ax
-        self.legend      = legend()
+        self.legend      = legend() # § class §
         self.points      = []
         self.hulls       = []
         self.algorithm   = algorithm
@@ -174,7 +174,7 @@ class plotter_graphics():
             self.ax.add_patch(ellipse)
 
             label = self.make_label(hirachie)
-            self.hulls.append(plot_unit_props(self.legend, ellipse, center_x+2,center_y+2, hirachie, legend_item, alpha=plot_kwargs['alpha']))
+            self.hulls.append(plot_unit_props(self.legend, [ellipse], center_x+2,center_y+2, hirachie, legend_item, alpha=plot_kwargs['alpha']))
             # print(f"⋅⋅ {len(self.hulls) - 1} ellipses: {self.hulls[-1].element}")
 
 

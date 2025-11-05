@@ -74,5 +74,19 @@ def import_excel(import_file_name, import_sheet):      # & filter
     return data
 
 
-def fill_config_with_default(frame):
+def import_json(finename):
+    with open('config.json', 'r', encoding="utf-8") as file:
+        config = json.load(file)
+
+    version = config['version']
+    if version == 1:
+        return config['frames']
+    elif version == 2:
+        frames = {}
+        for dataset in config['datasets']:
+            frames.append(parse_json_v2(dataset))
+        return frames
+            
+
+def parse_json_v2(frame):
     pass

@@ -1,204 +1,248 @@
 {
-    "frames":[{
-        "# name":"erster",
-    
-        "API_Key": "Bearer teable_accEbwLnOPcALnjGJXU_Hp6iPPr5mn5WPOgMNfzqgAro1j9t1G0Vj6DjAJTMg+s=",
-        "teable_url":null,
-        "teable_url__": "https://teable.aerospace-lab.de/api/table/tblMYoRyrN4FrwdAiH6/record",
-        "import_file_name":"MatWeb_materials_export.xlsx",
-        "import_sheet":0,
-    
-        "export_file_name": null,
-    
-        "image_width":16,
-        "image_height":9,
-        "image_dpi":200,
-    
-    
-        "automatic_Display_Area_flag":true,
-        "automatic_Display_Area_margin": 0.1,
-    
+"version":1,
+"frames":[{
+    "name":"erster",
 
-        "x_quantity":"HDT 1.8",
-        "x_rel_quantity":null,
-        "log_x_flag":false,
-        "x_lim":[0, 250],
+    "API_Key": "Bearer teable_accEbwLnOPcALnjGJXU_Hp6iPPr5mn5WPOgMNfzqgAro1j9t1G0Vj6DjAJTMg+s=",
+    "teable_url":null,
+    "teable_url__": "https://teable.aerospace-lab.de/api/table/tblMYoRyrN4FrwdAiH6/record",
+    "import_file_name":"MatWeb_materials_export.xlsx",
+    "import_sheet":0,
 
-        "y_quantity":"Rm",
-        "y_rel_quantity":null,
-        "log_y_flag":false,
-        "y_lim":[0, 150],
+    "export_file_name": null,
+
+    "image_width":16,
+    "image_height":9,
+    "image_dpi":200,
 
 
-        "language":"de",
-        "legend_flag":true,
-        "title":"Plot",
+    "automatic_Display_Area_flag":true,
+    "automatic_Display_Area_margin": 0.1,
 
-        "algorithm":"alpha",
-        
-        "layers":[{
-                "name": "Gruppe",
-                "whitelist_flag": false,
-                "whitelist": [],
-                "alpha": 0.4
-            },{
-                "name": "Material",
-                "whitelist_flag": false,
-                "whitelist": [],
-                "alpha": 0.2
-            },{
-                "name": "Hersteller",
-                "whitelist_flag": false,
-                "whitelist": [],
-                "alpha": 0
-            },{
-                "name": "Variante",
-                "whitelist_flag": false,
-                "whitelist": [],
-                "alpha": 0
-            },{
-                "alpha_points": 0.3,
-                "alpha_areas":  0.5
-            }],
+
+    "x_quantity":"HDT 1.8",
+    "x_rel_quantity":null,
+    "log_x_flag":false,
+    "x_lim":[0, 350],
+
+    "y_quantity":"Rm",
+    "y_rel_quantity":null,
+    "log_y_flag":false,
+    "y_lim":[0, 150],
+
+
+    "language":"de",
+    "legend_flag":true,
+    "title":"Plot",
+
+    "algorithm":"alpha",
     
-        "filter":{
-            "conjunction":"and",
-            "filterSet":[{
-                "fieldId":"Available",
-                "operator":"is",
-                "value":null
-            }]
-        },
-    
-        "axes":[{
-            "name":"nr",
-            "columns":["nr"],
-            "mode":"default",
-            "labels":{
-                "de":"",
-                "en":""
-            }
+    "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.4
         },{
-            "name":"HDT 0.46",
-            "columns":["Deflection Temperature at 0.46 MPa 66 psi"],
-            "mode":"default",
-            "labels":{
-                "de":"Verformungstemperatur [°C] @ 0.46 MPa",
-                "en":"Deflection Temperature $HDT$ [°C] @ 0.46 MPa"
-            }
+            "name": "Material",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.2
         },{
-            "name":"HDT 1.8",
-            "columns":["Deflection Temperature at 1.8 MPa 264 psi"],
-            "mode":"default",
-            "labels":{
-                "de":"Verformungstemperatur [°C] @ 1,8 MPa",
-                "en":"Deflection Temperature $HDT$ [°C] @ 1.8 MPa"
-            }
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0
         },{
-            "name":"melt",
-            "columns":["Melting Point", "Melt Temperature", "Processing Temperature"],
-            "mode":"default",
-            "labels":{
-                "de":"Schmelztemperatur [°C]",
-                "en":"melting point [°C]"
-            }
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0
         },{
-            "name":"Rm",
-            "columns":["Tensile Strength at Break", "Tensile Strength Ultimate", "Tensile Strength", "Tensile Strength Yield"],
-            "mode":"max",
-            "labels":{
-                "de":"Zugfestigkeit $R_m$ [MPa]",
-                "en":"Tensile Strength $R_m$ [MPa]"
-            }
-        },{
-            "name":"E-Mod",
-            "columns":["Tensile Modulus", "Modulus of Elasticity"],
-            "mode":"def",
-            "labels":{
-                "de":"E-Modul [GPa]",
-                "en":"E-Modulus [GPa]"
-            }
-        },{
-            "name":"Elong_br",
-            "columns":["Elongation at Break"],
-            "mode":"def",
-            "labels":{
-                "de":"Bruchdehnung [%]",
-                "en":"Elongation at Break [%]"
-            }
-        },{
-            "name":"dens",
-            "columns":["Density","Specific Gravity"],
-            "mode":"def",
-            "labels":{
-                "de":"Dichte",
-                "en":"Density"
-            }
-        },{
-            "name":"vicat",
-            "columns":["Vicat Softening Point"],
-            "mode":"def",
-            "labels":{
-                "de":"Vicat",
-                "en":"Vicat Softening Point"
-            }
-        },{
-            "name":"Tg",
-            "columns":["Glass Transition Temp Tg"],
-            "mode":"def",
-            "labels":{
-                "de":"Glassübergangstemperatur $T_g$ [°C]",
-                "en":"Glass Transition Temperature $T_g$ [°C]"
-            }
+            "alpha_points": 0.3,
+            "alpha_areas":  0.5
         }],
-    
-    
-        "guidelines":[],
-    
-        "markers":[{
-            "Deflection Temperature at 1.8 MPa 264 psi":235,
-            "Tensile Strength":87,
-            "Tensile Modulus":8.23,
+
+    "filter":{
+        "conjunction":"and",
+        "filterSet":[{
+            "fieldId":"Available",
+            "operator":"is",
+            "value":null
+        }]
+    },
+
+    "axes":[{
+        "name":"nr",
+        "columns":["nr"],
+        "mode":"default",
+        "labels":{
+            "de":"",
+            "en":""
+        }
+    },{
+        "name":"HDT 0.46",
+        "columns":["Deflection Temperature at 0.46 MPa 66 psi"],
+        "mode":"default",
+        "labels":{
+            "de":"Verformungstemperatur [°C] @ 0.46 MPa",
+            "en":"Deflection Temperature $HDT$ [°C] @ 0.46 MPa"
+        }
+    },{
+        "name":"HDT 1.8",
+        "columns":["Deflection Temperature at 1.8 MPa 264 psi"],
+        "mode":"default",
+        "labels":{
+            "de":"Verformungstemperatur [°C] @ 1,8 MPa",
+            "en":"Deflection Temperature $HDT$ [°C] @ 1.8 MPa"
+        }
+    },{
+        "name":"melt",
+        "columns":["Melting Point", "Melt Temperature", "Processing Temperature"],
+        "mode":"default",
+        "labels":{
+            "de":"Schmelztemperatur $T_S$ [°C]",
+            "en":"melting point $T_M$ [°C]"
+        }
+    },{
+        "name":"Rm",
+        "columns":["Tensile Strength at Break", "Tensile Strength Ultimate", "Tensile Strength", "Tensile Strength Yield"],
+        "mode":"max",
+        "labels":{
+            "de":"Zugfestigkeit $R_m$ [MPa]",
+            "en":"Tensile Strength $R_m$ [MPa]"
+        }
+    },{
+        "name":"E-Mod",
+        "columns":["Tensile Modulus", "Modulus of Elasticity"],
+        "mode":"def",
+        "labels":{
+            "de":"E-Modul [GPa]",
+            "en":"E-Modulus [GPa]"
+        }
+    },{
+        "name":"Elong_br",
+        "columns":["Elongation at Break"],
+        "mode":"def",
+        "labels":{
+            "de":"Bruchdehnung [%]",
+            "en":"Elongation at Break [%]"
+        }
+    },{
+        "name":"dens",
+        "columns":["Density","Specific Gravity"],
+        "mode":"def",
+        "labels":{
+            "de":"Dichte $\\rho$ [kg/m$^3$]",
+            "en":"Density $\\rho$ [kg/m$^3$]"
+        }
+    },{
+        "name":"vicat",
+        "columns":["Vicat Softening Point"],
+        "mode":"def",
+        "labels":{
+            "de":"Vicat",
+            "en":"Vicat Softening Point"
+        }
+    },{
+        "name":"Tg",
+        "columns":["Glass Transition Temp Tg"],
+        "mode":"def",
+        "labels":{
+            "de":"Glassübergangstemperatur $T_g$ [°C]",
+            "en":"Glass Transition Temperature $T_g$ [°C]"
+        }
+    }],
+
+
+    "guidelines":[],
+
+    "annotations":[{
+        "marker_size": 300,
+        "font_size":15
+    },{
+        "text":{
             "name":"Bambu PPS",
-            "color":"b",
-            "marker": "*",
+            "rel_pos":[0,8],
+            "color":"PPS"
+        },
+        "axes":{
+            "HDT 1.8":235,
+            "Rm":87,
+            "E-Mod":8.23
+        },
+        "marker":{
+            "color":"PPS",
+            "marker_symbol": "o",
             "size_factor":1
-        },{
-            "Deflection Temperature at 1.8 MPa 264 psi":162,
-            "Tensile Modulus":21.4,
+        },
+        "arrow":null
+    },{
+        "text":{
             "name":"Ensinger",
-            "color":"yellow",
-            "marker": "*",
+            "rel_pos":[0,2],
+            "color":"PC"
+        },
+        "axes":{
+            "HDT 1.8":162,
+            "E-Mod":21.4
+        },
+        "marker":{
+            "color":"PC",
+            "marker_symbol": "+",
             "size_factor":1
-        }],
-            "marker_size": 400,
-    
-        "annotations":[],
-            
-        "arrows":[],
-    
-        "colored_areas":[],
-    
-        "material_colors":{
-            "ABS": "#219DD3",	
-            "PA12":"#7BBFD9", 	
-            "PEEK":"#D69D20",	
-            "PLA": "#E3B768",	
-            "PET": "#3BD420",	
-            "PETG":"#85E064",	
-            "PPSU":"#B52ED6",	
-            "PPS": "#CE82E0",
-    
-            "PA11":"#219DD3",	
-            "POM": "#7BBFD9",	
-            "PP":  "#D69D20",	
-            "PVDF":"#E3B768",	
-            "PC":  "#3BD420",	
-            "PEI": "#85E064",	
-            "PA6": "#B52ED6",	
-            "PPA": "#CE82E0",
-    
-            "PA": "red",
-            "default":"grey"
-            }
-    }]}
+        },
+        "arrow":null
+    },{
+        "text":{
+            "name":"Prusa Space PC",
+            "rel_pos":[0,2],
+            "color":"PC"
+        },
+        "axes":{
+            "HDT 0.46":137.6,
+            "Rm":3.7
+        },
+        "marker":{
+            "color":"PC",
+            "marker_symbol": "*",
+            "size_factor":1
+        },
+        "arrow":null,
+        "#":"None or num"
+    }],
+        
+        
+    "arrows":[],
+
+    "colored_areas":[],
+
+    "# highlighted_hulls":[{
+        "layer":"Material",
+        "label":"PA6",
+        "alpha":0.7
+    }
+    ],
+
+    "material_colors":{
+        "ABS": "#219DD3",	
+        "PA12":"#7BBFD9", 	
+        "PEEK":"#D69D20",	
+        "PLA": "#E3B768",	
+        "PET": "#3BD420",	
+        "PETG":"#85E064",	
+        "PPSU":"#B52ED6",	
+        "PPS": "#CE82E0",
+
+        "PA11":"#219DD3",	
+        "POM": "#7BBFD9",	
+        "PP":  "#D69D20",	
+        "PVDF":"#E3B768",	
+        "PC":  "#3BD420",	
+        "PEI": "#85E064",	
+        "PA6": "#B52ED6",	
+        "PPA": "#CE82E0",
+
+        "PA": "red",
+        "default":"grey"
+        }
+}]}

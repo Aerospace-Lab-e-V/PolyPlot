@@ -26,6 +26,7 @@ class pick_event_handing:
             self.point_label.change_point(point)
         elif patch != None:
             self.toggle_visibility(patch)
+        # & if marker
 
         self.fig.canvas.draw_idle()
         
@@ -48,6 +49,9 @@ class pick_event_handing:
                     item.element[i].set_picker(item.picker)
                 else:
                     item.element[i].set_picker(item.picker_nvis)
+        
+            if self.point_label.last_point != None and item.element == self.point_label.last_point.element:
+                self.point_label.rm_last_point()
 
         group[0].visible = new_state
 

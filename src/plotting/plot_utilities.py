@@ -172,10 +172,10 @@ class data_handling():
 
 class parse_data():
     def __init__(self, frame, x_quantity, y_quantity, absolute = True):
-        self.quantities = [ None,   None ]
-        self.labels     = [ None,   None ]
+        self.quantities = [ None ,  None ]
+        self.labels     = [ None ,  None ]
         self.columns    = [[None], [None]]
-        self.modes      = [ None,   None ]
+        self.modes      = [ None ,  None ]
         for i, quantity in enumerate([x_quantity, y_quantity]):
             for axe in frame['axes']:
                 if axe['name'] == quantity:
