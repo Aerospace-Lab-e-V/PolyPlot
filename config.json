@@ -162,7 +162,7 @@
     },{
         "text":{
             "name":"Bambu PPS",
-            "rel_pos":[0,8],
+            "rel_pos":[0,5],
             "color":"PPS"
         },
         "axes":{
@@ -216,12 +216,11 @@
 
     "colored_areas":[],
 
-    "# highlighted_hulls":[{
+    "highlighted_hulls":[{
         "layer":"Material",
         "label":"PA6",
         "alpha":0.7
-    }
-    ],
+    }],
 
     "material_colors":{
         "ABS": "#219DD3",	

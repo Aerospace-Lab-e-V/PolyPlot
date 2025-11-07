@@ -4,11 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 
-from import_data import(
-        import_teable,
-        import_excel,
-        import_json,
-    )
+from import_data import *
 from plotting import *
 from eventhandling import *
 
@@ -46,6 +42,7 @@ if __name__ == '__main__':
         # ~ import data 
         if frame["teable_url"] != None:
             data = import_teable(frame["teable_url"], frame["API_Key"], columns, frame["layers"], frame["filter"])
+            # & filter
         else:
             data = import_excel(frame["import_file_name"], frame["import_sheet"])
         if len(data) == 0:
@@ -103,7 +100,7 @@ if __name__ == '__main__':
             print("❗ERROR drawing guidelines. Check config.json! continuing...")
 
 
-        marker.create_annotation(plot_scale = [1,1])
+        marker.create_annotation(plot_size)
 
 
         # : Figure manipulation :

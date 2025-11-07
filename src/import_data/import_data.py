@@ -3,18 +3,7 @@ import os
 import json
 import pandas as pd
 
-def collums_list(columns, layers):  # returns a list of all columns that should be requested via API
-    wanted_fields = []
-
-    for layer in range(len(layers) -1):
-        wanted_fields.append(layers[layer]["name"])
-    for axes in columns:
-        for column in axes:
-            wanted_fields.append(column + " low" )
-            wanted_fields.append(column + " high")
-
-    return wanted_fields
-
+from .filter import *
 
 
 def import_teable(teable_url, api_key, columns, layers, filter):
@@ -60,9 +49,21 @@ def import_teable(teable_url, api_key, columns, layers, filter):
     else:
         raise Exception(f"unknown Teable error {status.status_code}: {status.text}")
 
+def collums_list(columns, layers):  # returns a list of all columns that should be requested via API
+    wanted_fields = []
+
+    for layer in range(len(layers) -1):
+        wanted_fields.append(layers[layer]["name"])
+    for axes in columns:
+        for column in axes:
+            wanted_fields.append(column + " low" )
+            wanted_fields.append(column + " high")
+
+    return wanted_fields
 
 
-def import_excel(import_file_name, import_sheet):      # & filter 
+
+def import_excel(import_file_name, import_sheet):
     data = pd.read_excel(
         os.path.join(
             os.getcwd(),
@@ -71,9 +72,13 @@ def import_excel(import_file_name, import_sheet):      # & filter
             ),
         sheet_name = import_sheet
     )
+
+    # & filter
     return data
 
 
+
+# : config.json :
 def import_json(finename):
     with open('config.json', 'r', encoding="utf-8") as file:
         config = json.load(file)
