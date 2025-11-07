@@ -94,36 +94,42 @@ class plot_size():
     def __init__(self, frame, DATA, marker):
         self.automatic_Display_Area_flag = frame["automatic_Display_Area_flag"]
         self.margin         = frame["automatic_Display_Area_margin"]
-        self.log_flag       = [frame["log_x_flag"], frame["log_y_flag"]]
-        self.limits         = [frame["x_lim"],      frame["x_lim"]     ]
         self.DATA           = DATA
-        self.x = dimension(self, 0, marker) # § class §
-        self.y = dimension(self, 1, marker) # § class §
+        self.x = dimension(self, 0, marker, frame["log_x_flag"], frame["x_lim"]) # § class §
+        self.y = dimension(self, 1, marker, frame["log_y_flag"], frame["y_lim"]) # § class §
 
 class dimension():
-    def __init__(self, head, dim, marker):
+    def __init__(self, head, dim, marker, log_flag, limit):
+        self.log_flag = log_flag
+        self.space = 1
         if head.automatic_Display_Area_flag:
             # .ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
-            self.plot_padding(float(np.nanmin(head.DATA[:,dim])), float(np.nanmax(head.DATA[:,dim])), head.log_flag[dim], head.margin, marker.limits(dim))
+            self.plot_padding(float(np.nanmin(head.DATA[:,dim])), float(np.nanmax(head.DATA[:,dim])), head.margin, marker.limits(dim))
         else:
-            self.low  = head.limits[dim][0]
-            self.high = head.limits[dim][1]
+            self.low  = limit[dim][0]
+            self.high = limit[dim][1]
+        
 
-    def plot_padding(self, min, max, log_flag, margin, marker):
+    def plot_padding(self, min, max, margin, marker):
         low  = np.nanmin([marker[0], min])
         high = np.nanmax([marker[1], max])
 
-        if log_flag:
+        if self.log_flag:
             low_log  = np.log10(low )
             high_log = np.log10(high)
             diff = (high_log - low_log) * margin
             self.low  = 10 ** (low_log  - diff)
             self.high = 10 ** (high_log + diff)
+            self.space = (np.log10(self.high) - np.log10(self.low)) / 100
         else:
             self.low  = low  - (high - low) * margin
             self.high = high + (high - low) * margin
+            self.space = (self.high - self.low) /100
+    
+    def offset(self, pos, diff):
+        if self.log_flag:
+            return 10**(np.log10(pos) + self.space * diff)
+        else:
+            return pos + self.space * diff
 
-
-    def one_percent(self, dim):
-        self.one_p = 1
         

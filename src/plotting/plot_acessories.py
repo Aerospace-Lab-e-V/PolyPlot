@@ -1,40 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def draw_guideline(
-        guidelines,
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-        ax,
-    ):
-    '''
-        Draws guideline for material index.
-
-        Parameters
-        ----------
-        guideline : dict
-            x : float (optional)      x or y must be given
-                power of the material index (and thus the guideline)
-                e.g., 1 for E/rho, 3 for E^(1/3)/rho.
-            y : float (optional)
-                x-axis limits ([low, high])
-            m : float (optional)
-                y_intercept of the guideline.
-                This gets tricky if your x- and y-axis limits do not include 1.0.
-                The default is 1.0.
-            string : string to display and label the guideline
-            string_position : location to start the string
-        x_min, x_max: float
-            definition area
-        ax : matplotlib axis object
-            The current plotting axis.
-
-        Returns
-        -------
-        None.
-    '''
+def draw_guideline(guidelines, x_min, x_max, y_min, y_max, ax):
     num_points = 5
     for guideline in guidelines:
 
@@ -85,31 +52,7 @@ def draw_guideline(
 
 
 
-def draw_colored_areas(
-    colored_areas,
-    ax
-    ):
-    '''
-        colors the backgrounf of specific areas
-
-        Parameters
-        ----------
-        colored_areas : dict
-            x : list
-                x-coordinates of edgeponts
-            y : list
-                y-coordinates corresponding to the given x-coordinates above
-            color : char
-                specifies color of the area
-            alpha : float between 0 and 1
-                intensity of the color
-        ax : matplotlib axis object
-            The current plotting axis.
-
-        Returns
-        -------
-        None.
-    '''
+def draw_colored_areas(colored_areas, ax):
     for colored_area in colored_areas:
         x         = colored_area['x']
         y         = colored_area['y']
@@ -148,7 +91,7 @@ class marker:
                 self.annotations.append(annotation)    
 
 
-    def create_annotation(self, plot_scale):
+    def create_annotation(self, plot_size):
         print(self.annotations)
         for annotation in self.annotations: 
             values = annotation['values']
@@ -169,10 +112,11 @@ class marker:
             text = annotation['text']
             color = self.get_color(text['color'])
             arrow = annotation.get('arrow', None)
+            print("label pos:", plot_size.x.offset(text['rel_pos'][0], values[0]) , plot_size.y.offset(text['rel_pos'][1], values[1]))
             if arrow == None:           # ~ Label 
                 self.ax.text(
-                    x        = text['rel_pos'][0] * plot_scale[0] + values[0],
-                    y        = text['rel_pos'][1] * plot_scale[1] + values[1],
+                    x        = plot_size.x.offset(values[0], text['rel_pos'][0]),
+                    y        = plot_size.y.offset(values[1], text['rel_pos'][1]),
                     s        = text['name'],
                     color    = color,
                     fontsize = self.font_size,
@@ -182,7 +126,8 @@ class marker:
                 self.ax.annotate(
                     s           = text['name'],
                     xy          = values,
-                    xytext      = text['rel_pos'] * plot_scale + values,
+                    xytext      = [plot_size.x.offset(values[0], text['rel_pos'][0]), \
+                                   plot_size.y.offset(values[1], text['rel_pos'][1])],
                     color       = color,
                     fontsize    = self.font_size,
                     arrowprops  = arrows[arrow],
