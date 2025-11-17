@@ -9,16 +9,18 @@ def draw_guideline(guidelines, x_min, x_max, y_min, y_max, ax):
         y = guideline['y']
         m = guideline['m']
 
-        if m == False:  # horizontal
+        if x == None:    # horizontal
             x_values = np.linspace(x_min, x_max, num_points)
             y_values = np.ones(num_points)* y
-        elif m == True: # vertical
+        elif y == None:  # vertical
             x_values = np.ones(num_points)* x
             y_values = np.linspace(y_min, y_max, num_points)
-        else:                                                   # & semilog
+        else:             # & semilog
             x_values = np.linspace(x_min, x_max, num_points)
             y_intercept = (y- (m*x))
             y_values = m*x_values + y_intercept
+
+        print(f"guideline: {guideline['string']} @ [{x_values} - {y_values}]")
 
         ax.plot(
             x_values,
@@ -28,7 +30,7 @@ def draw_guideline(guidelines, x_min, x_max, y_min, y_max, ax):
             color     = guideline['color'    ],
             )
 
-        if m == True:
+        if y == None:
             label_angle = np.pi/2
         else:
             label_angle = np.arctan(m)
@@ -72,11 +74,12 @@ class marker:
     def __init__(self, annotations, material_colors, plotted_axes, ax):
         self.annotations_raw = annotations[1:]
         self.annotations     = []
-        self.material_colors = material_colors
-        self.font_size       = annotations[0]['font_size'  ]
-        self.marker_size     = annotations[0]['marker_size']
-        self.ax = ax
-        self.annotation_position(plotted_axes)
+        if len(self.annotations_raw):
+            self.material_colors = material_colors
+            self.font_size       = annotations[0]['font_size'  ]
+            self.marker_size     = annotations[0]['marker_size']
+            self.ax = ax
+            self.annotation_position(plotted_axes)
 
     def annotation_position(self, plotted_axes):
         for annotation in self.annotations_raw:
@@ -88,11 +91,12 @@ class marker:
 
             if values[0] != None and values[1] != None:
                 annotation['values'] = values
-                self.annotations.append(annotation)    
+                self.annotations.append(annotation)  
 
 
-    def create_annotation(self, plot_size):
-        print(self.annotations)
+    def create_annotations(self, plot_size):
+        if len(self.annotations_raw) == 0: 
+            return
         for annotation in self.annotations: 
             values = annotation['values']
 
@@ -108,11 +112,11 @@ class marker:
                         marker = marker.get('marker_symbol','+'),
                         s = self.marker_size * marker.get('size_factor', 1),
                     )
-                                    
+
             text = annotation['text']
             color = self.get_color(text['color'])
             arrow = annotation.get('arrow', None)
-            print("label pos:", plot_size.x.offset(text['rel_pos'][0], values[0]) , plot_size.y.offset(text['rel_pos'][1], values[1]))
+            # print("label pos:", plot_size.x.offset(text['rel_pos'][0], values[0]) , plot_size.y.offset(text['rel_pos'][1], values[1]))
             if arrow == None:           # ~ Label 
                 self.ax.text(
                     x        = plot_size.x.offset(values[0], text['rel_pos'][0]),
@@ -144,8 +148,10 @@ class marker:
     
     def limits(self, dim):
         ret = [np.nan, np.nan]
-        for annotation in self.annotations:
-            ret[0] = np.nanmin([ret[0], annotation['values'][dim]])
-            ret[1] = np.nanmax([ret[1], annotation['values'][dim]])
-
+        if len(self.annotations) > 0: 
+            for annotation in self.annotations:
+                ret[0] = np.nanmin([ret[0], annotation['values'][dim]])
+                ret[1] = np.nanmax([ret[1], annotation['values'][dim]])
         return ret
+
+

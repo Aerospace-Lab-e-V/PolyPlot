@@ -25,7 +25,7 @@ class plot_unit_props():
         self.picker_nvis = picker_nvis
         self.alpha       = alpha    
         self.visible     = True
-        print(self.hirachie)
+        # print(self.hirachie)
 
         legend.append_content(legend_item, self)
             
@@ -51,12 +51,12 @@ class plotter_graphics():
         if X == [None, None]: 
             return label
 
-        print(X)
+        # print(X)
         coords = ["",""]
         for dim in [0,1]:
             coords[dim] += "{0:.5g}".format(X[dim][0])
             if X[dim][1] != None and X[dim][0] != X[dim][1]:
-                print(X[1][dim])
+                # print(X[1][dim])
                 coords[dim] += " - {0:.5g}".format(X[dim][1])
         
         return f" {label}\n ( {coords[0]} I {coords[1]} ) " 
@@ -76,7 +76,7 @@ class plotter_graphics():
                         zorder = 5,
                     )
         # self.legend.append_content(category, points)
-        point = plot_unit_props(self.legend, points, x[0],y[0]+4, hirachie, legend_item, label, picker=5, alpha=alpha)
+        point = plot_unit_props(self.legend, points, x[0],y[0], hirachie, legend_item, label, picker=5, alpha=alpha)
         self.points.append(point)
 
         
@@ -84,14 +84,14 @@ class plotter_graphics():
     def draw_hull(
             self,
             X,      # [:,x/y]
-            legend_item,
             hirachie,
+            legend_item,
             scale,
             plot_kwargs={}, 
         ):
         n_interpolate = 120
 
-        for pos, entry in enumerate(X):     # replace nan with value incase of range in onlY one dimension
+        for pos, entry in enumerate(X):     # replace nan with value incase of range in only one dimension
             if np.isnan(entry[0]):          
                 entry[0] = X[pos-1,0]
             elif np.isnan(entry[1]):
@@ -99,21 +99,24 @@ class plotter_graphics():
         
         # print(np.transpose(X))
 
-        if len(X) == 1:
-            raise("can't plot Hull, only one Point", X) # & falls nur ein Punkt & alpha_points = None 
-
         line = True
-        angle = np.atan2(X[0,1]-X[1,1], X[0,0]-X[1,0])
-        for pos, entry in enumerate(X):          # checks if all entries are in one line which makes calculating a hull impossible
-            if abs(angle - np.atan2(X[0,1]-X[pos,1], X[0,0]-X[pos,0])) > 0.01 and np.all(X[0,:] != X[pos,:]):  # not same angle and not identical
-                line = False
-                break
+        Data = np.unique(X, axis=0)
+        
+        if len(Data) < 2:
+            print("can't plot Hull, only one Point - skipping", X) # & falls nur ein Punkt 
+        elif len(Data) > 2:
+            angle = [np.atan2(Data[0,1]-Data[1,1],  Data[0,0]-Data[1,0])]
+            for pos, entry in enumerate(Data[1:]):          # checks if all entries are in one line which makes calculating a hull impossible
+                angle.append(np.atan2(Data[0,1]-entry[1],  Data[0,0]-entry[0]))
+                if abs(angle[0] - angle[-1]) > 0.01:
+                    line = False
+                    break
 
         if line == True:
             patch = self.draw_ellipses(
                     X,
-                    legend_item,
                     hirachie,
+                    legend_item,
                     scale,
                     plot_kwargs = plot_kwargs,
                 )
@@ -137,8 +140,8 @@ class plotter_graphics():
     def draw_ellipses(
             self,
             X,      # [:,x/y]
-            legend_item,
             hirachie,
+            legend_item,
             scale,
             plot_kwargs = None,
             value_ranges = False,
@@ -159,7 +162,7 @@ class plotter_graphics():
             ellipse = self.ax.plot(X[:,0], X[:,1], linewidth=5, **plot_kwargs)
 
             label = self.make_label(hirachie, [[X[0,0],X[1,0]], [X[0,1],X[1,1]]])
-            self.points.append(plot_unit_props(self.legend, ellipse, center_x,center_y+2, hirachie, legend_item, label, picker=getattr(plot_kwargs, 'picker', False), alpha=plot_kwargs['alpha']))
+            self.points.append(plot_unit_props(self.legend, ellipse, center_x,center_y, hirachie, legend_item, label, picker=getattr(plot_kwargs, 'picker', False), alpha=plot_kwargs['alpha']))
 
         else:
             r_2 = r_1 / 10
@@ -174,7 +177,7 @@ class plotter_graphics():
             self.ax.add_patch(ellipse)
 
             label = self.make_label(hirachie)
-            self.hulls.append(plot_unit_props(self.legend, [ellipse], center_x+2,center_y+2, hirachie, legend_item, alpha=plot_kwargs['alpha']))
+            self.hulls.append(plot_unit_props(self.legend, [ellipse], center_x,center_y, hirachie, legend_item, alpha=plot_kwargs['alpha']))
             # print(f"⋅⋅ {len(self.hulls) - 1} ellipses: {self.hulls[-1].element}")
 
 
@@ -184,35 +187,13 @@ class plotter_graphics():
             scale=1.1, 
             n_interpolate=100, 
             ):
-        """
-            Calculates a "smooth" hull around given points in `X`.
-            The different settings have different drawbacks but the given defaults work reasonably well.
-            Parameters
-            ----------
-            X : np.ndarray
-                2d-array with 2 columns and `n` rows
-            scale : float, optional
-                padding strength, by default 1.1
-            padding : str, optional
-                padding mode, by default "scale"
-            n_interpolate : int, optional
-                number of interpolation points, by default 100
-            interpolation : str or callable(ix,iy,x), optional
-                interpolation mode, by default "quadratic_periodic"
 
-            Inspired by: https://stackoverflow.com/a/17557853/991496
-        """
         scaler = sklearn.pipeline.make_pipeline(
-            # sklearn.preprocessing.MaxAbsScaler()
-            # sklearn.preprocessing.RobustScaler(quantile_range = (25,75))
-            # sklearn.preprocessing.PowerTransformer(method='box-cox'),
-            # TODO: make a flag based on log-log scaling?
             sklearn.preprocessing.FunctionTransformer(np.log),
             sklearn.preprocessing.MinMaxScaler(feature_range = (0,1)),
             sklearn.preprocessing.StandardScaler(with_std=False),
             )
         points_scaled = scaler.fit_transform(X) * scale
-        # np.linalg.matrix_rank(points_scaled - points_scaled[0]) < 2 → check if in a line
         
         points_scaled = points_scaled[~np.isnan(points_scaled[:, 0])]
         points_scaled = points_scaled[~np.isnan(points_scaled[:, 1])]
@@ -220,14 +201,8 @@ class plotter_graphics():
         hull_scaled = scipy.spatial.ConvexHull(points_scaled, incremental=True)
         hull_points_scaled = points_scaled[hull_scaled.vertices]
         
-        # old code (modified for log scaling)
         hull_points= np.concatenate([hull_points_scaled,hull_points_scaled[:1]])
-        
-        #stackoverflow code
-        # hull_points = scaler.inverse_transform(hull_points_scaled)
-        # hull_points = np.concatenate([hull_points, hull_points[:1]])
-        
-        # number of interpolated points
+
         nt = np.linspace(0, 1, n_interpolate)
         
         x, y = hull_points[:,0], hull_points[:,1]

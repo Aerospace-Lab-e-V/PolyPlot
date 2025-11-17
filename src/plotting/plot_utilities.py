@@ -8,15 +8,15 @@ from types import SimpleNamespace
 from .plot_hull import plotter_graphics
 
 class data_handling(): 
-    def __init__(self, graphics, frame):
+    def __init__(self, graphics, dataframe, frame):
         self.graphics        = graphics
-        self.absolute        = parse_data(frame, frame["x_quantity"],     frame["y_quantity"],     True )
-        self.relative        = parse_data(frame, frame["x_rel_quantity"], frame["y_rel_quantity"], False)
+        self.absolute        = parse_data(dataframe, frame, frame["x_quantity"],     frame["y_quantity"],     True )
+        self.relative        = parse_data(dataframe, frame, frame["x_rel_quantity"], frame["y_rel_quantity"], False)
         self.frame           = frame
-        self.material_colors = frame['material_colors']
+        self.material_colors = dataframe['material_colors']
         self.layers          = frame['layers']
+        self.layer_names     = []
         self.len_layers      = len(self.layers) 
-        self.legend          = ['default']
         self.point_count     = {'skipped':0, 'plotted':0}     # [skipped, plotted]
         self.alpha_points    = self.layers[-1]['alpha_points']
         self.alpha_areas     = self.layers[-1]['alpha_areas' ]
@@ -26,15 +26,16 @@ class data_handling():
                             data,
                             current_layer_number = 0,
                             hirachie             = [],
-                            current_color        = self.frame['material_colors']['default'],
+                            legend_item          = "default",
+                            current_color        = self.material_colors['default'],
                         )
 
-
-    def recursive_preparation(self, data, current_layer_number, hirachie, current_color):
+    def recursive_preparation(self, data, current_layer_number, hirachie, legend_item, current_color):
         # +       recursive repetition       +
         if current_layer_number < self.len_layers - 1:
             try:
                 layer_name           = self.layers[current_layer_number]['name']
+                self.layer_names.append(layer_name)
                 layer_whitelist_flag = self.layers[current_layer_number]['whitelist_flag']
                 layer_whitelist      = self.layers[current_layer_number]['whitelist']
                 layer_alpha          = self.layers[current_layer_number]['alpha']
@@ -43,32 +44,35 @@ class data_handling():
                 raise KeyError(f"could not import layer {current_layer_number +1}. Check config.json!")
 
             for category, material_data in data.groupby(layer_name):
-                if pd.isna(category): category == None            
-                print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======") 
+                if pd.isna(category): category == None
+                plotted = False            
+                # print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======") 
 
                 if (category  in layer_whitelist and layer_whitelist_flag == True) or \
                 (category not in layer_whitelist and layer_whitelist_flag == False):
-                    if category in self.material_colors and category not in self.legend and layer_alpha:   # ° color & legend entry handling
+                    if category in self.material_colors and category != legend_item and layer_alpha:   # ° color & legend entry handling
                         current_color = self.material_colors [category]
-                        self.graphics.legend.append_category(category, current_color)
-                        self.legend.append(category)
+                        legend_item = category
+                        if current_color != None: 
+                            self.graphics.legend.append_category(category, current_color)
 
                     DATA, plotted = self.recursive_preparation(
                             material_data,
                             current_layer_number + 1,
                             hirachie + [category],
+                            legend_item,
                             current_color,
                         )
 
                     # print(DATA)
                     # print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
-                    if DATA.shape[0] > 1 and layer_alpha > 0 and layer_alpha != None          \
+                    if DATA.shape[0] > 1 and layer_alpha != None and 0 < layer_alpha <= 1          \
                     and not len(data.groupby(layer_name).groups.keys()) == 1       \
-                    and plotted == False: # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
+                    and current_color != None and plotted == False: # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
                         self.graphics.draw_hull(
                                 DATA,
-                                category,
                                 hirachie,
+                                legend_item,
                                 scale = 1.05,
                                 plot_kwargs = {
                                     'color': current_color,
@@ -93,14 +97,15 @@ class data_handling():
         else:
             DATA = self.single_values(   # plot individual points
                     data,
-                    current_color,
                     hirachie,
+                    legend_item,
+                    current_color,
                 )
             return DATA, False
 
 
 
-    def single_values(self, data, current_color, hirachie):
+    def single_values(self, data, hirachie, legend_item, current_color):
         point_list = np.full((1, 2), np.nan)     # [x, y][low, high][datapoints]
 
         for data_point in range(len(data)):
@@ -108,19 +113,19 @@ class data_handling():
             for dim, dimension in enumerate(['x','y']):
                 coords[dim, :] = self.point_per_axis(data, data_point, dim)
 
-            if np.any(coords[:] == None): 
+            if np.any(np.isnan(coords[:,0])): 
                 self.point_count['skipped'] += 1
-                print("⚠ skipped Point")
+                # print("⚠ skipped Point")
             else:
                 self.point_count['plotted'] += 1
-                self.plot_point(coords, point_list, hirachie, current_color)
+                self.plot_point(coords, point_list, hirachie, legend_item, current_color)
                 point_list = np.vstack((point_list, coords[:,0]))  # add low
                 if not np.all(pd.isna(coords[:, 1])):
                     point_list = np.vstack((point_list, coords[:,1]))   # add high if not empty in both dimensions
 
         point_list = point_list[1: ,:] # remove placeholder on beginning
-        print("x: ", np.transpose(point_list[:, 0]))
-        print("y: ", np.transpose(point_list[:, 1]))
+        # print("x: ", np.transpose(point_list[:, 0]))
+        # print("y: ", np.transpose(point_list[:, 1]))
         return point_list
 
 
@@ -138,20 +143,20 @@ class data_handling():
 
 
 
-    def plot_point(self, coords, point_list, hirachie, current_color):
+    def plot_point(self, coords, point_list, hirachie, legend_item, current_color):
         point_list = np.vstack((point_list, coords[:,0]))  # add low
         if not np.all(pd.isna(coords[:, 1])):
             point_list = np.vstack((point_list, coords[:,1]))   # add high if not empty in both dimensions
 
         # +  plot  + 
-            if self.alpha_areas != None and self.alpha_areas > 0:
+            if self.alpha_areas != None and 0 < self.alpha_areas <= 1 and current_color != None:
                 if np.isnan(coords[0,1]): coords[0,1] = coords[0,0]
                 if np.isnan(coords[1,1]): coords[1,1] = coords[1,0]
 
                 self.graphics.draw_ellipses(
                         np.transpose(coords),
-                        self.legend[-1],
                         hirachie    = hirachie,
+                        legend_item = legend_item,
                         scale       = 1.05,
                         plot_kwargs = {
                             'color':current_color,
@@ -160,24 +165,24 @@ class data_handling():
                             },
                         value_ranges = True
                     )
-        elif self.alpha_points != None and self.alpha_points > 0:
+        elif self.alpha_points != None and 0 < self.alpha_points <= 1 and current_color != None:
             self.graphics.plot(
                     coords[0, :],
                     coords[1, :],
                     color       = current_color,
                     alpha       = self.alpha_points,
                     hirachie    = hirachie,
-                    legend_item = self.legend[-1]
+                    legend_item = legend_item,
                 )
 
 class parse_data():
-    def __init__(self, frame, x_quantity, y_quantity, absolute = True):
+    def __init__(self, dataframe, frame, x_quantity, y_quantity, absolute = True):
         self.quantities = [ None ,  None ]
         self.labels     = [ None ,  None ]
         self.columns    = [[None], [None]]
         self.modes      = [ None ,  None ]
         for i, quantity in enumerate([x_quantity, y_quantity]):
-            for axe in frame['axes']:
+            for axe in dataframe['axes']:
                 if axe['name'] == quantity:
                     self.quantities[i]  = axe['name']
                     self.labels[i]      = axe['labels'][frame['language']]

@@ -85,12 +85,13 @@ def import_json(finename):
 
     version = config['version']
     if version == 1:
-        return config['frames']
+        # return config['frames']
+        raise ValueError("wrong .json format")
     elif version == 2:
-        frames = {}
-        for dataset in config['datasets']:
-            frames.append(parse_json_v2(dataset))
-        return frames
+        # frames = {}
+        # for dataset in config['datasets']:
+        #     frames.append(parse_json_v2(dataset))
+        return config['dataframes']
             
 
 def parse_json_v2(frame):

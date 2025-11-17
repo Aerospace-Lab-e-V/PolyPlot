@@ -7,13 +7,14 @@ from .plot_utilities import (
 from .plot_acessories import (
         draw_guideline,
         draw_colored_areas,
-        marker
+        marker,
     )
 
 from .formatting import(
         legend,
         axe_label,
         watermark,
+        figurename,
         plot_size,
     )
 

@@ -21,6 +21,13 @@ class legend():
     def append_content(self, category, item):
         self.map[category].append(item)
 
+    # def format_label_pos(self, Plot_size):
+    #     for category in self.map.values():
+    #         for item in category[1:]:
+    #             if item.label_pos[1] != None:
+    #                 item.label_pos[1] += Plot_size.x.space
+    #                 print(item.label_pos[1])
+                
 
     def create_legend(self, language, font_color):
         match language:
@@ -89,6 +96,16 @@ def watermark(fig, alpha, pos, size):
     logo_ax.imshow(img_array)
     logo_ax.axis('off')
 
+def figurename(frame, dateframe_index, frame_index):
+    frame_name  = frame.get('name', None)
+    export_name = frame.get('export_file_name', None)
+    if frame_name != None:
+        return frame_name
+    if export_name != None:
+        return export_name
+    else:
+        return f"Figure {dateframe_index+1}.{frame_index+1}"
+
 
 class plot_size():
     def __init__(self, frame, DATA, marker):
@@ -106,8 +123,8 @@ class dimension():
             # .ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
             self.plot_padding(float(np.nanmin(head.DATA[:,dim])), float(np.nanmax(head.DATA[:,dim])), head.margin, marker.limits(dim))
         else:
-            self.low  = limit[dim][0]
-            self.high = limit[dim][1]
+            self.low  = limit[0]
+            self.high = limit[1]
         
 
     def plot_padding(self, min, max, margin, marker):
@@ -117,13 +134,14 @@ class dimension():
         if self.log_flag:
             low_log  = np.log10(low )
             high_log = np.log10(high)
-            diff = (high_log - low_log) * margin
-            self.low  = 10 ** (low_log  - diff)
-            self.high = 10 ** (high_log + diff)
+            margin = (high_log - low_log) * margin
+            self.low  = 10 ** (low_log  - margin)
+            self.high = 10 ** (high_log + margin)
             self.space = (np.log10(self.high) - np.log10(self.low)) / 100
         else:
-            self.low  = low  - (high - low) * margin
-            self.high = high + (high - low) * margin
+            margin = (high - low) * margin
+            self.low  = low  - margin
+            self.high = high + margin
             self.space = (self.high - self.low) /100
     
     def offset(self, pos, diff):
