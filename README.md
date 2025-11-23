@@ -10,6 +10,9 @@
  * log and semilog
  * generation of multiple plots at once
  * easy language switch
+ * color & transparency definitions
+ * export as .png or .svg 
+ * live manipulation in popup plot
  * and much more ...
  all the setting can be adjusted in the config.json file an created by execution the plot_ashby.py
 
@@ -24,9 +27,11 @@ Der source-code stammt ursprüngilich von diesem [GitHub](https://github.com/wal
 Um den Code ganz auf unsere Bedürfnisse anpassen zu können, haben wir ihn auf unser GitLab übernommen.
 
 ## Verwendung
-1. VSC: Python extension installieren
-2. Python interpreter wählen: 
-   VSC: Strg+Shift+P → Python:Select Interpreter → Enter Path → Find → .\Ashby\Scrips\python.exe
+1. VSC vorbereiten: 
+   1. Python extension installieren
+   2. vurtual environment installieren (requirements.txt)
+   3. Python interpreter wählen: 
+   Strg+Shift+P → Python:Select Interpreter → Enter Path → Find → .\Ashby\Scrips\python.exe
 3. Excel-Tabelle in .\material_properties\ ablegen
-4. Einstellungen in **config.json** anpassen ([siehe Wiki](https://wiki.aerospace-lab.de/spaces/RPS/pages/235667472/ASHBY-Plots))
+4. Einstellungen in **config.json** anpassen ([siehe Erklärung](docs\config_explanation.jsonc))
 5. plot_ashby.py ausführen

@@ -1,7 +1,9 @@
-def filter_data(data, filters, filter_keys):
+def filter_data(data, filters):
     data_ = []  # & dict ?
-    filters = frame['filter']
-    for i, entry in data:
+    if filters == None:
+        return data
+    
+    for entry in data:
         result = filter_master(entry, filters)
         if result:
             data_.append(entry)

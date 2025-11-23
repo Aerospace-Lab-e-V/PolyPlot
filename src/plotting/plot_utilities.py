@@ -11,15 +11,18 @@ class data_handling():
     def __init__(self, graphics, dataframe, frame):
         self.graphics        = graphics
         self.absolute        = parse_data(dataframe, frame, frame["x_quantity"],     frame["y_quantity"],     True )
-        self.relative        = parse_data(dataframe, frame, frame["x_rel_quantity"], frame["y_rel_quantity"], False)
+        self.relative        = parse_data(dataframe, frame, frame.get("x_rel_quantity",None), frame.get("y_rel_quantity",None), False)
         self.frame           = frame
         self.material_colors = dataframe['material_colors']
         self.layers          = frame['layers']
         self.layer_names     = []
         self.len_layers      = len(self.layers) 
         self.point_count     = {'skipped':0, 'plotted':0}     # [skipped, plotted]
-        self.alpha_points    = self.layers[-1]['alpha_points']
-        self.alpha_areas     = self.layers[-1]['alpha_areas' ]
+        self.alpha_points    = self.layers[-1].get('alpha_points', None)
+        self.alpha_areas     = self.layers[-1].get('alpha_areas',  None)
+
+        self.material_colors['default'] = self.material_colors.get('default', '#000000')
+
 
     def plot(self, data):
         return self.recursive_preparation(
@@ -36,9 +39,9 @@ class data_handling():
             try:
                 layer_name           = self.layers[current_layer_number]['name']
                 self.layer_names.append(layer_name)
-                layer_whitelist_flag = self.layers[current_layer_number]['whitelist_flag']
-                layer_whitelist      = self.layers[current_layer_number]['whitelist']
-                layer_alpha          = self.layers[current_layer_number]['alpha']
+                layer_whitelist_flag = self.layers[current_layer_number].get('whitelist_flag',False)
+                layer_whitelist      = self.layers[current_layer_number].get('whitelist',[])
+                layer_alpha          = self.layers[current_layer_number].get('alpha',None)
                 combined_DATA        = np.full((1, 2), np.nan)      # & leer erstelen?
             except:
                 raise KeyError(f"could not import layer {current_layer_number +1}. Check config.json!")
@@ -67,7 +70,6 @@ class data_handling():
                     # print(DATA)
                     # print("plotted: ", plotted, "  -  keys: ", data.groupby(layer_name).groups.keys())
                     if DATA.shape[0] > 1 and layer_alpha != None and 0 < layer_alpha <= 1          \
-                    and not len(data.groupby(layer_name).groups.keys()) == 1       \
                     and current_color != None and plotted == False: # hull not empty  &  visible  &  not identical to layer below if layer below is plotted
                         self.graphics.draw_hull(
                                 DATA,
@@ -132,13 +134,13 @@ class data_handling():
     def point_per_axis(self, data, data_point, dim):
         point = self.absolute.property_availability(data, data_point, dim)
         if np.all(point == None): return None
-        if self.relative.columns[dim] == [None]:               # specific data  (/density)
-            return point
-        else:
+
+        if self.relative.columns[dim] != [None]:               # specific data  (/density)
             point_rel = self.relative.property_availability(data, data_point, dim)
             if np.all(point_rel == None): return None
             point /= point_rel
-            return point
+
+        return point
 
 
 
@@ -185,7 +187,7 @@ class parse_data():
             for axe in dataframe['axes']:
                 if axe['name'] == quantity:
                     self.quantities[i]  = axe['name']
-                    self.labels[i]      = axe['labels'][frame['language']]
+                    self.labels[i]      = axe['labels'][dataframe['language']]
                     self.columns[i]     = axe['columns']
                     self.modes[i]       = axe['mode']
                     break

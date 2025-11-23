@@ -1,0 +1,2697 @@
+{
+"version":2,
+"dataframes":[{
+    "API_Key": null,
+    "teable_url":null,
+    "import_file_name":"MatWeb_materials_export.xlsx",
+    "import_sheet":0,
+
+    "create_all_frames":true,
+    "frames":[{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 1",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 2",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET","PLA"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 3",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET","PLA","PP"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 4",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET","PLA","PP","PC"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 5",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET","PLA","PP","PC","ABS"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 7",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET","PLA","PP","PC","ABS","PA"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 8",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET","PLA","PP","PC","ABS","PA","PPS"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 9",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET","PLA","PP","PC","ABS","PA","PPS"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 10",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET","PLA","PP","PC","ABS","PA","PPS","PPSU"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 11",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET","PLA","PP","PC","ABS","PA","PPS","PPSU","PEEK"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 12",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET","PLA","PP","PC","ABS","PA","PPS","PPSU","PEEK","PEI"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "frames/frame 13",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": true,
+                "whitelist": ["PET","PLA","PP","PC","ABS","PA","PPS","PPSU","PEEK","PEI"],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": null,
+                "alpha_areas": null
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[{
+            "x": [0, 300, 300, 80,  80, 0  ],
+            "y": [0,   0,  50, 50, 200, 200],
+            "color": "r",
+            "alpha": 0.2
+        }],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },
+    {
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "axis/axis 1",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm1",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.4
+        },{
+            "name": "Material",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "axis/axis 2",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm2",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.4
+        },{
+            "name": "Material",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "axis/axis 3",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm3",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.4
+        },{
+            "name": "Material",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "axis/axis 4",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm4",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.4
+        },{
+            "name": "Material",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "axis/axis 5 (max)",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm5",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.4
+        },{
+            "name": "Material",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "axis/axis 5 (min)",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm6",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.4
+        },{
+            "name": "Material",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[]
+    },
+    {
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "layers/layer 1",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.25,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": true,
+            "whitelist": ["PA"],
+            "alpha": 0.08
+        },{
+            "name": "Material",
+            "whitelist_flag": true,
+            "whitelist": ["PA6"],
+            "alpha": 0.08
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": true,
+            "whitelist": ["Mocom"],
+            "alpha": 0.08
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.4
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "layers/layer 2",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.25,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": true,
+            "whitelist": ["PA"],
+            "alpha": 0.08
+        },{
+            "name": "Material",
+            "whitelist_flag": true,
+            "whitelist": ["PA6"],
+            "alpha": 0.08
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.4
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+        
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "layers/layer 3",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.25,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": true,
+            "whitelist": ["PA"],
+            "alpha": 0.08
+        },{
+            "name": "Material",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.3
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+        
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "layers/layer 4",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.25,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.3
+        },{
+            "name": "Material",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+        
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "layers/layer 5",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.25,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Rm",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.15
+        },{
+            "name": "Material",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.3
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.2
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.1
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+        
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },
+    {
+        "name":null,
+        
+        "language":"en",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "other/marker 1",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Elong_br",
+        "y_rel_quantity":"dens",
+        "log_y_flag":true,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": 0.3,
+                "alpha_areas":  0.5
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[{
+            "marker_size": 300,
+            "font_size":15
+        },{
+            "text":{
+                "name":"Prusa Space PC",
+                "rel_pos":[0,3],
+                "color":"PC"
+            },
+            "axes":{
+                "dens":    1.21,
+                "HDT 0.46":137.6,
+                "HDT 1.8": 128.8,
+                "Rm":      72,
+                "Elong_br":3.8
+            },
+            "marker":{
+                "color":"PC",
+                "marker_symbol": "*",
+                "size_factor":1
+            },
+            "arrow":null,
+            "#":"None or num"
+        }],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"en",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "other/marker 2",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Elong_br",
+        "y_rel_quantity":"dens",
+        "log_y_flag":true,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": 0.3,
+                "alpha_areas":  0.5
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[{
+            "marker_size": 300,
+            "font_size":15
+        },{
+            "text":{
+                "name":"Prusa Space PC",
+                "rel_pos":[0,3],
+                "color":"PC"
+            },
+            "axes":{
+                "dens":    1.21,
+                "HDT 0.46":137.6,
+                "HDT 1.8": 128.8,
+                "Rm":      72,
+                "Elong_br":3.8
+            },
+            "marker":{
+                "color":"PC",
+                "marker_symbol": "*",
+                "size_factor":1
+            },
+            "arrow":null,
+            "#":"None or num"
+        },{
+            "text":{
+                "name":"Punkt",
+                "rel_pos":[4,7],
+                "color":"blue"
+            },
+            "axes":{
+                "dens":    1,
+                "HDT 1.8": 80,
+                "Elong_br":100
+            },
+            "marker":null,
+            "arrow":{
+                "width": 3,
+                "shrink": 0.1,
+                "facecolor": "blue",
+                "headlength": 10,
+                "headwidth": 10
+            }
+        }],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"en",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "other/marker 3",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Elong_br",
+        "y_rel_quantity":"dens",
+        "log_y_flag":true,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": 0.3,
+                "alpha_areas":  0.5
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[{
+            "marker_size": 300,
+            "font_size":15
+        },{
+            "text":{
+                "name":"Prusa Space PC",
+                "rel_pos":[0,3],
+                "color":"PC"
+            },
+            "axes":{
+                "dens":    1.21,
+                "HDT 0.46":137.6,
+                "HDT 1.8": 128.8,
+                "Rm":      72,
+                "Elong_br":3.8
+            },
+            "marker":{
+                "color":"PC",
+                "marker_symbol": "*",
+                "size_factor":1
+            },
+            "arrow":null,
+            "#":"None or num"
+        },{
+            "text":{
+                "name":"PEI",
+                "rel_pos":[0,0],
+                "color":"PEI"
+            },
+            "axes":{
+                "dens":    1,
+                "HDT 1.8": 190,
+                "Elong_br":3.8
+            },
+            "marker":null,
+            "arrow":null,
+            "#":"None or num"
+        },{
+            "text":{
+                "name":"Punkt",
+                "rel_pos":[4,7],
+                "color":"blue"
+            },
+            "axes":{
+                "dens":    1,
+                "HDT 1.8": 80,
+                "Elong_br":100
+            },
+            "marker":null,
+            "arrow":{
+                "width": 3,
+                "shrink": 0.1,
+                "facecolor": "blue",
+                "headlength": 10,
+                "headwidth": 10
+            }
+        }],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },
+    {
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "other/line 0",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"Tg",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[0, 250],
+
+        "y_quantity":"melt",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[150, 400],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": 0.3,
+                "alpha_areas":  0.5
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[{
+            "marker_size": 300,
+            "font_size":15
+        }],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "other/line 1",
+
+        "automatic_Display_Area_flag":false,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"Tg",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[0, 250],
+
+        "y_quantity":"melt",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[150, 400],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": 0.3,
+                "alpha_areas":  0.5
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[{
+            "x": 50,
+            "y": 200,
+            "m": 1,
+            "linestyle": "--",
+            "color":"aqua",
+            "linewidth": 4,
+            "fontsize": 20,
+            "string":"$\\frac{Schmelztemperatur}{Glassübergangstemperatur} =$ const.",
+            "string_above": true,
+            "string_padding": 5
+        }],
+
+        "annotations":[{
+            "marker_size": 300,
+            "font_size":15
+        }],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },
+    {
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "build/build 1",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Elong_br",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": 0.3,
+                "alpha_areas":  0.5
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "build/build 2",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Elong_br",
+        "y_rel_quantity":null,
+        "log_y_flag":true,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": 0.3,
+                "alpha_areas":  0.5
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "build/build 3",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Elong_br",
+        "y_rel_quantity":"dens",
+        "log_y_flag":true,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": 0.3,
+                "alpha_areas":  0.5
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },{
+        "name":null,
+        
+        "language":"en",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name": "build/build 4",
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"Elong_br",
+        "y_rel_quantity":"dens",
+        "log_y_flag":true,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0.4
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0
+            },{
+                "alpha_points": 0.3,
+                "alpha_areas":  0.5
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    },
+    {
+        "name":"interaktiv",
+        
+        "language":"de",
+        "legend_flag":true,
+        "title":"Plot",
+
+        "image_ratio":2,
+        "resolution":1000,
+        "export_file_name":null,
+
+        "automatic_Display_Area_flag":true,
+        "automatic_Display_Area_margin": 0.1,
+
+        "x_quantity":"HDT 1.8",
+        "x_rel_quantity":null,
+        "log_x_flag":false,
+        "x_lim":[30, 230],
+
+        "y_quantity":"E-Mod",
+        "y_rel_quantity":null,
+        "log_y_flag":false,
+        "y_lim":[10, 135],
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+                "name": "Gruppe",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Material",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": 0.4
+            },{
+                "name": "Hersteller",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "name": "Variante",
+                "whitelist_flag": false,
+                "whitelist": [],
+                "alpha": null
+            },{
+                "alpha_points": 0.3,
+                "alpha_areas":  0.5
+            }],
+
+        "filter":{
+            "conjunction":"and",
+            "filterSet":[{
+                "fieldId":"Available",
+                "operator":"is",
+                "value":null
+            }]
+        },
+
+        "guidelines":[],
+
+        "annotations":[],
+            
+        "arrows":[],
+
+        "colored_areas":[],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7
+        }]
+    }],
+
+    "axes":[{
+        "name":"nr",
+        "columns":["nr"],
+        "mode":"default",
+        "labels":{
+            "de":"",
+            "en":""
+        }
+    },{
+        "name":"HDT 0.46",
+        "columns":["Deflection Temperature at 0.46 MPa 66 psi"],
+        "mode":"default",
+        "labels":{
+            "de":"Verformungstemperatur [°C] @ 0.46 MPa",
+            "en":"Deflection Temperature $HDT$ [°C] @ 0.46 MPa"
+        }
+    },{
+        "name":"HDT 1.8",
+        "columns":["Deflection Temperature at 1.8 MPa 264 psi"],
+        "mode":"default",
+        "labels":{
+            "de":"Verformungstemperatur [°C] @ 1,8 MPa",
+            "en":"Deflection Temperature $HDT$ [°C] @ 1.8 MPa"
+        }
+    },{
+        "name":"melt",
+        "columns":["Melting Point", "Melt Temperature", "Processing Temperature"],
+        "mode":"default",
+        "labels":{
+            "de":"Schmelztemperatur $T_S$ [°C]",
+            "en":"melting point $T_M$ [°C]"
+        }
+    },{
+        "name":"Rm",
+        "columns":["Tensile Strength at Break", "Tensile Strength Ultimate", "Tensile Strength", "Tensile Strength Yield"],
+        "mode":"min",
+        "labels":{
+            "de":"Zugfestigkeit $R_m$ [MPa]",
+            "en":"Tensile Strength $R_m$ [MPa]"
+        }
+    },{
+        "name":"E-Mod",
+        "columns":["Tensile Modulus", "Modulus of Elasticity"],
+        "mode":"def",
+        "labels":{
+            "de":"E-Modul [GPa]",
+            "en":"E-Modulus [GPa]"
+        }
+    },{
+        "name":"Elong_br",
+        "columns":["Elongation at Break"],
+        "mode":"def",
+        "labels":{
+            "de":"Bruchdehnung [%]",
+            "en":"Elongation at Break [%]"
+        }
+    },{
+        "name":"dens",
+        "columns":["Density","Specific Gravity"],
+        "mode":"def",
+        "labels":{
+            "de":"Dichte $\\rho$ [kg/m$^3$]",
+            "en":"Density $\\rho$ [kg/m$^3$]"
+        }
+    },{
+        "name":"vicat",
+        "columns":["Vicat Softening Point"],
+        "mode":"def",
+        "labels":{
+            "de":"Vicat",
+            "en":"Vicat Softening Point"
+        }
+    },{
+        "name":"Tg",
+        "columns":["Glass Transition Temp Tg"],
+        "mode":"def",
+        "labels":{
+            "de":"Glassübergangstemperatur $T_g$ [°C]",
+            "en":"Glass Transition Temperature $T_g$ [°C]"
+        }
+    },{
+        "name":"Rm1",
+        "columns":["Tensile Strength Ultimate"],
+        "mode":"default",
+        "labels":{
+            "de":"Zugfestigkeit $R_m$ [MPa]",
+            "en":"Tensile Strength $R_m$ [MPa]"
+        }
+    },{
+        "name":"Rm2",
+        "columns":["Tensile Strength Yield", "Tensile Strength"],
+        "mode":"default",
+        "labels":{
+            "de":"Zugfestigkeit $R_m$ [MPa]",
+            "en":"Tensile Strength $R_m$ [MPa]"
+        }
+    },{
+        "name":"Rm3",
+        "columns":["Tensile Strength Ultimate", "Tensile Strength Yield", "Tensile Strength"],
+        "mode":"default",
+        "labels":{
+            "de":"Zugfestigkeit $R_m$ [MPa]",
+            "en":"Tensile Strength $R_m$ [MPa]"
+        }
+    },{
+        "name":"Rm4",
+        "columns":["Tensile Strength at Break", "Tensile Strength Ultimate", "Tensile Strength Yield", "Tensile Strength"],
+        "mode":"default",
+        "labels":{
+            "de":"Zugfestigkeit $R_m$ [MPa]",
+            "en":"Tensile Strength $R_m$ [MPa]"
+        }
+    },{
+        "name":"Rm5",
+        "columns":["Tensile Strength at Break", "Tensile Strength Ultimate", "Tensile Strength Yield", "Tensile Strength"],
+        "mode":"max",
+        "labels":{
+            "de":"Zugfestigkeit $R_m$ [MPa]",
+            "en":"Tensile Strength $R_m$ [MPa]"
+        }
+    },{
+        "name":"Rm6",
+        "columns":["Tensile Strength at Break", "Tensile Strength Ultimate", "Tensile Strength Yield", "Tensile Strength"],
+        "mode":"min",
+        "labels":{
+            "de":"Zugfestigkeit $R_m$ [MPa]",
+            "en":"Tensile Strength $R_m$ [MPa]"
+        }
+    }],
+
+    "material_colors":{
+        "ABS": "#219DD3",	
+        "PA12":"#7BBFD9", 	
+        "PEEK":"#D69D20",	
+        "PLA": "#E3B768",	
+        "PET": "#3BD420",	
+        "PETG":"#85E064",	
+        "PPSU":"#B52ED6",	
+        "PPS": "#CE82E0",
+
+        "PA11":"#219DD3",	
+        "POM": "#7BBFD9",	
+        "PP":  "#D69D20",	
+        "PVDF":"#E3B768",	
+        "PC":  "#3BD420",	
+        "PEI": "#85E064",	
+        "PA6": "#B52ED6",	
+        "PPA": "#CE82E0",
+
+        "Mocom":"blue",
+        "BASF": "green",
+
+        "PA": "red",
+        "default":"grey"
+        }
+}]}

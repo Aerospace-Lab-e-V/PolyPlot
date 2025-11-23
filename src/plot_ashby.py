@@ -10,32 +10,42 @@ from eventhandling import *
 
 
 if __name__ == '__main__':
-    print("\n\nstarting Ashby-Plot Generator            Ⓒ afffe 2025")
+    print("\n\nstarting Ashby-Plot Generator            Ⓒ afffe18 @ RPS (ASL) 2025")
 
+
+# : DATAFRAME                                                                           :
     dataframes = import_json('config.json')
     for dataframe_index, dataframe in enumerate(dataframes):
         print(f"\n::::::::::::::::::::::::::::::::::::: loading dataframe {dataframe_index + 1} of {len(dataframes)} :::::::::::::::::::::::::::::::::::::")
 
+        language = dataframe.get('language',"en")
+        resolution = dataframe.get('resolution', None)
+        if resolution in [None,"svg"]:
+            fileformat = "svg"
+            resolution = 100
+        else:
+            fileformat = "png"
+        image_ratio    = dataframe.get('image_ratio', 16/9)
+        create_frames  = dataframe.get('create_all_frames', True)
+
+
+# : FRAME                                                                               :
         for frame_index, frame in enumerate(dataframe['frames']):
-            if not (dataframe.get('create_all_frames', True) == True or frame_index in dataframe.get('create_all_frames', True)):
+            if not (create_frames == True or frame_index +1 in create_frames):
                 continue
 
-            name = frame.get('name',None)
-            if name != None:
-                name = f":  {name}"
-            print(f"\n::::::::::::::::::::::::::::  creating frame {frame_index + 1} of {len(dataframe['frames'])}{name} :::::::::::::::::::::::::::: \n")
+            print(f"\n::::::::::::::::::::::::::::  creating frame {frame_index + 1} of {len(dataframe['frames'])} {frame.get('name',"")} :::::::::::::::::::::::::::: \n")
 
 
             # : General setup :
-            if frame['export_file_name'] != None:
+            if frame.get('export_file_name',None) != None:
                 font_color = 'white'
             else:
-                title = frame['title']
                 font_color = 'black'
 
-            figure_size = (frame['image_width'],frame['image_height'])
+            figure_size = (10*image_ratio ,10)
             fig, ax = plt.subplots(1,1, figsize=figure_size)
-            if frame['legend_flag'] == True:
+            if frame.get('legend_flag',True) == True:
                 plt.subplots_adjust(left=0.09, right=0.86)
             
             ax.tick_params(colors=font_color, labelsize=15)
@@ -45,25 +55,29 @@ if __name__ == '__main__':
             plt.rcParams.update({'font.sans-serif':'Arial'})
             plt.rcParams.update({'font.size': 18})
             # plt.rc('text',usetex='False')
-            # plt.rcParams['mathtext.default'] = 'regular'
-
-
-            # ~ import data 
-            if dataframe['teable_url'] != None:
-                data = import_teable(dataframe['teable_url'], dataframe['API_Key'], columns, frame['layers'], frame['filter'])
-                # & filter
-            else:
-                data = import_excel(dataframe['import_file_name'], dataframe['import_sheet'])
-            if len(data) == 0:
-                raise ValueError("No Vailid Data imported")
-
+            # plt.rcParams['mathtext.default'] = True
+            if fileformat == "svg":
+                plt.rcParams.update({"savefig.format":"svg"})
 
             # : class init :
-            Graphics = plotter_graphics(ax, frame['algorithm'])       # plot_hull.py   → legend()  # § class §
+            Graphics = plotter_graphics(ax, frame.get('algorithm',"cubic"))       # plot_hull.py   → legend()  # § class §
 
             Sorted_data = data_handling(Graphics, dataframe, frame)   # plot_utilities.py # § class §
 
-            Marker = marker(frame['annotations'], dataframe['material_colors'], Sorted_data.absolute.quantities, ax)   # plot_acessories.py # § class §
+            Marker = marker(frame['annotations'], dataframe['material_colors'], Sorted_data.absolute.quantities, Sorted_data.relative.quantities, ax)   # plot_acessories.py # § class §
+
+
+            # : import data :
+            if dataframe.get('teable_url',None) != None:
+                data = import_teable(dataframe['teable_url'], dataframe['API_Key'], Sorted_data.absolute.columns, frame['layers'], frame.get('filter', None))
+            elif dataframe.get('import_file_name',None) != None:
+                data = import_excel(dataframe['import_file_name'], dataframe.get('import_sheet',0))
+                filter_data(data, frame.get('filter', None))
+            else:
+                raise FileNotFoundError("no datasource selected. set teable_url or import_file_name in config")
+            if len(data) == 0:
+                raise ValueError("No Vailid Data imported")
+
 
             # : Data plotting :
             DATA, _ = Sorted_data.plot(data)
@@ -76,9 +90,9 @@ if __name__ == '__main__':
             Plot_size = plot_size(frame, DATA, Marker) # § class §
                         
 
-            if frame['legend_flag']:
+            if frame.get('legend_flag',True):
                 Graphics.legend.create_legend(
-                    language = frame['language'],
+                    language = language,
                     font_color = font_color,
                 )
 
@@ -99,6 +113,7 @@ if __name__ == '__main__':
                         x_max = Plot_size.x.high *2,
                         y_min = Plot_size.y.low  /2,
                         y_max = Plot_size.y.high *2,
+                        font_color=font_color,
                         ax = ax,
                     )
             except:
@@ -113,9 +128,9 @@ if __name__ == '__main__':
             ax.set(xlim=[Plot_size.x.low, Plot_size.x.high], ylim=[Plot_size.y.low, Plot_size.y.high])        
 
             # ~ toggle log in plot 
-            if frame['log_x_flag']:
+            if frame.get('log_x_flag',False):
                 ax.set_xscale('log')
-            if frame['log_y_flag']:
+            if frame.get('log_y_flag',False):
                 ax.set_yscale('log')
             
             # ~ set x- and y-labels 
@@ -135,8 +150,8 @@ if __name__ == '__main__':
             print(f"skipped a total of {Sorted_data.point_count['skipped']} Datapoints due to missing entries.  {Sorted_data.point_count['plotted']} were plotted.")  # & low & high ≙ 2 Values
 
             # : export :
-            if frame['export_file_name'] == None:
-                plt.title(title, loc='center', size=40, pad=15)
+            if frame.get('export_file_name',None) == None:
+                plt.title(frame.get('title',""), loc='center', size=40, pad=15)
                 fig.canvas.manager.set_window_title(figurename(frame, dataframe_index, frame_index))
                 watermark(fig, alpha=0.5, pos=[0.72, 0.13], size=.13)
 
@@ -146,11 +161,10 @@ if __name__ == '__main__':
 
                 plt.show(block=False)
                 print(f"⇒ plot displayed \n")
+
             else:
-                if frame.get('image_dpi',None) in [None, 'svg']:
-                    plt.rcParams.update({"savefig.format":"svg"})
-                    frame['image_dpi'] = 100
-                plt.savefig(os.path.join('export', frame['export_file_name']), dpi=frame['image_dpi'], transparent=True)
+                # os.makedirs(dir, exist_ok=True)    
+                plt.savefig(os.path.join('export', frame['export_file_name']), dpi=resolution/10, transparent=True) # & create directory
                 print(f"⇒ plot saved as ./export/{frame['export_file_name']} \n")
                 plt.close()
             

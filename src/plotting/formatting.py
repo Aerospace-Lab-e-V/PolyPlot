@@ -109,24 +109,20 @@ def figurename(frame, dateframe_index, frame_index):
 
 class plot_size():
     def __init__(self, frame, DATA, marker):
-        self.automatic_Display_Area_flag = frame["automatic_Display_Area_flag"]
-        self.margin         = frame["automatic_Display_Area_margin"]
+        self.margin         = frame.get("automatic_Display_Area_margin",0.12)
         self.DATA           = DATA
-        self.x = dimension(self, 0, marker, frame["log_x_flag"], frame["x_lim"]) # § class §
-        self.y = dimension(self, 1, marker, frame["log_y_flag"], frame["y_lim"]) # § class §
+        self.x = dimension(self, 0, marker, frame.get('log_x_flag',False), frame.get("x_lim",None)) # § class §
+        self.y = dimension(self, 1, marker, frame.get('log_y_flag',False), frame.get("y_lim",None)) # § class §
 
 class dimension():
     def __init__(self, head, dim, marker, log_flag, limit):
         self.log_flag = log_flag
-        self.space = 1
-        if head.automatic_Display_Area_flag:
-            # .ax.margins(x=automatic_Display_Area_margin, y=automatic_Display_Area_margin)
+        if limit == None:
             self.plot_padding(float(np.nanmin(head.DATA[:,dim])), float(np.nanmax(head.DATA[:,dim])), head.margin, marker.limits(dim))
         else:
-            self.low  = limit[0]
-            self.high = limit[1]
-        
+            self.plot_padding(limit[0], limit[1], head.margin, marker.limits(dim))
 
+        
     def plot_padding(self, min, max, margin, marker):
         low  = np.nanmin([marker[0], min])
         high = np.nanmax([marker[1], max])
@@ -143,6 +139,7 @@ class dimension():
             self.low  = low  - margin
             self.high = high + margin
             self.space = (self.high - self.low) /100
+    
     
     def offset(self, pos, diff):
         if self.log_flag:

@@ -1,13 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def draw_guideline(guidelines, x_min, x_max, y_min, y_max, ax):
+def draw_guideline(guidelines, x_min, x_max, y_min, y_max, font_color, ax):
     num_points = 5
     for guideline in guidelines:
 
-        x = guideline['x']
-        y = guideline['y']
-        m = guideline['m']
+        x = guideline.get('x', False)
+        y = guideline.get('y', False)
+        m = guideline.get('m', False)
+        if x == False or y == False or m == False:
+            print("❗ x, y or m not specified for guideline")
 
         if x == None:    # horizontal
             x_values = np.linspace(x_min, x_max, num_points)
@@ -20,14 +22,13 @@ def draw_guideline(guidelines, x_min, x_max, y_min, y_max, ax):
             y_intercept = (y- (m*x))
             y_values = m*x_values + y_intercept
 
-        print(f"guideline: {guideline['string']} @ [{x_values} - {y_values}]")
+        print(f"guideline: {guideline.get('label',"")} @ [{x_values} - {y_values}]")
+
 
         ax.plot(
             x_values,
             y_values,
-            linestyle = guideline['linestyle'],
-            linewidth = guideline['linewidth'],
-            color     = guideline['color'    ],
+            plot_kwargs = guideline.get("line_props", None) # & test and fix
             )
 
         if y == None:
@@ -35,19 +36,20 @@ def draw_guideline(guidelines, x_min, x_max, y_min, y_max, ax):
         else:
             label_angle = np.arctan(m)
 
-        if guideline['string_above'] == True:
+        if guideline.get('label_above',True) == True:
             label_normal_angle = label_angle + np.pi/2
         else: 
             label_normal_angle = label_angle - np.pi/2
 
-        x_text = x + np.cos(label_normal_angle)*guideline['string_padding']
-        y_text = y + np.sin(label_normal_angle)*guideline['string_padding']
+        x_text = x + np.cos(label_normal_angle)*guideline.get('label_padding',6)
+        y_text = y + np.sin(label_normal_angle)*guideline.get('label_padding',6)
 
         ax.text(
             x_text,
             y_text, 
-            guideline['string'], 
-            fontsize=guideline['fontsize'],
+            guideline.get('label',""), 
+            color=guideline.get("font_color",font_color),
+            fontsize=guideline.get('fontsize', 18),
             rotation=np.rad2deg(label_angle), 
             rotation_mode='anchor',
             transform_rotates_text=True)
@@ -58,8 +60,12 @@ def draw_colored_areas(colored_areas, ax):
     for colored_area in colored_areas:
         x         = colored_area['x']
         y         = colored_area['y']
-        color     = colored_area['color']
-        alpha     = colored_area['alpha']
+        color     = colored_area['color']       # & .get(,'default')
+        alpha     = colored_area.get('alpha',0.2)
+
+        if len(x) != len(y) or len(x) == 0 or len(y) == 0:
+            print("❗ x & y array have different sizes or length 0 unable to print colored area")
+            break
 
         ax.fill(
             x, 
@@ -71,27 +77,34 @@ def draw_colored_areas(colored_areas, ax):
 
 # :  MARKER  : 
 class marker:
-    def __init__(self, annotations, material_colors, plotted_axes, ax):
+    def __init__(self, annotations, material_colors, abs_axes, rel_axes, ax):
         self.annotations_raw = annotations[1:]
         self.annotations     = []
         if len(self.annotations_raw):
             self.material_colors = material_colors
-            self.font_size       = annotations[0]['font_size'  ]
-            self.marker_size     = annotations[0]['marker_size']
+            self.font_size       = annotations[0].get('font_size',18)
+            self.marker_size     = annotations[0].get('marker_size',330)
             self.ax = ax
-            self.annotation_position(plotted_axes)
+            self.annotation_position(abs_axes, rel_axes)
 
-    def annotation_position(self, plotted_axes):
+    def annotation_position(self, abs_axes, rel_axes):
         for annotation in self.annotations_raw:
             values = [None, None]
-            for key, value in annotation['axes'].items():
-                for axe in plotted_axes:
-                    if axe == key:
-                        values[plotted_axes.index(axe)] = value
+            for dim in [0,1]: # dimensions
+                values[dim] = self.get_pos(abs_axes[dim], annotation['axes'])
+                if rel_axes[dim] != None and values[dim] != None:        # rellative
+                    value = self.get_pos(rel_axes[dim], annotation['axes'])
+                    if value != None:  values[dim] /= value
+                    else:              values[dim]  = None
 
             if values[0] != None and values[1] != None:
                 annotation['values'] = values
                 self.annotations.append(annotation)  
+
+    def get_pos(self, plt_axe, ann_axes):
+        for key, value in ann_axes.items():
+            if plt_axe == key:
+                return value
 
 
     def create_annotations(self, plot_size):
@@ -109,12 +122,15 @@ class marker:
                         values[0],
                         values[1],
                         c = color,
-                        marker = marker.get('marker_symbol','+'),
+                        marker = marker.get('marker_symbol','o'),
                         s = self.marker_size * marker.get('size_factor', 1),
+                        edgecolors = self.get_color(marker.get('edgecolors',"black")),
+                        linewidths = marker.get('linewidths', 0)
                     )
 
             text = annotation['text']
-            color = self.get_color(text['color'])
+            font_size = text.get('font_size', self.font_size)
+            color = self.get_color(text.get('color','default'))
             arrow = annotation.get('arrow', None)
             # print("label pos:", plot_size.x.offset(text['rel_pos'][0], values[0]) , plot_size.y.offset(text['rel_pos'][1], values[1]))
             if arrow == None:           # ~ Label 
@@ -127,15 +143,15 @@ class marker:
                     ha       = "center"
                 )
             else:                        # ~ Arrow 
-                self.ax.annotate(
-                    s           = text['name'],
+                self.ax.annotate(        # & shrink shortens arrow on both ends
+                    text        = text['name'],
                     xy          = values,
                     xytext      = [plot_size.x.offset(values[0], text['rel_pos'][0]), \
                                    plot_size.y.offset(values[1], text['rel_pos'][1])],
                     color       = color,
                     fontsize    = self.font_size,
-                    arrowprops  = arrows[arrow],
-                    plot_kwargs = {'ha': 'center'}
+                    arrowprops  = annotation['arrow'],
+                    # kwargs      = {'ha': 'center'}
                 )
             print(f"marker: {text['name']} @ {values}")
 
