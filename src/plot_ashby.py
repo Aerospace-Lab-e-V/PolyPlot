@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
             Sorted_data = data_handling(Graphics, dataframe, frame)   # plot_utilities.py # § class §
 
-            Marker = marker(frame['annotations'], dataframe['material_colors'], Sorted_data.absolute.quantities, Sorted_data.relative.quantities, ax)   # plot_acessories.py # § class §
+            Marker = marker(frame.get('annotations',{}), dataframe['material_colors'], Sorted_data.absolute.quantities, Sorted_data.relative.quantities, ax)   # plot_acessories.py # § class §
 
 
             # : import data :
@@ -97,7 +97,7 @@ if __name__ == '__main__':
                 )
 
             try:
-                if len(frame['colored_areas']) > 0:
+                if len(frame.get('colored_areas',{})) > 0:
                     draw_colored_areas(
                         frame['colored_areas'],
                         ax = ax
@@ -106,18 +106,18 @@ if __name__ == '__main__':
                 print("❗ERROR drawing colored areas. Check config.json! continuing...")
 
 
-            try:
-                draw_guideline(
-                        frame['guidelines'],
-                        x_min = Plot_size.x.low  /2,
-                        x_max = Plot_size.x.high *2,
-                        y_min = Plot_size.y.low  /2,
-                        y_max = Plot_size.y.high *2,
-                        font_color=font_color,
-                        ax = ax,
+            # try:
+            draw_guideline(
+                    frame.get('guidelines',{}),
+                    x_min = Plot_size.x.low  /2,
+                    x_max = Plot_size.x.high *2,
+                    y_min = Plot_size.y.low  /2,
+                    y_max = Plot_size.y.high *2,
+                    font_color=font_color,
+                    ax = ax,
                     )
-            except:
-                print("❗ERROR drawing guidelines. Check config.json! continuing...")
+            # except:
+            #     print("❗ERROR drawing guidelines. Check config.json! continuing...")
 
 
             Marker.create_annotations(Plot_size)

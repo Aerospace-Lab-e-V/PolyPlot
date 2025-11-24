@@ -28,7 +28,7 @@ def draw_guideline(guidelines, x_min, x_max, y_min, y_max, font_color, ax):
         ax.plot(
             x_values,
             y_values,
-            plot_kwargs = guideline.get("line_props", None) # & test and fix
+            **guideline.get("line_props", {}) # & test and fix
             )
 
         if y == None:
@@ -137,14 +137,14 @@ class marker:
                 self.ax.text(
                     x        = plot_size.x.offset(values[0], text['rel_pos'][0]),
                     y        = plot_size.y.offset(values[1], text['rel_pos'][1]),
-                    s        = text['name'],
+                    s        = text.get('name',""),
                     color    = color,
                     fontsize = self.font_size,
                     ha       = "center"
                 )
             else:                        # ~ Arrow 
                 self.ax.annotate(        # & shrink shortens arrow on both ends
-                    text        = text['name'],
+                    text        = text.get('name',""),
                     xy          = values,
                     xytext      = [plot_size.x.offset(values[0], text['rel_pos'][0]), \
                                    plot_size.y.offset(values[1], text['rel_pos'][1])],

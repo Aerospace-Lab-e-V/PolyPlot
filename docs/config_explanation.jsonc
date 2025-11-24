@@ -14,19 +14,21 @@
 {
 "version":3,                            // version number
 "dataframes":[{
-    "API_Key": null,                    // Teable API Key   [str]
-    "teable_url":null,                  // Teable url       ["https://www..."] if [null] → import Excel from import_file_name (#15) {null}
-    "import_file_name":"  .xlsx",       // Excel file name  [str], Excel is expected to be in the material_properties folder {null}
+    "API_Key": null,                    // Teable API Key   ["Bearer teable_ ..." str]
+    "teable_url":null,                  // Teable url       ["https://www ..." str] if [null] → import Excel from import_file_name (#19) {null}
+    "import_file_name":"",              // Excel file name  [str "...xlsx"], Excel is expected to be in the material_properties folder {null}
     "import_sheet":0,                   // sheetnumber in Exel to import [num] {0}
 
-    "image_ratio":2,                    // with/heigth [num] {16/9}
+    "image_ratio":2,                    // with/heigth [num] {16/9} 
     "resolution":1000,                  // vertical resolution [num / "svg"] {"svg"}
 
     "language":"",                      // [str] {"en"} language for axis-label
 
-    "create_all_frames":true,           // [true] create all frames in list,  [num array] only given frames (numbers can be retrieved from output when creatin all frames) {true}
+
+// : Frames :
+    "create_all_frames":true,           // [true] create all frames in list,  [num array] only given frames (numbers can be retrieved from output when creating all frames) {true}
     "frames":[{
-        "name":null,                    // title to show in output and window header on popout
+        "name":null,                    // title to show in output and window header on popout {""}
         
         "legend_flag":true,             // [true]/[ false] schold a legend be printed  {true}
         // & legend title
@@ -41,16 +43,17 @@
 
         "y_quantity":"",                // axis name (see bottom) for value on y_axis       [str]
         "y_rel_quantity":null,          //   "                    to divide y_quantity by (per point)   [str / none] {none}
-        "log_y_flag":false,             // [true[/[false] should the y-axis be displayed logarhithmic                  {false}
+        "log_y_flag":false,             // [true[/[false] should the y-axis be displayed logarhithmic                {false}
         "y_lim":[0, 0],                 // [num, num] area on y-axis to be displayed, [null] will calculate the area itself including padding (#47)   {null}
 
-        "automatic_Display_Area_margin": 0.1,       // rellative padding around points/marker in every direction 1 is size of all points  {0.12}
+        "automatic_Display_Area_margin": 0,    // rellative padding around points/marker in every direction 1 is size of all points  {0.12}
 
-        "algorithm":"",                 // approximation algorithm for hulls ["alpha" / "cubic"]
+        "algorithm":"",                 // approximation algorithm for hulls ["alpha" / "cubic"]  {cubic}
         
+    // + layers +
         "layers":[{
                 "name": "",                 // layer name [str]
-                "whitelist_flag": true,     // [true]: whitelist / [false]: blacklist  {false}
+                "whitelist_flag": true,     // [true]: whitelist / [false]: blacklist  {false}, decides how the whitlist array below (#57) is used
                 "whitelist": null,          // black/whitelist filterwords [str array] or [null]  {null}
                 "alpha": null               // [num]/[null] opacity for that layer ∈[0,1]  {null}
             },                              // insert further layers here
@@ -59,62 +62,67 @@
                 "alpha_areas": null         // [num]/[null] opacity of points with ranges in at least one direction ∈[0,1]  {null}
             }],
 
+    // + filter +
         "filter":{},                        // create and copy value via Teable API {null}   // ToDo: not fully functional with Excel import
 
+    // + guidelines +
         "guidelines":[{
             "x": 50,                        // x coordinate of anchor point [num], horizontal if [null]
             "y": 200,                       // y coordinate of anchor point [num], vertical   if [null]
             "m": 1,                         // incline    // ToDo: semi logarhitmic not working
-            "line_props":{                  // see https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html for all options
+            "line_props":{                  // see https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html for all options 
                 "linestyle": "--",          // linestyle [str], see https://matplotlib.org/stable/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D.set_linestyle
                 "color":"aqua",             // color (#12)   // ToDo: material_colors
                 "linewidth": 4              // [num]
             },
             "fontsize": 20,                 // [num] {18}
-            "font_color":"",                // [str] {default font color: blac / white} 
+            "font_color":"",                // [str] {default font color: black / white} 
             "label":"",                     // label [str] {""}
-            "label_above": true,            // should the label be placed above or below the line [true / false] {true}
+            "label_above": true,            // should the label be placed above or below the line [true]/[false] {true}
             "label_padding": 0              // padding between label and lien [num] {6}
         }],            
 
+    // + annotations +
         "annotations":[{                    // the first entry may only contain font_ & marker_size and no annotation
-            "marker_size": 300,             // default marker size.
-            "font_size":15                  // default font size
+            "marker_size": 0,               // default marker size {330}
+            "font_size":0                   // default font size   {18}
         },{
             "text":{
-                "name":"",                  // label
+                "name":"",                  // label  {""}
                 "rel_pos":[0,0],            // shift from axes position [x,y] ≙ [num,num]  in   * Plotsize / 100
-                "color":"",                 // color (#12), material_colors (#109)  [str]
-                "font_size":0               // fontsize to overwrite de default one (#79)
+                "color":"",                 // color (#12), material_colors (#146)  [str]
+                "font_size":0               // fontsize to overwrite de default one (#88)
             },
             "axes":{                        // define position
                 "": 0,                      // axes name (#120) [str] : position [num]
                 "": 0, //...
             },
             "marker":{                      // [none] for no marker  {none}
-                "color":"",                 // color (#12), material_colors (#109)  [str]
-                "marker_symbol": "",        // see https://matplotlib.org/stable/api/markers_api.html for all options
-                "size_factor":1,            // multiplier to marker_size (#78)
+                "color":"",                 // color (#12), material_colors (#146)  [str]  {'default'}
+                "marker_symbol": "",        // see https://matplotlib.org/stable/api/markers_api.html for all options  {"o"}
+                "size_factor":1,            // multiplier to marker_size (#78)  {1}
                 "linewidths":0,             // outline width [num] {0}
-                "edgecolors":""             // outline color (#12), material_colors (#109) [str] {"black"}
+                "edgecolors":""             // outline color (#12), material_colors (#146) [str] {"black"}
             },
             "arrow":{                       // [none] for no arrow  {none},  see https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.annotate.html arrowprops
-                "width": 0,                 // linewidth
+                "width": 0,                 // linewidth {}
                 // "shrink": 0.1,           // ToDo: verkürzt auf beiden Seiten
-                "facecolor": "blue",        // arrow color: (#12), material_colors (#109)  [str]
+                "facecolor": "blue",        // arrow color: (#12), material_colors (#146)  [str] {}
                 // ToDo: outline
-                "headlength": 0,            // headdimensions in points [num]
-                "headwidth": 0              //   "
+                "headlength": 0,            // headdimensions in points [num] {}
+                "headwidth": 0              //   "                              
             }
         }],
             
-        "colored_areas":[{      // + background color for areas + 
+    // + background color for areas + 
+        "colored_areas":[{
             "x": [],            // point list  [num array], corner points: (x[i], y[i])
             "y": [],            //   " 
             "color": "",        // color (#12)      // ToDo: material_colors
             "alpha": 0          // [num] opacity ∈[0,1]  {0.2}
         }],
 
+    // + highlighted hulls +
         "highlighted_hulls":[{      // ToDo: not yet implemented
             "layer":"",
             "label":"",
@@ -122,20 +130,22 @@
             "color": ""
         }]
     }],
-
-    "axes":[{                    // + list of all possible axes +
+    // : end of Frame :
+    // + list of all possible axes +
+    "axes":[{                    
         "name":"",               // axis name    [str]
         "columns":["",""],       // column names [str,str, ...] 
-        "mode":"",               // "default", "max, "min"
+        "mode":"",               // "default", "max, "min"   {"default"}
         "labels":{
             "de":"",             // axis Label
-            "en":""              // more languages can be added  (#16)
+            "en":""              // more languages can be added  (#25)
         }                        // a list to copy paste for our default axes is found at  material_properties\axen.json
     }],
 
-    "material_colors":{       // + list of all colors +
+    // + list of all colors +
+    "material_colors":{       
         "": "",	              // material_name : #rrggbb or color-name [str]  (#12)   
                               // append all colors here
-        "default":""          // hex or color-name [str]  (#12)
+        "default":""          // hex or color-name [str] (#12), default color for hulls, marker,.. if no color is given {"#000000"}
         }
 }]}

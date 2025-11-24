@@ -44,16 +44,13 @@
             "alpha_areas":  0.3
         }],
 
-
-        "guidelines":[],
-
         "annotations":[{
             "marker_size": 300,
             "font_size":15
         },{
             "text":{
                 "name":"Prusa Space PC",
-                "rel_pos":[0,2],
+                "rel_pos":[0,3],
                 "color":"PC"
             },
             "axes":{
@@ -65,16 +62,68 @@
             },
             "marker":{
                 "color":"PC",
-                "marker_symbol": "*",
-                "size_factor":1
+                "size_factor":1,
+                "linewidths":2
             },
             "arrow":null,
             "#":"None or num"
+        },{
+            "text":{
+                "name":"PEI",
+                "rel_pos":[0,0],
+                "color":"PEI"
+            },
+            "axes":{
+                "dens":    1,
+                "HDT 1.8": 190,
+                "Rm":120
+            },
+            "marker":null,
+            "arrow":null,
+            "#":"None or num"
+        },{
+            "text":{
+                "name":"Punkt",
+                "rel_pos":[4,7],
+                "color":"blue"
+            },
+            "axes":{
+                "dens":    1,
+                "HDT 1.8": 80,
+                "Rm":100
+            },
+            "marker":null,
+            "arrow":{
+                "width": 3,
+                "shrink": 0.1,
+                "facecolor": "blue",
+                "headlength": 10,
+                "headwidth": 10
+            }
         }],
-            
-        "arrows":[],
+   
+        "guidelines":[{
+            "x": 50,
+            "y": 50,
+            "m": 0.6,
+            "line_props":{
+                "linestyle": "-",
+                "color":"aqua",
+                "linewidth": 3
+            },
+            "fontsize": 20,
+            "label":"$\\frac{Schmelztemperatur}{Glassübergangstemperatur} =$ const.",
+            "label_above": true,
+            "label_padding": 4
+        }],
 
-        "colored_areas":[],
+
+        "colored_areas":[{
+            "x": [0, 300, 300, 80,  80, 0  ],
+            "y": [0,   0,  50, 50, 200, 200],
+            "color": "r",
+            "alpha": 0.2
+        }],
 
         "highlighted_hulls":[{
             "layer":"Material",
