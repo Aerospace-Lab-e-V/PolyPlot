@@ -1,9 +1,7 @@
 {
 "version":3,
 "dataframes":[{
-    "API_Key": "Bearer teable_accEbwLnOPcALnjGJXU_Hp6iPPr5mn5WPOgMNfzqgAro1j9t1G0Vj6DjAJTMg+s=",
-    "teable_url": "https://teable.aerospace-lab.de/api/table/tblMYoRyrN4FrwdAiH6/record",
-    "import_file_name":"MatWeb_materials_export.xlsx",
+    "import_file_name":"MatWeb_materials_export_Filament.xlsx",
 
     "image_ratio":2,
     "resolution":1000,
@@ -23,11 +21,6 @@
             "name": "Gruppe",
             "whitelist_flag": false,
             "whitelist": [],
-            "alpha": null
-        },{
-            "name": "Material",
-            "whitelist_flag": false,
-            "whitelist": [],
             "alpha": 0.5
         },{
             "name": "Hersteller",
@@ -44,93 +37,14 @@
             "alpha_areas":  0.3
         }],
 
-        "annotations":[{
-            "marker_size": 300,
-            "font_size":15
-        },{
-            "text":{
-                "name":"Prusa Space PC",
-                "rel_pos":[0,3],
-                "color":"PC"
-            },
-            "axes":{
-                "dens":    1.21,
-                "HDT 0.46":137.6,
-                "HDT 1.8": 128.8,
-                "Rm":      72,
-                "Elong_br":3.8
-            },
-            "marker":{
-                "color":"PC",
-                "size_factor":1,
-                "linewidths":2
-            },
-            "arrow":null,
-            "#":"None or num"
-        },{
-            "text":{
-                "name":"PEI",
-                "rel_pos":[0,0],
-                "color":"PEI"
-            },
-            "axes":{
-                "dens":    1,
-                "HDT 1.8": 190,
-                "Rm":120
-            },
-            "marker":null,
-            "arrow":null,
-            "#":"None or num"
-        },{
-            "text":{
-                "name":"Punkt",
-                "rel_pos":[4,7],
-                "color":"blue"
-            },
-            "axes":{
-                "dens":    1,
-                "HDT 1.8": 80,
-                "Rm":100
-            },
-            "marker":null,
-            "arrow":{
-                "width": 3,
-                "shrink": 0.1,
-                "facecolor": "blue",
-                "headlength": 10,
-                "headwidth": 10
-            }
-        }],
+        "annotations":[],
    
-        "guidelines":[{
-            "x": 50,
-            "y": 50,
-            "m": 0.6,
-            "line_props":{
-                "linestyle": "-",
-                "color":"aqua",
-                "linewidth": 3
-            },
-            "fontsize": 20,
-            "label":"$\\frac{Schmelztemperatur}{Glassübergangstemperatur} =$ const.",
-            "label_above": true,
-            "label_padding": 4
-        }],
+        "guidelines":[],
 
 
-        "colored_areas":[{
-            "x": [0, 300, 300, 80,  80, 0  ],
-            "y": [0,   0,  50, 50, 200, 200],
-            "color": "r",
-            "alpha": 0.2
-        }],
+        "colored_areas":[],
 
-        "highlighted_hulls":[{
-            "layer":"Material",
-            "label":"PA6",
-            "alpha":0.7,
-            "color":null
-        }]
+        "highlighted_hulls":[]
     }],
 
     "axes":[{
@@ -168,7 +82,7 @@
     },{
         "name":"Rm",
         "columns":["Tensile Strength at Break", "Tensile Strength Ultimate", "Tensile Strength", "Tensile Strength Yield"],
-        "mode":"min",
+        "mode":"max",
         "labels":{
             "de":"Zugfestigkeit $R_m$ [MPa]",
             "en":"Tensile Strength $R_m$ [MPa]"

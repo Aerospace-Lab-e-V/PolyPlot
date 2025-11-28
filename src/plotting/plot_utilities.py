@@ -4,14 +4,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import colors
 from types import SimpleNamespace
+from termcolor import (colored, cprint)
+
 
 from .plot_hull import plotter_graphics
 
 class data_handling(): 
-    def __init__(self, graphics, dataframe, frame):
+    def __init__(self, graphics:type, dataframe:pd.DataFrame, frame:dict):
         self.graphics        = graphics
-        self.absolute        = parse_data(dataframe, frame, frame["x_quantity"],     frame["y_quantity"],     True )
-        self.relative        = parse_data(dataframe, frame, frame.get("x_rel_quantity",None), frame.get("y_rel_quantity",None), False)
+        self.absolute        = parse_data(dataframe, frame, frame["x_quantity"], frame["y_quantity"])
+        self.relative        = parse_data(dataframe, frame, frame.get("x_rel_quantity",None), frame.get("y_rel_quantity",None))
         self.frame           = frame
         self.material_colors = dataframe['material_colors']
         self.layers          = frame['layers']
@@ -24,7 +26,10 @@ class data_handling():
         self.material_colors['default'] = self.material_colors.get('default', '#000000')
 
 
-    def plot(self, data):
+    def plot(self, data:pd.DataFrame) -> np.ndarray:
+        self.absolute.clear_unused_columns(data)
+        self.relative.clear_unused_columns(data)
+
         return self.recursive_preparation(
                             data,
                             current_layer_number = 0,
@@ -33,7 +38,7 @@ class data_handling():
                             current_color        = self.material_colors['default'],
                         )
 
-    def recursive_preparation(self, data, current_layer_number, hirachie, legend_item, current_color):
+    def recursive_preparation(self, data:pd.DataFrame, current_layer_number:int, hirachie:list, legend_item:str, current_color:str) -> np.ndarray:
         # +       recursive repetition       +
         if current_layer_number < self.len_layers - 1:
             try:
@@ -93,7 +98,6 @@ class data_handling():
                 plotted = False
                     
             return combined_DATA[1:,:], plotted
-
                 
         # +       recursive exit       +
         else:
@@ -107,7 +111,7 @@ class data_handling():
 
 
 
-    def single_values(self, data, hirachie, legend_item, current_color):
+    def single_values(self, data:pd.DataFrame, hirachie:list, legend_item:str, current_color:str) -> pd.DataFrame:
         point_list = np.full((1, 2), np.nan)     # [x, y][low, high][datapoints]
 
         for data_point in range(len(data)):
@@ -131,7 +135,7 @@ class data_handling():
         return point_list
 
 
-    def point_per_axis(self, data, data_point, dim):
+    def point_per_axis(self, data:pd.DataFrame, data_point:pd.DataFrame, dim:int) -> pd.DataFrame:
         point = self.absolute.property_availability(data, data_point, dim)
         if np.all(point == None): return None
 
@@ -144,8 +148,7 @@ class data_handling():
 
 
 
-
-    def plot_point(self, coords, point_list, hirachie, legend_item, current_color):
+    def plot_point(self, coords:list, point_list:list, hirachie:list, legend_item:str, current_color:str) -> None:
         point_list = np.vstack((point_list, coords[:,0]))  # add low
         if not np.all(pd.isna(coords[:, 1])):
             point_list = np.vstack((point_list, coords[:,1]))   # add high if not empty in both dimensions
@@ -177,48 +180,60 @@ class data_handling():
                     legend_item = legend_item,
                 )
 
+
+
+
 class parse_data():
-    def __init__(self, dataframe, frame, x_quantity, y_quantity, absolute = True):
+    def __init__(self, dataframe:pd.DataFrame, frame:dict, x_quantity:str, y_quantity:str) -> None:
+        import_quantities = [x_quantity, y_quantity]
         self.quantities = [ None ,  None ]
         self.labels     = [ None ,  None ]
         self.columns    = [[None], [None]]
         self.modes      = [ None ,  None ]
-        for i, quantity in enumerate([x_quantity, y_quantity]):
+
+        for dim, quantity in enumerate(import_quantities):
             for axe in dataframe['axes']:
                 if axe['name'] == quantity:
-                    self.quantities[i]  = axe['name']
-                    self.labels[i]      = axe['labels'][dataframe['language']]
-                    self.columns[i]     = axe['columns']
-                    self.modes[i]       = axe['mode']
+                    self.quantities[dim]  = axe['name']
+                    self.labels[dim]      = axe['labels'][dataframe['language']]
+                    self.columns[dim]     = axe['columns']
+                    self.modes[dim]       = axe.get('mode',"default")
                     break
+            
+            if self.quantities[dim] != import_quantities[dim]:
+                raise KeyError(f"{["x","y"][dim]}-quantity '{import_quantities[dim]}' not found. please check the config.json and datasource")
 
-        if absolute and None in self.quantities:
-            raise ValueError("quantity not found. please check the config.json")
-        if np.any(self.columns[:] == None):
-            raise KeyError("at least one axes has no column assigned to it. please check 'axes' 'x'/'y-quantity' in the config.json")
-
+    def clear_unused_columns(self, data:pd.DataFrame) -> None:
+        for dim in [0,1]:
+            for column in self.columns[dim][:]:
+                if column != None and f"{column} low" not in data.columns:
+                    self.columns[dim].remove(column)
+                    cprint(f"❗'{column}' does not exist in your dataset but is set in '{self.quantities[dim]}'","yellow")
         self.len_col = [len(self.columns[:][0]), len(self.columns[:][1])]
 
 
-    def property_availability(self, data, data_point, dim):
+    def property_availability(self, data:dict, data_point:pd.DataFrame, dim:int) -> pd.DataFrame | None:
         point  = np.full((2, self.len_col[dim]), np.nan)   #[low,high][column entries]
         index  = None
         column = self.columns[dim]
         for property, property_data in enumerate(column):
             if not pd.isna(data[property_data + ' low'].iloc[data_point]):
                 point[0, property] = data[property_data + ' low' ].iloc[data_point].copy()  # low
-                point[1, property] = data[property_data + ' high'].iloc[data_point].copy()  # high
+                point[1, property] = data.get(property_data + ' high', np.nan).iloc[data_point].copy()  # high
         
         if not np.all(np.isnan(point[0, :])):
-            if   self.modes[dim] == "max":      # & ignoring high value
-                index = np.nanargmax(point[0, :])
+            if   self.modes[dim] == "max":
+                # index = np.nanargmax(np.nanmax(point, axis=0))    # & RuntimeWarning: All-NaN slice encountered
+                index = np.nanargmax(np.hstack([point[0,:],point[1,:]]))
+                print(index, point,  np.hstack([point[0,:],point[1,:]]), np.size(point, axis=1))
+                index = index-np.size(point, axis=1) if index >= np.size(point, axis=1) else index
+                print(index)
             elif self.modes[dim] == "min":
-                index = np.nanargmin(point[0, :]) 
+                index = np.nanargmin(          point[0, :]) 
             else:
-                index = np.argmax(~np.isnan(point[0, :]))
+                index = np.argmax(~np.isnan(   point[0, :]))
 
             return point[:,index]
 
-        
         else:
             return None

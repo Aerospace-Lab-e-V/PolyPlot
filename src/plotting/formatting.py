@@ -19,7 +19,8 @@ class legend():
         self.map[item] = [patch]
 
     def append_content(self, category, item):
-        self.map[category].append(item)
+        if category != 'default':
+            self.map[category].append(item)
 
     # def format_label_pos(self, Plot_size):
     #     for category in self.map.values():
@@ -126,6 +127,7 @@ class dimension():
     def plot_padding(self, min, max, margin, marker):
         low  = np.nanmin([marker[0], min])
         high = np.nanmax([marker[1], max])
+        # & take hull splines into account
 
         if self.log_flag:
             low_log  = np.log10(low )

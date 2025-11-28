@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import json
+from termcolor import (colored, cprint)
 
 from import_data import *
 from plotting import *
@@ -10,13 +11,13 @@ from eventhandling import *
 
 
 if __name__ == '__main__':
-    print("\n\nstarting Ashby-Plot Generator            Ⓒ afffe18 @ RPS (ASL) 2025")
+    print(f"\n\n{colored(" starting Ashby-Plot Generator            Ⓒ afffe18 @ RPS (ASL) 2025 ",on_color="on_blue")}")
 
 
 # : DATAFRAME                                                                           :
     dataframes = import_json('config.json')
     for dataframe_index, dataframe in enumerate(dataframes):
-        print(f"\n::::::::::::::::::::::::::::::::::::: loading dataframe {dataframe_index + 1} of {len(dataframes)} :::::::::::::::::::::::::::::::::::::")
+        cprint(f"\n::::::::::::::::::::::::::::::::::::  loading dataframe {dataframe_index + 1} of {len(dataframes)}  ::::::::::::::::::::::::::::::::::::","blue", ["bold"])
 
         language = dataframe.get('language',"en")
         resolution = dataframe.get('resolution', None)
@@ -34,7 +35,7 @@ if __name__ == '__main__':
             if not (create_frames == True or frame_index +1 in create_frames):
                 continue
 
-            print(f"\n::::::::::::::::::::::::::::  creating frame {frame_index + 1} of {len(dataframe['frames'])} {frame.get('name',"")} :::::::::::::::::::::::::::: \n")
+            cprint(f"\n::::::::::::::::::::::::::::  creating frame {frame_index + 1} of {len(dataframe['frames'])} {frame.get('name',"")} :::::::::::::::::::::::::::: \n","blue")
 
 
             # : General setup :
@@ -69,7 +70,7 @@ if __name__ == '__main__':
 
             # : import data :
             if dataframe.get('teable_url',None) != None:
-                data = import_teable(dataframe['teable_url'], dataframe['API_Key'], Sorted_data.absolute.columns, frame['layers'], frame.get('filter', None))
+                data = import_teable(dataframe['teable_url'], dataframe['API_Key'], frame['layers'], frame.get('filter', None), [Sorted_data.absolute.columns[0], Sorted_data.absolute.columns[1], Sorted_data.relative.columns[0], Sorted_data.relative.columns[1]])
             elif dataframe.get('import_file_name',None) != None:
                 data = import_excel(dataframe['import_file_name'], dataframe.get('import_sheet',0))
                 filter_data(data, frame.get('filter', None))
@@ -103,21 +104,21 @@ if __name__ == '__main__':
                         ax = ax
                     )
             except:
-                print("❗ERROR drawing colored areas. Check config.json! continuing...")
+                cprint("❗ERROR drawing colored areas. Check config.json! continuing...","red")
 
 
-            # try:
-            draw_guideline(
-                    frame.get('guidelines',{}),
-                    x_min = Plot_size.x.low  /2,
-                    x_max = Plot_size.x.high *2,
-                    y_min = Plot_size.y.low  /2,
-                    y_max = Plot_size.y.high *2,
-                    font_color=font_color,
-                    ax = ax,
-                    )
-            # except:
-            #     print("❗ERROR drawing guidelines. Check config.json! continuing...")
+            try:
+                draw_guideline(
+                        frame.get('guidelines',{}),
+                        x_min = Plot_size.x.low  /2,
+                        x_max = Plot_size.x.high *2,
+                        y_min = Plot_size.y.low  /2,
+                        y_max = Plot_size.y.high *2,
+                        font_color=font_color,
+                        ax = ax,
+                        )
+            except:
+                cprint("❗ERROR drawing guidelines. Check config.json! continuing...","red")
 
 
             Marker.create_annotations(Plot_size)
@@ -134,8 +135,8 @@ if __name__ == '__main__':
                 ax.set_yscale('log')
             
             # ~ set x- and y-labels 
-            ax.set_xlabel(axe_label(Sorted_data, 0), color = font_color, fontsize = 18, labelpad=10)
-            ax.set_ylabel(axe_label(Sorted_data, 1), color = font_color, fontsize = 18, labelpad=5 )
+            ax.set_xlabel(axe_label(Sorted_data, 0), color=font_color, fontsize=18, labelpad=10)
+            ax.set_ylabel(axe_label(Sorted_data, 1), color=font_color, fontsize=18, labelpad=5 )
 
 
             # ~ add grid lines 
@@ -147,7 +148,7 @@ if __name__ == '__main__':
             # .plt.tight_layout(pad=2.5)
 
             # ~ general info 
-            print(f"skipped a total of {Sorted_data.point_count['skipped']} Datapoints due to missing entries.  {Sorted_data.point_count['plotted']} were plotted.")  # & low & high ≙ 2 Values
+            cprint(f"skipped a total of {Sorted_data.point_count['skipped']} Datapoints due to missing entries.  {Sorted_data.point_count['plotted']} were plotted.","green")  # & low & high ≙ 2 Values
 
             # : export :
             if frame.get('export_file_name',None) == None:
@@ -160,12 +161,12 @@ if __name__ == '__main__':
                 # +                +
 
                 plt.show(block=False)
-                print(f"⇒ plot displayed \n")
+                cprint(f"⇒ plot displayed \n","green")
 
             else:
-                # os.makedirs(dir, exist_ok=True)    
+                # & os.makedirs(dir, exist_ok=True)    
                 plt.savefig(os.path.join('export', frame['export_file_name']), dpi=resolution/10, transparent=True) # & create directory
-                print(f"⇒ plot saved as ./export/{frame['export_file_name']} \n")
+                cprint(f"⇒ plot saved as ./export/{frame['export_file_name']} \n","green")
                 plt.close()
             
             plt.pause(.3)

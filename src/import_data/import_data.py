@@ -6,8 +6,8 @@ import pandas as pd
 from .filter import *
 
 
-def import_teable(teable_url, api_key, columns, layers, filter):
-    wanted_fields = collums_list(columns, layers)
+def import_teable(teable_url, api_key, layers, filter, axes):
+    wanted_fields = collums_list(axes, layers)
 
     params = {
         "take": 1000,
@@ -49,13 +49,14 @@ def import_teable(teable_url, api_key, columns, layers, filter):
     else:
         raise Exception(f"unknown Teable error {status.status_code}: {status.text}")
 
-def collums_list(columns, layers):  # returns a list of all columns that should be requested via API
+def collums_list(axes, layers):  # returns a list of all columns that should be requested via API
     wanted_fields = []
 
     for layer in range(len(layers) -1):
         wanted_fields.append(layers[layer]["name"])
-    for axes in columns:
-        for column in axes:
+    for columns in axes:
+        for column in columns:
+            if column == None: continue
             wanted_fields.append(column + " low" )
             wanted_fields.append(column + " high")
 

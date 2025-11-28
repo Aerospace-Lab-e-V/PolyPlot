@@ -71,7 +71,7 @@ class point_label():
             if self.annotation != None:         
                 self.rm_last_point()
 
-            # & mehrere Punkte übereinander anzeigen
+            # & mehrere Punkte übereinander anzeigen   (Idee: je kleiner, desto höhere Z-Ebene)
             self.annotation = self.ax.annotate(point.label, xy=point.label_pos, xycoords='data', xytext=(0,5), textcoords='offset points', ha='center', va='bottom', fontsize=12)
             point.element[0].set_alpha(1)
 

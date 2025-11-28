@@ -103,7 +103,7 @@ class plotter_graphics():
         Data = np.unique(X, axis=0)
         
         if len(Data) < 2:
-            print("can't plot Hull, only one Point - skipping", X) # & falls nur ein Punkt 
+            print("can't plot Hull, only one Point - skipping", X)
         elif len(Data) > 2:
             angle = [np.atan2(Data[0,1]-Data[1,1],  Data[0,0]-Data[1,0])]
             for pos, entry in enumerate(Data[1:]):          # checks if all entries are in one line which makes calculating a hull impossible

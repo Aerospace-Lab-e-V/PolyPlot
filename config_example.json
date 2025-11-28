@@ -1,0 +1,240 @@
+{
+"version":3,
+"dataframes":[{
+    "API_Key": "Bearer teable_accEbwLnOPcALnjGJXU_Hp6iPPr5mn5WPOgMNfzqgAro1j9t1G0Vj6DjAJTMg+s=",
+    "teable_url__": "https://teable.aerospace-lab.de/api/table/tblMYoRyrN4FrwdAiH6/record",
+    "import_file_name":"MatWeb_materials_export.xlsx",
+
+    "image_ratio":2,
+    "resolution":1000,
+
+    "language":"de",
+
+    "frames":[{
+        "name":null,
+
+        "x_quantity":"HDT 1.8",
+
+        "y_quantity":"Rm",
+
+        "algorithm":"alpha",
+        
+        "layers":[{
+            "name": "Gruppe",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Material",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.5
+        },{
+            "name": "Hersteller",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "name": "Variante",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": null
+        },{
+            "alpha_points": 0.3,
+            "alpha_areas":  0.3
+        }],
+
+        "annotations":[{
+            "marker_size": 300,
+            "font_size":15
+        },{
+            "text":{
+                "name":"Prusa Space PC",
+                "rel_pos":[0,3],
+                "color":"PC"
+            },
+            "axes":{
+                "dens":    1.21,
+                "HDT 0.46":137.6,
+                "HDT 1.8": 128.8,
+                "Rm":      72,
+                "Elong_br":3.8
+            },
+            "marker":{
+                "color":"PC",
+                "size_factor":1,
+                "linewidths":2
+            },
+            "arrow":null,
+            "#":"None or num"
+        },{
+            "text":{
+                "name":"PEI",
+                "rel_pos":[0,0],
+                "color":"PEI"
+            },
+            "axes":{
+                "dens":    1,
+                "HDT 1.8": 190,
+                "Rm":120
+            },
+            "marker":null,
+            "arrow":null,
+            "#":"None or num"
+        },{
+            "text":{
+                "name":"Punkt",
+                "rel_pos":[4,7],
+                "color":"blue"
+            },
+            "axes":{
+                "dens":    1,
+                "HDT 1.8": 80,
+                "Rm":100
+            },
+            "marker":null,
+            "arrow":{
+                "width": 3,
+                "shrink": 0.1,
+                "facecolor": "blue",
+                "headlength": 10,
+                "headwidth": 10
+            }
+        }],
+   
+        "guidelines":[{
+            "x": 50,
+            "y": 50,
+            "m": 0.6,
+            "line_props":{
+                "linestyle": "-",
+                "color":"aqua",
+                "linewidth": 3
+            },
+            "fontsize": 20,
+            "label":"$\\frac{Schmelztemperatur}{Glassübergangstemperatur} =$ const.",
+            "label_above": true,
+            "label_padding": 4
+        }],
+
+
+        "colored_areas":[{
+            "x": [0, 300, 300, 80,  80, 0  ],
+            "y": [0,   0,  50, 50, 200, 200],
+            "color": "r",
+            "alpha": 0.2
+        }],
+
+        "highlighted_hulls":[{
+            "layer":"Material",
+            "label":"PA6",
+            "alpha":0.7,
+            "color":null
+        }]
+    }],
+
+    "axes":[{
+        "name":"nr",
+        "columns":["nr"],
+        "mode":"default",
+        "labels":{
+            "de":"",
+            "en":""
+        }
+    },{
+        "name":"HDT 0.46",
+        "columns":["Deflection Temperature at 0.46 MPa 66 psi"],
+        "mode":"default",
+        "labels":{
+            "de":"Verformungstemperatur [°C] @ 0.46 MPa",
+            "en":"Deflection Temperature $HDT$ [°C] @ 0.46 MPa"
+        }
+    },{
+        "name":"HDT 1.8",
+        "columns":["Deflection Temperature at 1.8 MPa 264 psi"],
+        "mode":"default",
+        "labels":{
+            "de":"Verformungstemperatur [°C] @ 1,8 MPa",
+            "en":"Deflection Temperature $HDT$ [°C] @ 1.8 MPa"
+        }
+    },{
+        "name":"melt",
+        "columns":["Melting Point", "Melt Temperature", "Processing Temperature"],
+        "mode":"default",
+        "labels":{
+            "de":"Schmelztemperatur $T_S$ [°C]",
+            "en":"melting point $T_M$ [°C]"
+        }
+    },{
+        "name":"Rm",
+        "columns":["Tensile Strength at Break", "Tensile Strength Ultimate", "Tensile Strength", "Tensile Strength Yield"],
+        "mode":"max",
+        "labels":{
+            "de":"Zugfestigkeit $R_m$ [MPa]",
+            "en":"Tensile Strength $R_m$ [MPa]"
+        }
+    },{
+        "name":"E-Mod",
+        "columns":["Tensile Modulus", "Modulus of Elasticity"],
+        "mode":"def",
+        "labels":{
+            "de":"E-Modul [GPa]",
+            "en":"E-Modulus [GPa]"
+        }
+    },{
+        "name":"Elong_br",
+        "columns":["Elongation at Break"],
+        "mode":"def",
+        "labels":{
+            "de":"Bruchdehnung [%]",
+            "en":"Elongation at Break [%]"
+        }
+    },{
+        "name":"dens",
+        "columns":["Density","Specific Gravity"],
+        "mode":"def",
+        "labels":{
+            "de":"Dichte $\\rho$ [kg/m$^3$]",
+            "en":"Density $\\rho$ [kg/m$^3$]"
+        }
+    },{
+        "name":"vicat",
+        "columns":["Vicat Softening Point"],
+        "mode":"def",
+        "labels":{
+            "de":"Vicat",
+            "en":"Vicat Softening Point"
+        }
+    },{
+        "name":"Tg",
+        "columns":["Glass Transition Temp Tg"],
+        "mode":"def",
+        "labels":{
+            "de":"Glassübergangstemperatur $T_g$ [°C]",
+            "en":"Glass Transition Temperature $T_g$ [°C]"
+        }
+    }],
+
+    "material_colors":{
+        "ABS": "#219DD3",	
+        "PA12":"#7BBFD9", 	
+        "PEEK":"#D69D20",	
+        "PLA": "#E3B768",	
+        "PET": "#3BD420",	
+        "PETG":"#85E064",	
+        "PPSU":"#B52ED6",	
+        "PPS": "#CE82E0",
+
+        "PA11":"#219DD3",	
+        "POM": "#7BBFD9",	
+        "PP":  "#D69D20",	
+        "PVDF":"#E3B768",	
+        "PC":  "#3BD420",	
+        "PEI": "#85E064",	
+        "PA6": "#B52ED6",	
+        "PPA": "#CE82E0",
+
+        "PA": null,
+        "default":"grey"
+        }
+}]}
