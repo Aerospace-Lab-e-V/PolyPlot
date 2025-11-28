@@ -9,16 +9,20 @@
     "language":"de",
 
     "frames":[{
-        "export_file_name":"test/lol/hi",
 
-        "x_quantity":"HDT 1.8",
+        "x_quantity":"meltflow",
 
-        "y_quantity":"Rm",
+        "y_quantity":"meltflow",
 
         "algorithm":"alpha",
         
         "layers":[{
             "name": "Gruppe",
+            "whitelist_flag": false,
+            "whitelist": [],
+            "alpha": 0.5
+        },{
+            "name": "Material",
             "whitelist_flag": false,
             "whitelist": [],
             "alpha": 0.5
@@ -126,6 +130,14 @@
         "labels":{
             "de":"Glassübergangstemperatur $T_g$ [°C]",
             "en":"Glass Transition Temperature $T_g$ [°C]"
+        }
+    },{
+        "name":"meltflow",
+        "columns":["Melt Flow"],
+        "mode":"def",
+        "labels":{
+            "de":"Melt Flow $T_g$ [°C]",
+            "en":"Melt Flow $T_g$ [°C]"
         }
     }],
 

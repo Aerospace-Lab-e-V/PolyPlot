@@ -148,8 +148,8 @@ class plotter_graphics():
         ):
         angle = np.rad2deg(np.arctan2(X[1,1]-X[0,1], X[1,0]-X[0,0]))
 
-        center_x = (np.max(X[0,0]) + np.min(X[1,0])) / 2
-        center_y = (np.max(X[0,1]) + np.min(X[1,1])) / 2
+        center_x = (np.max(X[:,0]) + np.min(X[:,0])) / 2
+        center_y = (np.max(X[:,1]) + np.min(X[:,1])) / 2
         center = [center_x, center_y]
 
         r_x = (np.max(X[:,0]) - np.min(X[:,0]))
@@ -165,7 +165,7 @@ class plotter_graphics():
             self.points.append(plot_unit_props(self.legend, ellipse, center_x,center_y, hirachie, legend_item, label, picker=getattr(plot_kwargs, 'picker', False), alpha=plot_kwargs['alpha']))
 
         else:
-            r_2 = r_1 / 10
+            r_2 = r_1 / 11
 
             ellipse = patches.Ellipse(
                 xy = center,

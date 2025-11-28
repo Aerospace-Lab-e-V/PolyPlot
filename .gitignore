@@ -12,5 +12,6 @@ Specific folders
 ===============
 /.venv/*
 /export/*
+# /material_properties/*
 
 # git pullu

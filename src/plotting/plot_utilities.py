@@ -162,7 +162,7 @@ class data_handling():
                         np.transpose(coords),
                         hirachie    = hirachie,
                         legend_item = legend_item,
-                        scale       = 1.05,
+                        scale       = 1.02,
                         plot_kwargs = {
                             'color':current_color,
                             'alpha':self.alpha_areas,
