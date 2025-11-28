@@ -218,20 +218,17 @@ class parse_data():
         column = self.columns[dim]
         for property, property_data in enumerate(column):
             if not pd.isna(data[property_data + ' low'].iloc[data_point]):
-                point[0, property] = data[property_data + ' low' ].iloc[data_point].copy()  # low
-                point[1, property] = data.get(property_data + ' high', np.nan).iloc[data_point].copy()  # high
+                point[0, property] = data[    property_data + ' low'         ].iloc[data_point].copy()  # low
+                point[1, property] = data.get(property_data + ' high', np.nan).iloc[data_point].copy()  # high  (optional)
         
         if not np.all(np.isnan(point[0, :])):
             if   self.modes[dim] == "max":
-                # index = np.nanargmax(np.nanmax(point, axis=0))    # & RuntimeWarning: All-NaN slice encountered
                 index = np.nanargmax(np.hstack([point[0,:],point[1,:]]))
-                print(index, point,  np.hstack([point[0,:],point[1,:]]), np.size(point, axis=1))
                 index = index-np.size(point, axis=1) if index >= np.size(point, axis=1) else index
-                print(index)
             elif self.modes[dim] == "min":
-                index = np.nanargmin(          point[0, :]) 
+                index = np.nanargmin(point[0, :]) 
             else:
-                index = np.argmax(~np.isnan(   point[0, :]))
+                index = np.argmax(~np.isnan(point[0, :]))
 
             return point[:,index]
 

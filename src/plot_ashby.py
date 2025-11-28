@@ -148,7 +148,7 @@ if __name__ == '__main__':
             # .plt.tight_layout(pad=2.5)
 
             # ~ general info 
-            cprint(f"skipped a total of {Sorted_data.point_count['skipped']} Datapoints due to missing entries.  {Sorted_data.point_count['plotted']} were plotted.","green")  # & low & high ≙ 2 Values
+            cprint(f"skipped a total of {Sorted_data.point_count['skipped']} Datapoints due to missing entries.  {Sorted_data.point_count['plotted']} were plotted.","green")
 
             # : export :
             if frame.get('export_file_name',None) == None:
@@ -164,8 +164,8 @@ if __name__ == '__main__':
                 cprint(f"⇒ plot displayed \n","green")
 
             else:
-                # & os.makedirs(dir, exist_ok=True)    
-                plt.savefig(os.path.join('export', frame['export_file_name']), dpi=resolution/10, transparent=True) # & create directory
+                os.makedirs(os.path.dirname(os.path.join('export',frame['export_file_name'])), exist_ok=True)       # mkdir
+                plt.savefig(os.path.join('export', frame['export_file_name']), dpi=resolution/10, transparent=True) # save
                 cprint(f"⇒ plot saved as ./export/{frame['export_file_name']} \n","green")
                 plt.close()
             
