@@ -29,7 +29,7 @@ Um den Code ganz auf unsere Bedürfnisse anpassen zu können, haben wir ihn auf 
 ## Verwendung
 1. VSC vorbereiten: 
    1. Python extension installieren
-   2. vurtual environment installieren (requirements.txt)
+   2. virtual environment installieren (requirements.txt)
    3. Python interpreter wählen: 
    Strg+Shift+P → Python:Select Interpreter → Enter Path → Find → .\Ashby\Scrips\python.exe
 3. Excel-Tabelle in .\material_properties\ ablegen

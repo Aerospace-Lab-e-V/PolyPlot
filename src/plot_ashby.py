@@ -162,6 +162,7 @@ if __name__ == '__main__':
 
                 plt.show(block=False)
                 cprint(f"⇒ plot displayed \n","green")
+                plt.pause(.3)
 
             else:
                 os.makedirs(os.path.dirname(os.path.join('export',frame['export_file_name'])), exist_ok=True)       # mkdir
@@ -169,5 +170,4 @@ if __name__ == '__main__':
                 cprint(f"⇒ plot saved as ./export/{frame['export_file_name']} \n","green")
                 plt.close()
             
-            plt.pause(.3)
-            plt.show()
+    plt.show()
