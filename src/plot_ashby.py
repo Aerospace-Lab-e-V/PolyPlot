@@ -11,15 +11,16 @@ from eventhandling import *
 
 
 if __name__ == '__main__':
-    print(f"\n\n{colored(" starting Ashby-Plot Generator            Ⓒ afffe18 @ RPS (ASL) 2025 ",on_color="on_blue")}")
+    print(f"\n\n{colored(" starting Ashby-Plot Generator                     Ⓒ afffe18 @ RPS (ASL) 2025 ",on_color="on_blue")}")
 
+    handler = []
 
 # : DATAFRAME                                                                           :
     dataframes = import_json('config.json')
     for dataframe_index, dataframe in enumerate(dataframes):
         cprint(f"\n::::::::::::::::::::::::::::::::::::  loading dataframe {dataframe_index + 1} of {len(dataframes)}  ::::::::::::::::::::::::::::::::::::","blue", ["bold"])
 
-        language = dataframe.get('language',"en")
+        df_language = dataframe.get('language',"en")
         resolution = dataframe.get('resolution', None)
         if resolution in [None,"svg"]:
             fileformat = "svg"
@@ -28,6 +29,7 @@ if __name__ == '__main__':
             fileformat = "png"
         image_ratio    = dataframe.get('image_ratio', 16/9)
         create_frames  = dataframe.get('create_all_frames', True)
+        darkmode       = dataframe.get('dark_mode',False)
 
 
 # : FRAME                                                                               :
@@ -39,10 +41,12 @@ if __name__ == '__main__':
 
 
             # : General setup :
-            if frame.get('export_file_name',None) != None:
+            if frame.get('dark_mode', darkmode):
                 font_color = 'white'
             else:
                 font_color = 'black'
+
+            language = frame.get('language', df_language)
 
             figure_size = (10*image_ratio ,10)
             fig, ax = plt.subplots(1,1, figsize=figure_size)
@@ -54,7 +58,7 @@ if __name__ == '__main__':
 
             plt.rc('font', family='sans-serif')
             plt.rcParams.update({'font.sans-serif':'Arial'})
-            plt.rcParams.update({'font.size': 18})
+            plt.rcParams.update({'font.size': 22})
             # plt.rc('text',usetex='False')
             # plt.rcParams['mathtext.default'] = True
             if fileformat == "svg":
@@ -63,19 +67,13 @@ if __name__ == '__main__':
             # : class init :
             Graphics = plotter_graphics(ax, frame.get('algorithm',"cubic"))       # plot_hull.py   → legend()  # § class §
 
-            Sorted_data = data_handling(Graphics, dataframe, frame)   # plot_utilities.py # § class §
+            Sorted_data = data_handling(Graphics, dataframe, frame, language)   # plot_utilities.py # § class §
 
-            Marker = marker(frame.get('annotations',{}), dataframe['material_colors'], Sorted_data.absolute.quantities, Sorted_data.relative.quantities, ax)   # plot_acessories.py # § class §
+            Marker = marker(frame.get('annotations',[]), dataframe['material_colors'], Sorted_data.absolute.quantities, Sorted_data.relative.quantities, ax)   # plot_acessories.py # § class §
 
 
             # : import data :
-            if dataframe.get('teable_url',None) != None:
-                data = import_teable(dataframe['teable_url'], dataframe['API_Key'], frame['layers'], frame.get('filter', None), [Sorted_data.absolute.columns[0], Sorted_data.absolute.columns[1], Sorted_data.relative.columns[0], Sorted_data.relative.columns[1]])
-            elif dataframe.get('import_file_name',None) != None:
-                data = import_excel(dataframe['import_file_name'], dataframe.get('import_sheet',0))
-                filter_data(data, frame.get('filter', None))
-            else:
-                raise FileNotFoundError("no datasource selected. set teable_url or import_file_name in config")
+            data = import_data(dataframe, frame)
             if len(data) == 0:
                 raise ValueError("No Vailid Data imported")
 
@@ -152,12 +150,12 @@ if __name__ == '__main__':
 
             # : export :
             if frame.get('export_file_name',None) == None:
-                plt.title(frame.get('title',""), loc='center', size=40, pad=15)
+                plt.title(frame.get('title',""), loc='center', size=40, pad=15)         # & multilanguage support
                 fig.canvas.manager.set_window_title(figurename(frame, dataframe_index, frame_index))
-                watermark(fig, alpha=0.5, pos=[0.72, 0.13], size=.13)
+                watermark(fig, alpha=0.5, pos=[0.72, 0.13], size=.13)       # & add copyright text
 
                 # + event handling +
-                handler = pick_event_handing(fig, ax, Graphics)
+                handler.append(pick_event_handing(fig, ax, Graphics))
                 # +                +
 
                 plt.show(block=False)
@@ -166,8 +164,9 @@ if __name__ == '__main__':
 
             else:
                 os.makedirs(os.path.dirname(os.path.join('export',frame['export_file_name'])), exist_ok=True)       # mkdir
-                plt.savefig(os.path.join('export', frame['export_file_name']), dpi=resolution/10, transparent=True) # save
+                plt.savefig(os.path.join('export', frame['export_file_name']), dpi=resolution/10, transparent=True) # save    # & export = true  → save at /dataframe x/frame y   or   dataframename/framename
                 cprint(f"⇒ plot saved as ./export/{frame['export_file_name']} \n","green")
                 plt.close()
-            
+    
+    cprint(f"all selected plots displayed or saved \n","green")
     plt.show()

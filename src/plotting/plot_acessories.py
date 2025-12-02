@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def draw_guideline(guidelines, x_min, x_max, y_min, y_max, font_color, ax):
-    num_points = 5
+    num_points = 1000
     for guideline in guidelines:
 
         x = guideline.get('x', False)
@@ -22,7 +22,7 @@ def draw_guideline(guidelines, x_min, x_max, y_min, y_max, font_color, ax):
             y_intercept = (y- (m*x))
             y_values = m*x_values + y_intercept
 
-        print(f"guideline: {guideline.get('label',"")} @ [{x_values} - {y_values}]")
+        print(f"guideline: {guideline.get('label',"")} @ [{x_values[0]}|{y_values[0]}] - [{x_values[-1]}|{y_values[-1]}]")
 
 
         ax.plot(

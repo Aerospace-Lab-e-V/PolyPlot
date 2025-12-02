@@ -34,6 +34,10 @@ class legend():
         match language:
             case "de":
                 title = "Materialien:"
+            case "ko":
+                title = "Materiaalit:"            
+            case "nl":
+                title = "Materialen:"
             case _:
                 title = "materials:"
 
@@ -51,6 +55,7 @@ class legend():
                 edgecolor = 'none',
                 ncol = 1,
                 # draggable = True
+                # & 2nd column if to long
             )
 
         for entry in self.legend.legend_handles: # edit copy
@@ -121,7 +126,7 @@ class dimension():
         if limit == None:
             self.plot_padding(float(np.nanmin(head.DATA[:,dim])), float(np.nanmax(head.DATA[:,dim])), head.margin, marker.limits(dim))
         else:
-            self.plot_padding(limit[0], limit[1], head.margin, marker.limits(dim))
+            self.plot_padding(limit[0], limit[1], 0, marker.limits(dim))
 
         
     def plot_padding(self, min, max, margin, marker):

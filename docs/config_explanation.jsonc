@@ -22,7 +22,7 @@
     "image_ratio":2,                    // with/heigth [num] {16/9} 
     "resolution":1000,                  // vertical resolution [num / "svg"] {"svg"}
 
-    "language":"",                      // [str] {"en"} language for axis-label
+    "language":"",                      // [str] {"en"} language for axis-label & Legend Headline
 
 
 // : Frames :
@@ -33,8 +33,12 @@
         "legend_flag":true,             // [true]/[ false] schold a legend be printed  {true}
         // & legend title
         "title":"",                     // plot title for popout only [str] {""}
+        "dark_mode":false,              // font color, black or white: {true}
+
 
         "export_file_name": null,       // filename without ending ["folder/subfolder/filename"] , [null] wont export but open popup {null} // ToDo: folders must already exist
+        
+        "language":"",                  // [str] {language of dataframe}
 
         "x_quantity":"",                // axis name (see bottom) for value on x_axis       [str]
         "x_rel_quantity":null,          //   "                    to divide x_quantity by (per point)   [str / none] {none}

@@ -10,10 +10,10 @@ from termcolor import (colored, cprint)
 from .plot_hull import plotter_graphics
 
 class data_handling(): 
-    def __init__(self, graphics:type, dataframe:pd.DataFrame, frame:dict):
+    def __init__(self, graphics:type, dataframe:pd.DataFrame, frame:dict, language):
         self.graphics        = graphics
-        self.absolute        = parse_data(dataframe, frame, frame["x_quantity"], frame["y_quantity"])
-        self.relative        = parse_data(dataframe, frame, frame.get("x_rel_quantity",None), frame.get("y_rel_quantity",None))
+        self.absolute        = parse_data(dataframe['axes'], language, frame["x_quantity"], frame["y_quantity"])
+        self.relative        = parse_data(dataframe['axes'], language, frame.get("x_rel_quantity",None), frame.get("y_rel_quantity",None))
         self.frame           = frame
         self.material_colors = dataframe['material_colors']
         self.layers          = frame['layers']
@@ -23,7 +23,7 @@ class data_handling():
         self.alpha_points    = self.layers[-1].get('alpha_points', None)
         self.alpha_areas     = self.layers[-1].get('alpha_areas',  None)
 
-        self.material_colors['default'] = self.material_colors.get('default', '#000000')
+        self.material_colors['default'] = self.material_colors.get('default', '#222222')
 
 
     def plot(self, data:pd.DataFrame) -> np.ndarray:
@@ -184,7 +184,7 @@ class data_handling():
 
 
 class parse_data():
-    def __init__(self, dataframe:pd.DataFrame, frame:dict, x_quantity:str, y_quantity:str) -> None:
+    def __init__(self, axes:dict, language:str, x_quantity:str, y_quantity:str) -> None:
         import_quantities = [x_quantity, y_quantity]
         self.quantities = [ None ,  None ]
         self.labels     = [ None ,  None ]
@@ -192,10 +192,10 @@ class parse_data():
         self.modes      = [ None ,  None ]
 
         for dim, quantity in enumerate(import_quantities):
-            for axe in dataframe['axes']:
+            for axe in axes:
                 if axe['name'] == quantity:
                     self.quantities[dim]  = axe['name']
-                    self.labels[dim]      = axe['labels'][dataframe['language']]
+                    self.labels[dim]      = axe['labels'][language]
                     self.columns[dim]     = axe['columns']
                     self.modes[dim]       = axe.get('mode',"default")
                     break
@@ -227,6 +227,8 @@ class parse_data():
                 index = index-np.size(point, axis=1) if index >= np.size(point, axis=1) else index
             elif self.modes[dim] == "min":
                 index = np.nanargmin(point[0, :]) 
+            elif self.modes[dim] == "span":
+                pass        # & range from min to max covering all axis
             else:
                 index = np.argmax(~np.isnan(point[0, :]))
 

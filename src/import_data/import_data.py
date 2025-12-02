@@ -6,6 +6,16 @@ import pandas as pd
 from .filter import *
 
 
+def import_data(dataframe, frame):
+    if dataframe.get('teable_url',None) != None:
+        data = import_teable(dataframe['teable_url'], dataframe['API_Key'], frame['layers'], frame.get('filter', None), [Sorted_data.absolute.columns[0], Sorted_data.absolute.columns[1], Sorted_data.relative.columns[0], Sorted_data.relative.columns[1]])
+    elif dataframe.get('import_file_name',None) != None:
+        data = import_excel(dataframe['import_file_name'], dataframe.get('import_sheet',0))
+        filter_data(data, frame.get('filter', None))
+    else:
+        raise FileNotFoundError("no datasource selected. set teable_url or import_file_name in config")
+    return data
+
 def import_teable(teable_url, api_key, layers, filter, axes):
     wanted_fields = collums_list(axes, layers)
 
@@ -80,15 +90,11 @@ def import_excel(import_file_name, import_sheet):
 
 
 # : config.json :
-def import_json(finename):
-    with open('config.json', 'r', encoding="utf-8") as file:
+def import_json(filename):
+    with open(filename, 'r', encoding="utf-8") as file:
         config = json.load(file)
-
 
     if config.get('version',None) == 3:
         return config['dataframes']
     else:            
         raise ValueError("wrong .json format")
-
-def parse_json_v2(frame):
-    pass
