@@ -12,6 +12,7 @@ from .plot_acessories import (
 
 from .formatting import(
         legend,
+        title,
         axe_label,
         watermark,
         figurename,

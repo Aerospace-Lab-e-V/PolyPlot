@@ -6,7 +6,8 @@ import numpy as np
 
 
 class legend():
-    def __init__(self):       
+    def __init__(self, legend_title):   
+        self.legend_title = legend_title    
         self.handles = []
         self.map = {}
 
@@ -31,20 +32,12 @@ class legend():
                 
 
     def create_legend(self, language, font_color):
-        match language:
-            case "de":
-                title = "Materialien:"
-            case "ko":
-                title = "Materiaalit:"            
-            case "nl":
-                title = "Materialen:"
-            case _:
-                title = "materials:"
+        legend_title = title(self.legend_title, language)        
 
         self.legend = plt.legend(
                 handles=self.handles,
                 bbox_to_anchor = (1, 0, 1, 1),
-                title= title,
+                title= legend_title,
                 loc  = 'center left',
                 labelspacing = 1.05,
                 mode = 'expand',
@@ -53,9 +46,8 @@ class legend():
                 labelcolor = font_color,
                 facecolor = 'none',
                 edgecolor = 'none',
-                ncol = 1,
+                ncols = np.ceil(len(self.handles)/16),  # & test
                 # draggable = True
-                # & 2nd column if to long
             )
 
         for entry in self.legend.legend_handles: # edit copy
@@ -75,6 +67,15 @@ class legend():
             #     facecolor = 'none',
             #     edgecolor = 'none',
             #     ncol = 5)
+
+def title(title, language):
+    if isinstance(title, dict):
+        title = title.get(language, "")
+    elif not isinstance(title, str):
+        title = ""
+    return title
+
+
 
 def axe_label(sorted_data, axe):
     if sorted_data.relative.labels[axe] == None:

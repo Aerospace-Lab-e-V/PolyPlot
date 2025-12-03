@@ -1,28 +1,35 @@
 // This is an explanation for all possible settings for the config.json
-// Do not use this file directly, as comments are neither supported in default .json nor in the program itself
+// Do not use this file directly, as comments are neither supported by default .json format nor by the program itself
 // Ⓒ afffe18 @ RPS (ASL) 2025
 //
 // []   type of value needed  true,  false,  none, 
 //                            str : "string"  , str array : ["string1","string2]
 //                            num : 123       , num array : [1,2,3]
-// (#x) see line x for related settings or more reffernce
+// (#nn) see line nn for related settings or more reffernce
 // {}   default value (→ line is optional)
 //
-// LaTeX has limited support for labels. LaTeX code is between $ without spaces at beginning & end and commands require double backslash :  $\\LaTeX$
-// for colors see: https://matplotlib.org/stable/users/explain/colors/colors.html &  https://matplotlib.org/stable/gallery/color/named_colors.html 
+// LaTeX has limited support for labels. LaTeX code is between $ without spaces at beginning & end and commands require double backslash e.g.   $\\LaTeX$
+// for colors see: https://matplotlib.org/stable/users/explain/colors/colors.html & https://matplotlib.org/stable/gallery/color/named_colors.html 
 
 {
 "version":3,                            // version number
+"create_all_dataframes":true,           // [true] create all dataframes in list,  [num array] only given frames (numbers can be retrieved from output when creating all frames) {true}
 "dataframes":[{
+    "name":null,                        // title to show in console log, {""}
+
     "API_Key": null,                    // Teable API Key   ["Bearer teable_ ..." str]
     "teable_url":null,                  // Teable url       ["https://www ..." str] if [null] → import Excel from import_file_name (#19) {null}
     "import_file_name":"",              // Excel file name  [str "...xlsx"], Excel is expected to be in the material_properties folder {null}
     "import_sheet":0,                   // sheetnumber in Exel to import [num] {0}
 
     "image_ratio":2,                    // with/heigth [num] {16/9} 
-    "resolution":1000,                  // vertical resolution [num / "svg"] {"svg"}
+    "resolution":1000,                  // vertical resolution for .png export [num] or ["svg"] to export as .svg {"svg"}
 
+    "legend_title":{                    // legend title [str]/[dict] {""}
+        "en":""                         // language : tiltle [str]   (#31)
+    }, 
     "language":"",                      // [str] {"en"} language for axis-label & Legend Headline
+    "dark_mode":false,                  // font color, black or white: {true}
 
 
 // : Frames :
@@ -31,15 +38,15 @@
         "name":null,                    // title to show in output and window header on popout {""}
         
         "legend_flag":true,             // [true]/[ false] schold a legend be printed  {true}
-        // & legend title
-        "title":"",                     // plot title for popout only [str] {""}
-        "dark_mode":false,              // font color, black or white: {true}
+        "title":{                       // plot title for popout only [str]/[dict] {""}    // & implement
+            "en":""                     // language : tiltle [str]   (#31)
+        },                     
+        "dark_mode":false,              // font color, black or white: {dataframe:dark_mode}
+        "language":"",                  // [str] {dataframe:language }
 
 
         "export_file_name": null,       // filename without ending ["folder/subfolder/filename"] , [null] wont export but open popup {null} // ToDo: folders must already exist
         
-        "language":"",                  // [str] {language of dataframe}
-
         "x_quantity":"",                // axis name (see bottom) for value on x_axis       [str]
         "x_rel_quantity":null,          //   "                    to divide x_quantity by (per point)   [str / none] {none}
         "log_x_flag":false,             // [true]/[false] should the x-axis be displayed logarhithmic                  {false}
@@ -59,7 +66,8 @@
                 "name": "",                 // layer name [str]
                 "whitelist_flag": true,     // [true]: whitelist / [false]: blacklist  {false}, decides how the whitlist array below (#57) is used
                 "whitelist": null,          // black/whitelist filterwords [str array] or [null]  {null}
-                "alpha": null               // [num]/[null] opacity for that layer ∈[0,1]  {null}
+                "alpha": null,              // [num]/[null] opacity for that layer ∈[0,1]  {null}
+                "linewidth":0               // outline linewidth {1.5}   (alpha 0.35)
             },                              // insert further layers here
             {
                 "alpha_points": null,       // [num]/[null] opacity of points ∈[0,1]   {null}
@@ -110,11 +118,10 @@
             },
             "arrow":{                       // [none] for no arrow  {none},  see https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.annotate.html arrowprops
                 "width": 0,                 // linewidth {}
-                // "shrink": 0.1,           // ToDo: verkürzt auf beiden Seiten
                 "facecolor": "blue",        // arrow color: (#12), material_colors (#146)  [str] {}
-                // ToDo: outline
                 "headlength": 0,            // headdimensions in points [num] {}
-                "headwidth": 0              //   "                              
+                "headwidth": 0,             //   "       
+                "linewidth":0               // outline linewidth
             }
         }],
             
@@ -139,7 +146,7 @@
     "axes":[{                    
         "name":"",               // axis name    [str]
         "columns":["",""],       // column names [str,str, ...] 
-        "mode":"",               // "default", "max, "min"   {"default"}
+        "mode":"",               // ["default"] fist column that hast selected value will be plotted, ["max"]/["min"] highest/lowest value across all columns will be plotted, ["span"] highest and lowest can be from separate columns   {"default"}
         "labels":{
             "de":"",             // axis Label
             "en":""              // more languages can be added  (#25)
@@ -148,8 +155,7 @@
 
     // + list of all colors +
     "material_colors":{       
-        "": "",	              // material_name : #rrggbb or color-name [str]  (#12)   
-                              // append all colors here
-        "default":""          // hex or color-name [str] (#12), default color for hulls, marker,.. if no color is given {"#000000"}
+        "default":"",         // hex or color-name [str] (#12), default color for hulls, marker,.. if no color is given {"#000000"}
+        "": "",	              // material_name : #rrggbb or color-name [str]  (#12)   more colors can be added below
         }
 }]}

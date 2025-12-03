@@ -95,6 +95,6 @@ def import_json(filename):
         config = json.load(file)
 
     if config.get('version',None) == 3:
-        return config['dataframes']
+        return config
     else:            
         raise ValueError("wrong .json format")

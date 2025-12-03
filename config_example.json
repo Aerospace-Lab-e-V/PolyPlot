@@ -3,7 +3,7 @@
 "dataframes":[{
     "API_Key": "Bearer teable_accEbwLnOPcALnjGJXU_Hp6iPPr5mn5WPOgMNfzqgAro1j9t1G0Vj6DjAJTMg+s=",
     "teable_url__": "https://teable.aerospace-lab.de/api/table/tblMYoRyrN4FrwdAiH6/record",
-    "import_file_name":"MatWeb_materials_export.xlsx",
+    "import_file_name":"MatWeb_materials_export_Spritzguss.xlsx",
 
     "image_ratio":2,
     "resolution":1000,
@@ -13,9 +13,9 @@
     "frames":[{
         "name":null,
 
-        "x_quantity":"HDT 1.8",
+        "x_quantity":"HDT 0.46",
 
-        "y_quantity":"Rm",
+        "y_quantity":"melt",
 
         "algorithm":"alpha",
         
@@ -28,7 +28,7 @@
             "name": "Material",
             "whitelist_flag": false,
             "whitelist": [],
-            "alpha": 0.5
+            "alpha": 0.2
         },{
             "name": "Hersteller",
             "whitelist_flag": false,
@@ -40,8 +40,8 @@
             "whitelist": [],
             "alpha": null
         },{
-            "alpha_points": 0.3,
-            "alpha_areas":  0.3
+            "alpha_points": 0.5,
+            "alpha_areas":  0.5
         }],
 
         "annotations":[{

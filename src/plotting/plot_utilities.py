@@ -7,7 +7,8 @@ from types import SimpleNamespace
 from termcolor import (colored, cprint)
 
 
-from .plot_hull import plotter_graphics
+from .plot_hull  import plotter_graphics
+from .formatting import title
 
 class data_handling(): 
     def __init__(self, graphics:type, dataframe:pd.DataFrame, frame:dict, language):
@@ -40,17 +41,15 @@ class data_handling():
 
     def recursive_preparation(self, data:pd.DataFrame, current_layer_number:int, hirachie:list, legend_item:str, current_color:str) -> np.ndarray:
         # +       recursive repetition       +
-        if current_layer_number < self.len_layers - 1:
-            try:
-                layer_name           = self.layers[current_layer_number]['name']
-                self.layer_names.append(layer_name)
-                layer_whitelist_flag = self.layers[current_layer_number].get('whitelist_flag',False)
-                layer_whitelist      = self.layers[current_layer_number].get('whitelist',[])
-                layer_alpha          = self.layers[current_layer_number].get('alpha',None)
-                combined_DATA        = np.full((1, 2), np.nan)      # & leer erstelen?
-            except:
-                raise KeyError(f"could not import layer {current_layer_number +1}. Check config.json!")
-
+        if len(self.layers) > current_layer_number  and  'name' in self.layers[current_layer_number].keys():
+            layer_name           = self.layers[current_layer_number]['name']
+            self.layer_names.append(layer_name)
+            layer_whitelist_flag = self.layers[current_layer_number].get('whitelist_flag',False)
+            layer_whitelist      = self.layers[current_layer_number].get('whitelist',[])
+            layer_alpha          = self.layers[current_layer_number].get('alpha',None)
+            layer_linewidth      = self.layers[current_layer_number].get('linewidth',1.5)
+            combined_DATA        = np.full((1, 2), np.nan)      # & leer erstelen?
+           
             for category, material_data in data.groupby(layer_name):
                 if pd.isna(category): category == None
                 plotted = False            
@@ -58,18 +57,20 @@ class data_handling():
 
                 if (category  in layer_whitelist and layer_whitelist_flag == True) or \
                 (category not in layer_whitelist and layer_whitelist_flag == False):
-                    if category in self.material_colors and category != legend_item and layer_alpha:   # ° color & legend entry handling
-                        current_color = self.material_colors [category]
+                    if category in self.material_colors and category != legend_item and layer_alpha:
+                        current_color_instance = self.material_colors [category]
                         legend_item = category
-                        if current_color != None: 
-                            self.graphics.legend.append_category(category, current_color)
+                        if current_color_instance != None: 
+                            self.graphics.legend.append_category(category, current_color_instance)
+                    else:
+                        current_color_instance = current_color
 
                     DATA, plotted = self.recursive_preparation(
                             material_data,
                             current_layer_number + 1,
                             hirachie + [category],
                             legend_item,
-                            current_color,
+                            current_color_instance,
                         )
 
                     # print(DATA)
@@ -82,9 +83,10 @@ class data_handling():
                                 legend_item,
                                 scale = 1.05,
                                 plot_kwargs = {
-                                    'color': current_color,
+                                    'color': current_color_instance,
                                     'alpha': layer_alpha,
                                     'label': category,
+                                    'linewidth':layer_linewidth,
                                     },
                             )
                         plotted = True
@@ -195,7 +197,7 @@ class parse_data():
             for axe in axes:
                 if axe['name'] == quantity:
                     self.quantities[dim]  = axe['name']
-                    self.labels[dim]      = axe['labels'][language]
+                    self.labels[dim]      = title(axe.get('labels',""), language)
                     self.columns[dim]     = axe['columns']
                     self.modes[dim]       = axe.get('mode',"default")
                     break
@@ -224,15 +226,17 @@ class parse_data():
         if not np.all(np.isnan(point[0, :])):
             if   self.modes[dim] == "max":
                 index = np.nanargmax(np.hstack([point[0,:],point[1,:]]))
-                index = index-np.size(point, axis=1) if index >= np.size(point, axis=1) else index
+                coordinate = point[:, index-np.size(point, axis=1) if index >= np.size(point, axis=1) else index ]
             elif self.modes[dim] == "min":
-                index = np.nanargmin(point[0, :]) 
+                coordinate = point[:, np.nanargmin(point[0, :])]
             elif self.modes[dim] == "span":
-                pass        # & range from min to max covering all axis
+                coordinate = point[0, np.nanargmin(point[0, :])]
+                index = np.nanargmax(np.hstack([point[0,:],point[1,:]]))
+                coordinate = point[1, index-np.size(point, axis=1) if index >= np.size(point, axis=1) else index ]
             else:
-                index = np.argmax(~np.isnan(point[0, :]))
+                coordinate = point[:, np.argmax(~np.isnan(point[0, :]))]
 
-            return point[:,index]
+            return coordinate
 
         else:
             return None

@@ -12,15 +12,21 @@ from eventhandling import *
 
 if __name__ == '__main__':
     print(f"\n\n{colored(" starting Ashby-Plot Generator                     Ⓒ afffe18 @ RPS (ASL) 2025 ",on_color="on_blue")}")
+    config = import_json('config_example.json') # + inpt config +
 
     handler = []
+    create_dataframes  = config.get('create_all_dataframes', True)
 
 # : DATAFRAME                                                                           :
-    dataframes = import_json('config.json')
-    for dataframe_index, dataframe in enumerate(dataframes):
-        cprint(f"\n::::::::::::::::::::::::::::::::::::  loading dataframe {dataframe_index + 1} of {len(dataframes)}  ::::::::::::::::::::::::::::::::::::","blue", ["bold"])
+    for dataframe_index, dataframe in enumerate(config.get('dataframes',[])):
+        if not (create_dataframes == True or dataframe_index +1 in create_dataframes):
+            continue
 
-        df_language = dataframe.get('language',"en")
+        cprint(f"\n::::::::::::::::::::::::::::::::::::  loading dataframe {dataframe_index + 1} of {len(config['dataframes'])} {dataframe.get('name',"")} ::::::::::::::::::::::::::::::::::::","blue", ["bold"])
+
+        df_language = dataframe.get('language', "en")
+        df_darkmode = dataframe.get('dark_mode', False)
+
         resolution = dataframe.get('resolution', None)
         if resolution in [None,"svg"]:
             fileformat = "svg"
@@ -29,11 +35,9 @@ if __name__ == '__main__':
             fileformat = "png"
         image_ratio    = dataframe.get('image_ratio', 16/9)
         create_frames  = dataframe.get('create_all_frames', True)
-        darkmode       = dataframe.get('dark_mode',False)
-
 
 # : FRAME                                                                               :
-        for frame_index, frame in enumerate(dataframe['frames']):
+        for frame_index, frame in enumerate(dataframe.get('frames',[])):
             if not (create_frames == True or frame_index +1 in create_frames):
                 continue
 
@@ -41,7 +45,7 @@ if __name__ == '__main__':
 
 
             # : General setup :
-            if frame.get('dark_mode', darkmode):
+            if frame.get('dark_mode', df_darkmode):
                 font_color = 'white'
             else:
                 font_color = 'black'
@@ -65,7 +69,9 @@ if __name__ == '__main__':
                 plt.rcParams.update({"savefig.format":"svg"})
 
             # : class init :
-            Graphics = plotter_graphics(ax, frame.get('algorithm',"cubic"))       # plot_hull.py   → legend()  # § class §
+            Legend  = legend(dataframe.get('legend_title',""))          # § class §
+ 
+            Graphics = plotter_graphics(ax, Legend, frame.get('algorithm',"cubic"))       # plot_hull.py   → legend()  # § class §
 
             Sorted_data = data_handling(Graphics, dataframe, frame, language)   # plot_utilities.py # § class §
 
@@ -150,7 +156,8 @@ if __name__ == '__main__':
 
             # : export :
             if frame.get('export_file_name',None) == None:
-                plt.title(frame.get('title',""), loc='center', size=40, pad=15)         # & multilanguage support
+                frame_title = title(frame.get('title',""), language)
+                plt.title(frame_title, loc='center', size=40, pad=15)
                 fig.canvas.manager.set_window_title(figurename(frame, dataframe_index, frame_index))
                 watermark(fig, alpha=0.5, pos=[0.72, 0.13], size=.13)       # & add copyright text
 
@@ -168,5 +175,6 @@ if __name__ == '__main__':
                 cprint(f"⇒ plot saved as ./export/{frame['export_file_name']} \n","green")
                 plt.close()
     
-    cprint(f"all selected plots displayed or saved \n","green")
+    cprint(f" all selected plots displayed or saved ",color="white",on_color="on_green")
+    print("\n\n")
     plt.show()

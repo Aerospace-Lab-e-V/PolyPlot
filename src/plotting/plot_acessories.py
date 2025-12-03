@@ -17,7 +17,7 @@ def draw_guideline(guidelines, x_min, x_max, y_min, y_max, font_color, ax):
         elif y == None:  # vertical
             x_values = np.ones(num_points)* x
             y_values = np.linspace(y_min, y_max, num_points)
-        else:             # & semilog
+        else:
             x_values = np.linspace(x_min, x_max, num_points)
             y_intercept = (y- (m*x))
             y_values = m*x_values + y_intercept
@@ -28,7 +28,7 @@ def draw_guideline(guidelines, x_min, x_max, y_min, y_max, font_color, ax):
         ax.plot(
             x_values,
             y_values,
-            **guideline.get("line_props", {}) # & test and fix
+            **guideline.get("line_props", {})
             )
 
         if y == None:
@@ -143,7 +143,7 @@ class marker:
                     ha       = "center"
                 )
             else:                        # ~ Arrow 
-                self.ax.annotate(        # & shrink shortens arrow on both ends
+                self.ax.annotate(
                     text        = text.get('name',""),
                     xy          = values,
                     xytext      = [plot_size.x.offset(values[0], text['rel_pos'][0]), \

@@ -31,9 +31,9 @@ class plot_unit_props():
             
 
 class plotter_graphics():
-    def __init__(self, ax, algorithm):
+    def __init__(self, ax, Legend, algorithm):
         self.ax = ax
-        self.legend      = legend() # § class §
+        self.legend      = Legend
         self.points      = []
         self.hulls       = []
         self.algorithm   = algorithm
@@ -135,6 +135,14 @@ class plotter_graphics():
             )
             self.hulls.append(plot_unit_props(self.legend, patch, None,None, hirachie, legend_item, alpha=plot_kwargs['alpha']))
 
+            plot_kwargs['alpha'] = .35
+            outline = plt.plot( # outline
+                X_hull[:,0],
+                X_hull[:,1],
+                **plot_kwargs
+            )
+            self.hulls.append(plot_unit_props(self.legend, outline, None,None, hirachie, legend_item, alpha=plot_kwargs['alpha']))
+
 
     # ~ Ellipses 
     def draw_ellipses(
@@ -165,7 +173,7 @@ class plotter_graphics():
             self.points.append(plot_unit_props(self.legend, ellipse, center_x,center_y, hirachie, legend_item, label, picker=getattr(plot_kwargs, 'picker', False), alpha=plot_kwargs['alpha']))
 
         else:
-            r_2 = r_1 / 11
+            r_2 = r_1 / 11      # & scale dependant   KoTraFo nichtmöglich da Plotgrößer noch nicht feststeht 
 
             ellipse = patches.Ellipse(
                 xy = center,
