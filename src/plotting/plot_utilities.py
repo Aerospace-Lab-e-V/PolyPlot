@@ -24,9 +24,6 @@ class data_handling():
         self.alpha_points    = self.layers[-1].get('alpha_points', None)
         self.alpha_areas     = self.layers[-1].get('alpha_areas',  None)
 
-        self.material_colors['default'] = self.material_colors.get('default', '#222222')
-
-
     def plot(self, data:pd.DataFrame) -> np.ndarray:
         self.absolute.clear_unused_columns(data)
         self.relative.clear_unused_columns(data)
@@ -217,6 +214,7 @@ class parse_data():
     def property_availability(self, data:dict, data_point:pd.DataFrame, dim:int) -> pd.DataFrame | None:
         point  = np.full((2, self.len_col[dim]), np.nan)   #[low,high][column entries]
         index  = None
+        coordinate = np.empty([2])
         column = self.columns[dim]
         for property, property_data in enumerate(column):
             if not pd.isna(data[property_data + ' low'].iloc[data_point]):
@@ -230,10 +228,10 @@ class parse_data():
             elif self.modes[dim] == "min":
                 coordinate = point[:, np.nanargmin(point[0, :])]
             elif self.modes[dim] == "span":
-                coordinate = point[0, np.nanargmin(point[0, :])]
+                coordinate[0] = point[0, np.nanargmin(point[0, :])]
                 index = np.nanargmax(np.hstack([point[0,:],point[1,:]]))
-                coordinate = point[1, index-np.size(point, axis=1) if index >= np.size(point, axis=1) else index ]
-            else:
+                coordinate[1] = point[1, index-np.size(point, axis=1) if index >= np.size(point, axis=1) else index ]
+            else: # dafult order
                 coordinate = point[:, np.argmax(~np.isnan(point[0, :]))]
 
             return coordinate
