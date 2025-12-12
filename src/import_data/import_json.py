@@ -1,13 +1,17 @@
 import json
 
 def import_json(filename):
-    with open(filename, 'r', encoding="utf-8") as file:
-        config = json.load(file)
+    try:
+        with open(filename, 'r', encoding="utf-8") as file:
+            config = json.load(file)
 
-    if config.get('version',None) == 3:
-        return defaults(config)
-    else:            
-        raise ValueError("wrong .json format")
+        if config.get('version',None) == 3:
+            return defaults(config)
+        else:            
+            raise ValueError("wrong .json format")
+    except FileNotFoundError:
+        print(f"{filename} does not exist. please verify the name and position of your config.json")
+        raise
 
 
 
