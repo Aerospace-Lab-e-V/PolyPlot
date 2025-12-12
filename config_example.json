@@ -5,7 +5,8 @@
     "teable_url__": "https://teable.aerospace-lab.de/api/table/tblMYoRyrN4FrwdAiH6/record",
     "import_file_name":"MatWeb_materials_export_Spritzguss.xlsx",
 
-    "image_ratio":2,
+    "image_ratio":6,
+    "export_file_name":"test",
     "resolution":1000,
 
     "language":"de",
@@ -13,9 +14,9 @@
     "frames":[{
         "name":null,
 
-        "x_quantity":"HDT 0.46",
+        "x_quantity":"HDT 1.8",
 
-        "y_quantity":"melt",
+        "y_quantity":"Rm",
 
         "algorithm":"alpha",
         
@@ -119,8 +120,8 @@
 
 
         "colored_areas":[{
-            "x": [0, 300, 300, 80,  80, 0  ],
-            "y": [0,   0,  50, 50, 200, 200],
+            "x": [null,80],
+            "y": [null,50],
             "color": "r",
             "alpha": 0.2
         }],
@@ -168,7 +169,7 @@
     },{
         "name":"Rm",
         "columns":["Tensile Strength at Break", "Tensile Strength Ultimate", "Tensile Strength", "Tensile Strength Yield"],
-        "mode":"max",
+        "mode":"span",
         "labels":{
             "de":"Zugfestigkeit $R_m$ [MPa]",
             "en":"Tensile Strength $R_m$ [MPa]"

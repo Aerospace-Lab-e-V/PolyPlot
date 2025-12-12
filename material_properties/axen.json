@@ -33,8 +33,8 @@
         }
     },{
         "name":"Rm",
-        "columns":["Tensile Strength at Break", "Tensile Strength Ultimate", "Tensile Strength", "Tensile Strength Yield"],
-        "mode":"min",
+        "columns":["Tensile Strength Ultimate", "Tensile Strength", "Tensile Strength at Break", "Tensile Strength Yield"],
+        "mode":"default",
         "labels":{
             "de":"Zugfestigkeit $R_m$ [MPa]",
             "en":"Tensile Strength $R_m$ [MPa]"
