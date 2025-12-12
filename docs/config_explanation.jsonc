@@ -28,6 +28,11 @@
     "legend_title":{                    // legend title [str]/[dict] {""}
         "en":""                         // language : tiltle [str]   (#31)
     }, 
+    "font":{                            // [{}]
+        "font_style":"",                // fort style {"sans-serif"}  ["serif"]["sans-serif"]["cursive"]["fantasy"]["monospace"]
+        "font":"",                      // font [str] {"Arial"}
+        "font_size":0                   // fontsize [int] {22}
+    },
     "language":"",                      // [str] {"en"} language for axis-label & Legend Headline
     "dark_mode":false,                  // font color, black or white: {true}
 

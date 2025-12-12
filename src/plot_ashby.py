@@ -5,14 +5,14 @@ import numpy as np
 import json
 from termcolor import (colored, cprint)
 
-from import_data import *
-from plotting import *
+from import_data   import *
+from plotting      import *
 from eventhandling import *
 
 
 if __name__ == '__main__':
     print(f"\n\n{colored(" starting Ashby-Plot Generator                     Ⓒ afffe18 @ RPS (ASL) 2025 ",on_color="on_blue")}")
-    config = import_json('config_example.json') # + inpt config +
+    config = import_json('config_example.json') # + input config +
 
     handler = []
     create_dataframes  = config.get('create_all_dataframes', True)
@@ -26,6 +26,7 @@ if __name__ == '__main__':
 
         df_language = dataframe.get('language', "en")
         df_darkmode = dataframe.get('dark_mode', False)
+        df_font     = dataframe.get('font', {})
 
         resolution = dataframe.get('resolution', None)
         if resolution in [None,"svg"]:
@@ -33,7 +34,7 @@ if __name__ == '__main__':
             resolution = 100
         else:
             fileformat = "png"
-        image_ratio    = dataframe.get('image_ratio', 16/9)
+        df_image_ratio = dataframe.get('image_ratio', 16/9)
         create_frames  = dataframe.get('create_all_frames', True)
 
 # : FRAME                                                                               :
@@ -51,6 +52,7 @@ if __name__ == '__main__':
                 font_color = 'black'
 
             language = frame.get('language', df_language)
+            image_ratio = frame.get('image_ratio', df_image_ratio)
 
             figure_size = (10*image_ratio ,10)
             fig, ax = plt.subplots(1,1, figsize=figure_size)
@@ -60,9 +62,10 @@ if __name__ == '__main__':
             ax.tick_params(colors=font_color, labelsize=15)
             ax.spines[:].set_color(font_color)
 
-            plt.rc('font', family='sans-serif')
-            plt.rcParams.update({'font.sans-serif':'Arial'})
-            plt.rcParams.update({'font.size': 22})
+            plt.rc('font', family=df_font.get('font_style',"sans-serif"))
+            plt.rcParams.update({'font.sans-serif':df_font.get('fint',"Arial")})
+            plt.rcParams.update({'font.size': df_font.get('font_size',22)})
+            # & weight, stretch, variant, style
             # plt.rc('text',usetex='False')
             # plt.rcParams['mathtext.default'] = True
             if fileformat == "svg":
@@ -92,19 +95,23 @@ if __name__ == '__main__':
             # print(DATA)
 
             # : plot from config :
-            Plot_size = plot_size(frame, DATA, Marker) # § class §
+            Plot_size = plot_size(frame, DATA, Marker, image_ratio) # § class §
                         
 
             if frame.get('legend_flag',True):
                 Graphics.legend.create_legend(
                     language = language,
                     font_color = font_color,
+                    above = frame.get("legend_above",False)
                 )
 
             try:
                 if len(frame.get('colored_areas',{})) > 0:
                     draw_colored_areas(
                         frame['colored_areas'],
+                        Sorted_data,
+                        Marker,
+                        Plot_size,
                         ax = ax
                     )
             except:
