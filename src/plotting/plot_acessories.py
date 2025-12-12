@@ -55,27 +55,58 @@ def draw_guideline(guidelines, x_min, x_max, y_min, y_max, font_color, ax):
             transform_rotates_text=True)
 
 
-
-def draw_colored_areas(colored_areas, ax):
+# :  Area  :
+def draw_colored_areas(colored_areas, Sorted_data, Marker, Plot_size, ax):    # & min max per axis → hull
     for colored_area in colored_areas:
-        x         = colored_area['x']
-        y         = colored_area['y']
-        color     = colored_area['color']       # & .get(,'default')
-        alpha     = colored_area.get('alpha',0.2)
+        color = Marker.get_color(colored_area['color'])
+        alpha = colored_area.get('alpha',0.2)
+        axes  = colored_area.get("axes", None)
+        if axes == None:
+            x = colored_area['x']
+            y = colored_area['y']
 
-        if len(x) != len(y) or len(x) == 0 or len(y) == 0:
-            print("❗ x & y array have different sizes or length 0 unable to print colored area")
-            break
+            if len(x) != len(y) or len(x) == 0 or len(y) == 0:
+                print("❗ x & y array have different sizes or length 0. unable to print colored area")
+                break
+
+            if len(x) == 2:
+                x,y = min_max_area(x, y, Plot_size, alpha, color)
+        
+        else:
+            values = [None, None]
+            for dim, _ in enumerate([x,y]):
+                values[dim] = colored_area['axes'].get(Sorted_data.absolute.quantities[dim], [None,None])
+                if values[dim] != 0 and Sorted_data.relative.quantities[dim] != 0:
+                    value   = colored_area['axes'].get(Sorted_data.relative.quantities[dim], [None,None])
+                    if value != 0: values[dim] /= value
+                    else:          values[dim] = None
+            if not None in values:
+                x,y = min_max_area(x, y, Plot_size, alpha, color)
 
         ax.fill(
-            x, 
-            y, 
-            color = color, 
-            alpha = alpha
+                x, 
+                y, 
+                color = color, 
+                alpha = alpha
             )
 
+def min_max_area(x, y, Plot_size, alpha, color):
+        x_lim = [Plot_size.x.low - Plot_size.x.space,  Plot_size.x.high + Plot_size.x.space]
+        y_lim = [Plot_size.y.low - Plot_size.y.space,  Plot_size.y.high + Plot_size.y.space]
+        if x [0] == None:  x[0] = x_lim[0]
+        if x [1] == None:  x[1] = x_lim[1]
+        if y [0] == None:  y[0] = y_lim[0]
+        if y [1] == None:  y[1] = y_lim[1]
 
-# :  MARKER  : 
+        X = [x_lim[0], x[0], x[0], x[1], x[1], x_lim[1],    x_lim[1], x[1], x[1], x[0], x[0], x_lim[0]]
+        Y = [y[0], y[0], y_lim[0], y_lim[0], y[0], y[0],    y[1], y[1], y_lim[1], y_lim[1], y[1], y[1]]
+        return X, Y
+    
+
+
+
+
+# :  Marker  : 
 class marker:
     def __init__(self, annotations, material_colors, abs_axes, rel_axes, ax):
         self.annotations_raw = annotations[1:]
@@ -91,9 +122,9 @@ class marker:
         for annotation in self.annotations_raw:
             values = [None, None]
             for dim in [0,1]: # dimensions
-                values[dim] = self.get_pos(abs_axes[dim], annotation['axes'])
+                values[dim] = annotation['axes'].get(abs_axes[dim], None)     # self.get_pos(abs_axes[dim], annotation['axes'])
                 if rel_axes[dim] != None and values[dim] != None:        # rellative
-                    value = self.get_pos(rel_axes[dim], annotation['axes'])
+                    value   = annotation['axes'].get(rel_axes[dim], None)     #  self.get_pos(rel_axes[dim], annotation['axes'])
                     if value != None:  values[dim] /= value
                     else:              values[dim]  = None
 
@@ -101,10 +132,11 @@ class marker:
                 annotation['values'] = values
                 self.annotations.append(annotation)  
 
-    def get_pos(self, plt_axe, ann_axes):
-        for key, value in ann_axes.items():
-            if plt_axe == key:
-                return value
+    # def get_pos(self, plt_axe, ann_axes):
+    #     for key, value in ann_axes.items():
+    #         if plt_axe == key:
+    #             return value
+    #     ann_axes.get(plt_axe,None)
 
 
     def create_annotations(self, plot_size):
@@ -157,10 +189,14 @@ class marker:
 
 
     def get_color(self, color):
+        hex_characters = [0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f','A','B','C','D','E','F']
         if color in self.material_colors:
             return self.material_colors[color] 
+        # elif color[0] == "#"   and   len(color) in [4,7]   and   all(char in hex_characters for char in color):   # re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', color): # hex color code
+        #     return color
         else:
             return color
+        # & if not a color: self.material_colors['default']
     
     def limits(self, dim):
         ret = [np.nan, np.nan]
