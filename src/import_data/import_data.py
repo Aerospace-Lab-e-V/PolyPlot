@@ -86,15 +86,3 @@ def import_excel(import_file_name, import_sheet):
 
     # & filter
     return data
-
-
-
-# : config.json :
-def import_json(filename):
-    with open(filename, 'r', encoding="utf-8") as file:
-        config = json.load(file)
-
-    if config.get('version',None) == 3:
-        return config
-    else:            
-        raise ValueError("wrong .json format")
