@@ -42,6 +42,7 @@
             "en":""                     // language : tiltle [str]   (#31)
         },                     
         "dark_mode":false,              // font color, black or white: {dataframe:dark_mode}
+        "legend_above":false,           //determine where legend should be printed [true]:above, [false]:right, [none]:no legend  {false}
         "language":"",                  // [str] {dataframe:language }
 
 
@@ -106,7 +107,7 @@
                 "font_size":0               // fontsize to overwrite de default one (#88)
             },
             "axes":{                        // define position
-                "": 0,                      // axes name (#120) [str] : position [num]
+                "": 0,                      // axes name (#151) [str] : position [num]
                 "": 0, //...
             },
             "marker":{                      // [none] for no marker  {none}
@@ -127,7 +128,10 @@
             
     // + background color for areas + 
         "colored_areas":[{
-            "x": [],            // point list  [num array], corner points: (x[i], y[i])
+            "axes":{            // position per axis if [null] uses "x" & "y" instead, {null}
+                "":[],          // axes name (#151) : [ [num1, num2] ]  num1: min, num2:max  value the area should spann between
+            },      
+            "x": [],            // point list  [num array], corner points: (x[i], y[i]) only used if "axes":null (#131)
             "y": [],            //   " 
             "color": "",        // color (#12)      // ToDo: material_colors
             "alpha": 0          // [num] opacity ∈[0,1]  {0.2}
@@ -156,6 +160,6 @@
     // + list of all colors +
     "material_colors":{       
         "default":"",         // hex or color-name [str] (#12), default color for hulls, marker,.. if no color is given {"#000000"}
-        "": "",	              // material_name : #rrggbb or color-name [str]  (#12)   more colors can be added below
+        "": "",	              // material_name : [#rrggbb] or color-name [str]  (#12), [null] hides hulls ;  more colors can be added below
         }
 }]}

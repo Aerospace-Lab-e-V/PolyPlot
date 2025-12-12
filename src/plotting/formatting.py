@@ -31,10 +31,24 @@ class legend():
     #                 print(item.label_pos[1])
                 
 
-    def create_legend(self, language, font_color):
-        legend_title = title(self.legend_title, language)        
+    def create_legend(self, language, font_color, above):
+        legend_title = title(self.legend_title, language)     
 
-        self.legend = plt.legend(
+        if above:
+            self.legend = plt.legend(        
+                handles=self.handles,
+                bbox_to_anchor = (0, 1.02, 1, 0.2),
+                loc  = 'lower left',
+                mode = 'expand',
+                borderaxespad = 0,
+                fontsize = 15,
+                labelcolor = font_color,
+                facecolor = 'none',
+                edgecolor = 'none',
+                ncol = 5
+            )
+        elif not above:
+            self.legend = plt.legend(
                 handles=self.handles,
                 bbox_to_anchor = (1, 0, 1, 1),
                 title= legend_title,
@@ -50,23 +64,11 @@ class legend():
                 # draggable = True
             )
 
+
         for entry in self.legend.legend_handles: # edit copy
             entry.set_picker(True)
 
         plt.setp(self.legend.get_title(), color=font_color)  # legend title color
-
-        # ° legend above
-            # plt.legend(        
-            #     handles=handles,
-            #     bbox_to_anchor = (0, 1.02, 1, 0.2),
-            #     loc  = 'lower left',
-            #     mode = 'expand',
-            #     borderaxespad = 0,
-            #     fontsize = 15,
-            #     labelcolor = font_color,
-            #     facecolor = 'none',
-            #     edgecolor = 'none',
-            #     ncol = 5)
 
 def title(title, language):
     if isinstance(title, dict):
@@ -115,22 +117,22 @@ def figurename(frame, dateframe_index, frame_index):
 
 
 class plot_size():
-    def __init__(self, frame, DATA, marker):
+    def __init__(self, frame, DATA, marker, image_ratio):
         self.margin         = frame.get("automatic_Display_Area_margin",0.12)
-        self.DATA           = DATA
-        self.x = dimension(self, 0, marker, frame.get('log_x_flag',False), frame.get("x_lim",None)) # § class §
-        self.y = dimension(self, 1, marker, frame.get('log_y_flag',False), frame.get("y_lim",None)) # § class §
+        self.DATA           = DATA                                                                      
+        self.x = dimension(self, 0, marker, frame.get('log_x_flag',False), frame.get("x_lim",None), image_ratio**(-0.7)) # § class § 
+        self.y = dimension(self, 1, marker, frame.get('log_y_flag',False), frame.get("y_lim",None), 1                  ) # § class §
 
 class dimension():
-    def __init__(self, head, dim, marker, log_flag, limit):
+    def __init__(self, head, dim, marker, log_flag, limit, shrink):
         self.log_flag = log_flag
         if limit == None:
-            self.plot_padding(float(np.nanmin(head.DATA[:,dim])), float(np.nanmax(head.DATA[:,dim])), head.margin, marker.limits(dim))
+            self.plot_padding(float(np.nanmin(head.DATA[:,dim])), float(np.nanmax(head.DATA[:,dim])), head.margin, marker.limits(dim), shrink)
         else:
-            self.plot_padding(limit[0], limit[1], 0, marker.limits(dim))
+            self.plot_padding(limit[0], limit[1], 0, marker.limits(dim), shrink)
 
         
-    def plot_padding(self, min, max, margin, marker):
+    def plot_padding(self, min, max, margin, marker, shrink):
         low  = np.nanmin([marker[0], min])
         high = np.nanmax([marker[1], max])
         # & take hull splines into account
@@ -138,12 +140,12 @@ class dimension():
         if self.log_flag:
             low_log  = np.log10(low )
             high_log = np.log10(high)
-            margin = (high_log - low_log) * margin
+            margin = (high_log - low_log) * margin * shrink    # & e^()
             self.low  = 10 ** (low_log  - margin)
             self.high = 10 ** (high_log + margin)
             self.space = (np.log10(self.high) - np.log10(self.low)) / 100
         else:
-            margin = (high - low) * margin
+            margin = (high - low) * margin * shrink
             self.low  = low  - margin
             self.high = high + margin
             self.space = (self.high - self.low) /100
