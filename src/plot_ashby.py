@@ -12,7 +12,7 @@ from eventhandling import *
 
 if __name__ == '__main__':
     print(f"\n\n{colored(" starting Ashby-Plot Generator                     Ⓒ afffe18 @ RPS (ASL) 2025 ",on_color="on_blue")}")
-    config = import_json('config_example.json') # + input config +
+    config = import_json('Bambu.json') # + input config +
 
     handler = []
     create_dataframes  = config.get('create_all_dataframes', True)
@@ -63,7 +63,7 @@ if __name__ == '__main__':
             ax.spines[:].set_color(font_color)
 
             plt.rc('font', family=df_font.get('font_style',"sans-serif"))
-            plt.rcParams.update({'font.sans-serif':df_font.get('fint',"Arial")})
+            plt.rcParams.update({f'font.{df_font.get('font_style',"sans-serif")}':df_font.get('fint',"Arial")})
             plt.rcParams.update({'font.size': df_font.get('font_size',22)})
             # & weight, stretch, variant, style
             # plt.rc('text',usetex='False')

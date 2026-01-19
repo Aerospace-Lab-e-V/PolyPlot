@@ -46,13 +46,13 @@ class data_handling():
             layer_alpha          = self.layers[current_layer_number].get('alpha',None)
             layer_linewidth      = self.layers[current_layer_number].get('linewidth',1.5)
             combined_DATA        = np.full((1, 2), np.nan)      # & leer erstelen?
+            plotted = False            
            
-            for category, material_data in data.groupby(layer_name):
+            for category, material_data in data.groupby(layer_name, dropna=False):
                 if pd.isna(category): category == None
-                plotted = False            
                 # print("====== Layer ", current_layer_number, ": ", category, "  (", layer_name, ") ======") 
 
-                if (category  in layer_whitelist and layer_whitelist_flag == True) or \
+                if  (category in layer_whitelist and layer_whitelist_flag == True) or \
                 (category not in layer_whitelist and layer_whitelist_flag == False):
                     if category in self.material_colors and category != legend_item and layer_alpha:
                         current_color_instance = self.material_colors [category]
@@ -218,8 +218,17 @@ class parse_data():
         column = self.columns[dim]
         for property, property_data in enumerate(column):
             if not pd.isna(data[property_data + ' low'].iloc[data_point]):
-                point[0, property] = data[    property_data + ' low'         ].iloc[data_point].copy()  # low
-                point[1, property] = data.get(property_data + ' high', np.nan).iloc[data_point].copy()  # high  (optional)
+                point[0, property] = data[    property_data + ' low'      ].iloc[data_point].copy()  # low
+
+                if not pd.isna(data[property_data + ' high'].iloc[data_point]):
+                    point[0, property] = data[    property_data + ' high' ].iloc[data_point].copy()  # high
+
+                # point[1, property] = data.get(property_data + ' high', np.nan).iloc[data_point].copy()  # high  (optional)
+
+                # if data.get(property_data + ' high', np.nan) != np.nan:                             # high
+                #     point[1, property] = data[    property_data + ' high'].iloc[data_point].copy()
+                # else:
+                #     point[1,property] = np.nan
         
         if not np.all(np.isnan(point[0, :])):
             if   self.modes[dim] == "max":

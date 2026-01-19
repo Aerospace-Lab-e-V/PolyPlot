@@ -2,7 +2,7 @@ import json
 
 def import_json(filename):
     try:
-        with open(filename, 'r', encoding="utf-8") as file:
+        with open('./configs/' + filename, 'r', encoding="utf-8") as file:
             config = json.load(file)
 
         if config.get('version',None) == 3:
@@ -10,7 +10,7 @@ def import_json(filename):
         else:            
             raise ValueError("wrong .json format")
     except FileNotFoundError:
-        print(f"{filename} does not exist. please verify the name and position of your config.json")
+        print(f"{filename} does not exist in './configs/'. please verify the name and position of your config")
         raise
 
 
