@@ -6,7 +6,7 @@ import pandas as pd
 from .filter import *
 
 
-def import_data(dataframe, frame):
+def import_data(dataframe, frame, Sorted_data):
     if dataframe.get('teable_url',None) != None:
         data = import_teable(dataframe['teable_url'], dataframe['API_Key'], frame['layers'], frame.get('filter', None), [Sorted_data.absolute.columns[0], Sorted_data.absolute.columns[1], Sorted_data.relative.columns[0], Sorted_data.relative.columns[1]])
     elif dataframe.get('import_file_name',None) != None:

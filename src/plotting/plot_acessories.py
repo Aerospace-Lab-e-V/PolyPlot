@@ -1,20 +1,24 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from termcolor import (colored, cprint)
 
-def draw_guideline(guidelines, x_min, x_max, y_min, y_max, font_color, ax):
+
+# : Guideline :
+def draw_guideline(guidelines, x_min, x_max, y_min, y_max, font_color, Marker, ax):
     num_points = 1000
     for guideline in guidelines:
 
-        x = guideline.get('x', False)
-        y = guideline.get('y', False)
-        m = guideline.get('m', False)
-        if x == False or y == False or m == False:
-            print("❗ x, y or m not specified for guideline")
+        x = guideline.get('x', None)
+        y = guideline.get('y', None)
+        m = guideline.get('m', 1)
 
+        if x == None and y == None:
+            x = 0
+            y = 0
         if x == None:    # horizontal
             x_values = np.linspace(x_min, x_max, num_points)
             y_values = np.ones(num_points)* y
-        elif y == None:  # vertical
+        elif y == None:    # vertical
             x_values = np.ones(num_points)* x
             y_values = np.linspace(y_min, y_max, num_points)
         else:
@@ -48,25 +52,29 @@ def draw_guideline(guidelines, x_min, x_max, y_min, y_max, font_color, ax):
             x_text,
             y_text, 
             guideline.get('label',""), 
-            color=guideline.get("font_color",font_color),
-            fontsize=guideline.get('fontsize', 18),
-            rotation=np.rad2deg(label_angle), 
-            rotation_mode='anchor',
-            transform_rotates_text=True)
+            color    = Marker.get_color(guideline.get("font_color", font_color)),
+            fontsize = guideline.get('fontsize', 18),
+            rotation = np.rad2deg(label_angle), 
+            rotation_mode = 'anchor',
+            transform_rotates_text = True
+        )
 
 
 # :  Area  :
-def draw_colored_areas(colored_areas, Sorted_data, Marker, Plot_size, ax):    # & min max per axis → hull
+def draw_colored_areas(colored_areas, Sorted_data, Marker, Plot_size, ax) -> None:
     for colored_area in colored_areas:
         color = Marker.get_color(colored_area['color'])
         alpha = colored_area.get('alpha',0.2)
-        axes  = colored_area.get("axes", None)
-        if axes == None:
-            x = colored_area['x']
-            y = colored_area['y']
+
+        if colored_area.get("axes", None) == None:
+            try:
+                x = colored_area['x']
+                y = colored_area['y']
+            except:
+                cprint("❗ERROR neither axes nor 'x' & 'y' are set for printign areas. Check config.json! continuing...","red")
 
             if len(x) != len(y) or len(x) == 0 or len(y) == 0:
-                print("❗ x & y array have different sizes or length 0. unable to print colored area")
+                print("❗ x & y array have different sizes or length 0. unable to print colored area. Check config.json! continuing...","red")
                 break
 
             if len(x) == 2:
@@ -74,14 +82,16 @@ def draw_colored_areas(colored_areas, Sorted_data, Marker, Plot_size, ax):    # 
         
         else:
             values = [None, None]
-            for dim, _ in enumerate([x,y]):
-                values[dim] = colored_area['axes'].get(Sorted_data.absolute.quantities[dim], [None,None])
-                if values[dim] != 0 and Sorted_data.relative.quantities[dim] != 0:
-                    value   = colored_area['axes'].get(Sorted_data.relative.quantities[dim], [None,None])
-                    if value != 0: values[dim] /= value
-                    else:          values[dim] = None
-            if not None in values:
-                x,y = min_max_area(x, y, Plot_size, alpha, color)
+            for dim in range(2):  # [x,y]
+                values[dim] = colored_area['axes'].get(Sorted_data.absolute.quantities[dim], [None,None])  # get axes value from config for active axe
+                # if values[dim] != None and Sorted_data.relative.quantities[dim] != None:
+                #     value   = colored_area['axes'].get(Sorted_data.relative.quantities[dim], None)
+                #     if value != None: values[dim] /= value
+                #     else:          values[dim] = None
+
+            print(values)
+            if values[0] == None and values[1] == None: return
+            x,y = min_max_area(values[0], values[1], Plot_size, alpha, color)
 
         ax.fill(
                 x, 
@@ -90,9 +100,11 @@ def draw_colored_areas(colored_areas, Sorted_data, Marker, Plot_size, ax):    # 
                 alpha = alpha
             )
 
-def min_max_area(x, y, Plot_size, alpha, color):
+def min_max_area(x, y, Plot_size, alpha, color) -> (list, list):
         x_lim = [Plot_size.x.low - Plot_size.x.space,  Plot_size.x.high + Plot_size.x.space]
         y_lim = [Plot_size.y.low - Plot_size.y.space,  Plot_size.y.high + Plot_size.y.space]
+        if x [0] == None and x [1] == None:  x[0] = x_lim[1]
+        if y [0] == None and y [1] == None:  y[0] = y_lim[1]
         if x [0] == None:  x[0] = x_lim[0]
         if x [1] == None:  x[1] = x_lim[1]
         if y [0] == None:  y[0] = y_lim[0]
@@ -100,6 +112,7 @@ def min_max_area(x, y, Plot_size, alpha, color):
 
         X = [x_lim[0], x[0], x[0], x[1], x[1], x_lim[1],    x_lim[1], x[1], x[1], x[0], x[0], x_lim[0]]
         Y = [y[0], y[0], y_lim[0], y_lim[0], y[0], y[0],    y[1], y[1], y_lim[1], y_lim[1], y[1], y[1]]
+        print(X,Y)
         return X, Y
     
 
@@ -148,12 +161,10 @@ class marker:
             if values[0] != None and values[1] != None:
                 marker = annotation['marker']
                 if marker != None:     # ~ Marker 
-                    color = self.get_color(marker['color'])
-
                     self.ax.scatter(
                         values[0],
                         values[1],
-                        c = color,
+                        c = self.get_color(marker['color']),
                         marker = marker.get('marker_symbol','o'),
                         s = self.marker_size * marker.get('size_factor', 1),
                         edgecolors = self.get_color(marker.get('edgecolors',"black")),
@@ -188,7 +199,8 @@ class marker:
             print(f"marker: {text['name']} @ {values}")
 
 
-    def get_color(self, color):
+    def get_color(self, color):   # & moove out of marker class but keep material_colors
+        """takes a color string as input an returns the input or the corresponding materialcolor if exists"""
         hex_characters = [0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f','A','B','C','D','E','F']
         if color in self.material_colors:
             return self.material_colors[color] 

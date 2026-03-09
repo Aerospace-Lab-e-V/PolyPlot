@@ -5,7 +5,7 @@
 // []   type of value needed  true,  false,  none, 
 //                            str : "string"  , str array : ["string1","string2]
 //                            num : 123       , num array : [1,2,3]
-// (#nn) see line nn for related settings or more reffernce
+// (#nn) see line nn for related settings or more reference
 // {}   default value (→ line is optional)
 //
 // LaTeX has limited support for labels. LaTeX code is between $ without spaces at beginning & end and commands require double backslash e.g.   $\\LaTeX$
@@ -85,9 +85,9 @@
 
     // + guidelines +
         "guidelines":[{
-            "x": 50,                        // x coordinate of anchor point [num], horizontal if [null]
-            "y": 200,                       // y coordinate of anchor point [num], vertical   if [null]
-            "m": 1,                         // incline    // ToDo: semi logarhitmic not working
+            "x": 50,                        // x coordinate of anchor point [num], horizontal if [null] {null}
+            "y": 200,                       // y coordinate of anchor point [num], vertical   if [null] {null}
+            "m": 1,                         // incline  {1}
             "line_props":{                  // see https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html for all options 
                 "linestyle": "--",          // linestyle [str], see https://matplotlib.org/stable/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D.set_linestyle
                 "color":"aqua",             // color (#12)   // ToDo: material_colors
@@ -138,7 +138,7 @@
             },      
             "x": [],            // point list  [num array], corner points: (x[i], y[i]) only used if "axes":null (#131)
             "y": [],            //   " 
-            "color": "",        // color (#12)      // ToDo: material_colors
+            "color": "",        // color (#12)  ["red"]
             "alpha": 0          // [num] opacity ∈[0,1]  {0.2}
         }],
 

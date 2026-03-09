@@ -145,7 +145,7 @@ class plotter_graphics():
 
 
     # ~ Ellipses 
-    def draw_ellipses(
+    def draw_ellipses(    # & kacke für log Darstellung
             self,
             X,      # [:,x/y]
             hirachie,
@@ -222,7 +222,14 @@ class plotter_graphics():
             tck, _ = splprep([coords[:,0], coords[:,1]], s=0.001, per=True)
             u_fine = np.linspace(0, 1, 500)
             x2, y2 = splev(u_fine, tck)
-        elif self.algorithm == 'cubic':
+        # elif self.algorithm == 'quadratic':
+        #     t = np.zeros(x.shape)
+        #     t[1:] = np.sqrt((x[1:] - x[:-1])**2 + (y[1:] - y[:-1])**2)
+        #     t = np.cumsum(t)
+        #     t /= t[-1]
+        #     x2 = scipy.interpolate.splev(nt, scipy.interpolate.splrep(t, x, per=True, k=4))
+        #     y2 = scipy.interpolate.splev(nt, scipy.interpolate.splrep(t, y, per=True, k=4))
+        else: # self.algorithm == 'cubic'
             t = np.zeros(x.shape)
             t[1:] = np.sqrt((x[1:] - x[:-1])**2 + (y[1:] - y[:-1])**2)
             t = np.cumsum(t)

@@ -182,7 +182,7 @@ class data_handling():
 
 
 
-class parse_data():
+class parse_data():   # relative & absolute separate
     def __init__(self, axes:dict, language:str, x_quantity:str, y_quantity:str) -> None:
         import_quantities = [x_quantity, y_quantity]
         self.quantities = [ None ,  None ]

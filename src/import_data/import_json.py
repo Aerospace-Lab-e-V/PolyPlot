@@ -8,7 +8,7 @@ def import_json(filename):
         if config.get('version',None) == 3:
             return defaults(config)
         else:            
-            raise ValueError("wrong .json format")
+            raise ValueError("wrong .json format")   # & use correct error
     except FileNotFoundError:
         print(f"{filename} does not exist in './configs/'. please verify the name and position of your config")
         raise
