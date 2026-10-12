@@ -30,3 +30,6 @@ backend/.venv
 *.njsproj
 *.sln
 *.sw?
+
+# Claude Code local files
+.claude/

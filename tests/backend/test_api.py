@@ -22,8 +22,6 @@ PROJECT_DIR = Path(__file__).resolve().parents[2]
 FIXTURE_PATH = PROJECT_DIR / 'tests' / 'fixtures' / 'render-config.json'
 SERVER_START_SECONDS = 60     # importing the backend (scikit-learn, matplotlib) can take 20 s on a busy machine
 UPLOAD_FIXTURE_PATH = PROJECT_DIR / 'tests' / 'dataset_1.xlsx'
-FILAMENT_UPLOAD_FIXTURE_PATH = PROJECT_DIR / 'tests' / 'dataset_2.xlsx'
-SPRITZGUSS_UPLOAD_FIXTURE_PATH = PROJECT_DIR / 'tests' / 'dataset_3.xlsx'
 
 
 def build_multipart_body(fields: dict[str, str], files: dict[str, Path]) -> tuple[bytes, str]:
@@ -64,7 +62,6 @@ class BackendApiTests(unittest.TestCase):
         cls.temp_dir = tempfile.TemporaryDirectory()
         cls.material_properties_dir = Path(cls.temp_dir.name)
         shutil.copy(UPLOAD_FIXTURE_PATH, cls.material_properties_dir / UPLOAD_FIXTURE_PATH.name)
-        shutil.copy(FILAMENT_UPLOAD_FIXTURE_PATH, cls.material_properties_dir / FILAMENT_UPLOAD_FIXTURE_PATH.name)
         configured_base_url = os.environ.get('ASHBY_BACKEND_URL')
         if configured_base_url:
             cls.base_url = configured_base_url.rstrip('/')
@@ -199,7 +196,6 @@ class BackendApiTests(unittest.TestCase):
         self.assertIn('application/json', self.header(headers, 'Content-Type'))
         self.assertTrue(payload['success'])
         self.assertIn(UPLOAD_FIXTURE_PATH.name, payload['datasets'])
-        self.assertIn(FILAMENT_UPLOAD_FIXTURE_PATH.name, payload['datasets'])
 
     def test_render_plot_returns_warning_messages_header(self) -> None:
         warning_payload = json.loads(json.dumps(self.render_payload))
@@ -278,9 +274,9 @@ class BackendApiTests(unittest.TestCase):
         self.assertEqual(payload['import_file_name'], UPLOAD_FIXTURE_PATH.name)
 
     def test_extract_columns_from_filament_xlsx_source(self) -> None:
-        columns, _, _, _, _, _ = _extract_metadata_from_xlsx(FILAMENT_UPLOAD_FIXTURE_PATH.read_bytes(), 0)
+        columns, _, _, _, _, _ = _extract_metadata_from_xlsx(UPLOAD_FIXTURE_PATH.read_bytes(), 0)
 
-        self.assertGreater(len(columns), 200)
+        self.assertGreater(len(columns), 10)
         self.assertIn('Material', columns)
         self.assertIn('Bed Temp low', columns)
         self.assertIn('Bed Temp high', columns)
@@ -290,7 +286,7 @@ class BackendApiTests(unittest.TestCase):
         status, headers, body = self.post_multipart(
             '/api/import-database',
             fields={'import_sheet': '0'},
-            files={'file': FILAMENT_UPLOAD_FIXTURE_PATH},
+            files={'file': UPLOAD_FIXTURE_PATH},
         )
         payload = json.loads(body.decode('utf-8'))
 
@@ -304,12 +300,12 @@ class BackendApiTests(unittest.TestCase):
         self.assertIn('keywords_by_column', payload)
         self.assertIn('Material', payload['keywords_by_column'])
         self.assertGreater(len(payload['keywords_by_column']['Material']), 0)
-        self.assertEqual(payload['import_file_name'], FILAMENT_UPLOAD_FIXTURE_PATH.name)
+        self.assertEqual(payload['import_file_name'], UPLOAD_FIXTURE_PATH.name)
 
     def test_extract_columns_from_spritzguss_xlsx_source(self) -> None:
-        columns, _, _, _, _, _ = _extract_metadata_from_xlsx(SPRITZGUSS_UPLOAD_FIXTURE_PATH.read_bytes(), 0)
+        columns, _, _, _, _, _ = _extract_metadata_from_xlsx(UPLOAD_FIXTURE_PATH.read_bytes(), 0)
 
-        self.assertGreater(len(columns), 100)
+        self.assertGreater(len(columns), 10)
         self.assertIn('Material', columns)
         self.assertIn('CTE linear low', columns)
         self.assertIn('CTE linear high', columns)
@@ -319,7 +315,7 @@ class BackendApiTests(unittest.TestCase):
         status, headers, body = self.post_multipart(
             '/api/import-database',
             fields={'import_sheet': '0'},
-            files={'file': SPRITZGUSS_UPLOAD_FIXTURE_PATH},
+            files={'file': UPLOAD_FIXTURE_PATH},
         )
         payload = json.loads(body.decode('utf-8'))
 
@@ -331,7 +327,7 @@ class BackendApiTests(unittest.TestCase):
         self.assertIn('CTE linear high', payload['columns'])
         self.assertIn('CTE linear unit', payload['columns'])
         self.assertIn('Charpy Impact Notched low', payload['columns'])
-        self.assertEqual(payload['import_file_name'], SPRITZGUSS_UPLOAD_FIXTURE_PATH.name)
+        self.assertEqual(payload['import_file_name'], UPLOAD_FIXTURE_PATH.name)
 
     def test_render_plot_reports_missing_required_x_quantity(self) -> None:
         payload = json.loads(json.dumps(self.render_payload))

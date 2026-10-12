@@ -71,9 +71,6 @@
           {
             "name": "Rm",
             "columns": [
-              "Tensile Strength Yield",
-              "Tensile Strength Ultimate",
-              "Tensile Strength at Break",
               "Tensile Strength"
             ],
             "mode": "max",
