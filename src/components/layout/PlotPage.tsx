@@ -8,6 +8,7 @@ import { useI18n, type Translate } from '../../uiTranslations'
 import { BackendError, fetchBackend, readBackendError, toErrorDetails, type BackendErrorDetails } from '../../utils/backendErrors'
 import { addLogEntry } from '../../utils/debugLog'
 import { attributionHeaders, useAttributionUnlocked } from '../../utils/attributionKey'
+import { customLogoFile, customLogoForRequest, useCustomLogo } from '../../utils/customLogo'
 import { getCachedDatasourceFile, readDatasourceWithFallback } from '../../utils/datasourceStorage'
 import { ErrorDetails } from './DebugLog'
 import { AllPlotsGallery } from './AllPlotsGallery'
@@ -117,7 +118,8 @@ async function buildPlotRequest(
     const file = datasourceFilesByDataframe[dataframeIndex]
     return Boolean(file) && (!dataframe?.importFileName || file.name === dataframe.importFileName)
   })
-  if (datasourceIndices.length === 0) {
+  const logo = customLogoForRequest()
+  if (datasourceIndices.length === 0 && !logo) {
     return {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...attributionHeaders() },
@@ -138,6 +140,7 @@ async function buildPlotRequest(
       filename: file.name,
     })
   }
+  if (logo) form.append('watermark_logo', customLogoFile(logo))
   form.append('payload', JSON.stringify(payload))
   form.append('data_sources', JSON.stringify(descriptors))
 
@@ -262,6 +265,7 @@ type PreviewStatus = 'idle' | 'loading' | 'ok' | 'error' | 'stale'
 export function PlotPage({ plotConfig, configBaseName, activeDataframeIndex, activeFrameIndex, plotAction, plotActionNonce, datasourceFilesByDataframe, availableDatasets, missing, onJump, autoRefresh, onAutoRefreshChange, onSelectPlot }: Props) {
   const { t } = useI18n()
   const attributionUnlocked = useAttributionUnlocked()
+  const logoId = useCustomLogo()?.id ?? null
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const imageBlobRef = useRef<Blob | null>(null)
   /** Clickable points of the current preview, and the one shown in the details dialog. */
@@ -297,7 +301,7 @@ export function PlotPage({ plotConfig, configBaseName, activeDataframeIndex, act
   const plotImageKey = (dataframeIndex: number, frameIndex: number) => {
     const dataframe = plotConfig.dataframes[dataframeIndex]
     const frame = dataframe?.frames[frameIndex]
-    return dataframe && frame ? { id: plotId(dataframe, frame), key: renderKey(dataframe, frame, datasourceFilesByDataframe[dataframeIndex], attributionUnlocked) } : null
+    return dataframe && frame ? { id: plotId(dataframe, frame), key: renderKey(dataframe, frame, datasourceFilesByDataframe[dataframeIndex], attributionUnlocked, logoId) } : null
   }
 
   const getDownloadName = (entry: Pick<RenderedPlotEntry, 'dataframeIndex' | 'frameIndex' | 'mediaType'>) => {
@@ -457,7 +461,7 @@ export function PlotPage({ plotConfig, configBaseName, activeDataframeIndex, act
         details = {
           ...details,
           message: details.message === unreachable
-            ? t('backendLostDuringRender', { location: known.location || '?' })
+            ? (known.location ? t('backendLostDuringRender', { location: known.location }) : t('backendLostDuringRenderNoLocation'))
             : known.location ? `${details.message} ${t('backendLastStep', { location: known.location })}` : details.message,
           log: [details.log, `${t('lastBackendState', { seconds: known.elapsedSeconds })}:`, known.waitingIn && `${t('backendWaitingIn')}: ${known.waitingIn}`, ...known.outputTail].filter(Boolean).join('\n'),
         }
@@ -608,8 +612,8 @@ export function PlotPage({ plotConfig, configBaseName, activeDataframeIndex, act
   // Auto-refresh: re-render after the active dataframe's config stops changing for a moment.
   // Selection changes are handled by the effect above.
   // Memoized: the dataframe object only changes when one of its settings does. Entering or dropping
-  // the attribution key changes what the server draws, so it counts as a change too.
-  const configKey = useMemo(() => (activeDataframe ? `${attributionUnlocked}:${JSON.stringify(activeDataframe)}` : ''), [activeDataframe, attributionUnlocked])
+  // the attribution key or the own logo changes what the server draws, so it counts as a change too.
+  const configKey = useMemo(() => (activeDataframe ? `${attributionUnlocked}:${logoId}:${JSON.stringify(activeDataframe)}` : ''), [activeDataframe, attributionUnlocked, logoId])
   const selectionKey = `${activeDataframeIndex}:${activeFrameIndex}`
   const lastConfigRef = useRef({ configKey, selectionKey })
   useEffect(() => {

@@ -4,6 +4,7 @@ import { plotId, renderKey, type PlotImage, type usePlotImages } from '../../hoo
 import { useI18n } from '../../uiTranslations'
 import { dataframeLabel, frameLabel } from '../../utils/appState'
 import { useAttributionUnlocked } from '../../utils/attributionKey'
+import { useCustomLogo } from '../../utils/customLogo'
 import { toErrorDetails } from '../../utils/backendErrors'
 import { getDataframeMissing, getFrameMissing } from '../../utils/settingsStatus'
 
@@ -35,6 +36,7 @@ type GalleryPlot = { id: string; key: string; dataframeIndex: number; frameIndex
 export function AllPlotsGallery({ plotConfig, activeDataframeIndex, activeFrameIndex, datasourceFilesByDataframe, availableDatasets, autoRefresh, images, storeImage, renderPlot, onSelectPlot }: Props) {
   const { t } = useI18n()
   const unlocked = useAttributionUnlocked()
+  const logoId = useCustomLogo()?.id ?? null
   const [rendering, setRendering] = useState<string | null>(null)
   const [edited, setEdited] = useState(false)
 
@@ -43,13 +45,13 @@ export function AllPlotsGallery({ plotConfig, activeDataframeIndex, activeFrameI
     const dataframeMissing = getDataframeMissing(dataframe, availableDatasets ?? [], Boolean(dataframe.importFileName) && file?.name === dataframe.importFileName)
     return dataframe.frames.map((frame, frameIndex) => ({
       id: plotId(dataframe, frame),
-      key: renderKey(dataframe, frame, file, unlocked),
+      key: renderKey(dataframe, frame, file, unlocked, logoId),
       dataframeIndex,
       frameIndex,
       label: `${dataframeLabel(dataframe, dataframeIndex)} · ${frameLabel(frame, frameIndex)}`,
       canRender: dataframeMissing.length === 0 && getFrameMissing(frame).length === 0,
     }))
-  }), [plotConfig, datasourceFilesByDataframe, availableDatasets, unlocked])
+  }), [plotConfig, datasourceFilesByDataframe, availableDatasets, unlocked, logoId])
   const others = plots.filter((plot) => plot.dataframeIndex !== activeDataframeIndex || plot.frameIndex !== activeFrameIndex)
 
   // An edit is a config change after the page was used (clicked or typed in): restoring the

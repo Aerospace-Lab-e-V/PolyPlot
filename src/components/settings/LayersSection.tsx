@@ -30,7 +30,8 @@ type Props = {
 export function LayersSection({ activeFrame, materialColors, patchActiveFrame, patchActiveDataframe, addLayer, layerNameOptions, availableKeywordsByColumn, availableWhitelistKeywords, expandedLayerKeywords, setExpandedLayerKeywords }: Props) {
   const { t } = useI18n()
   const { goTo } = useSettings()
-  const openItems = useOpenItems(String(activeFrame._extensions.uiKey))
+  // The first layer starts open: it is where the material column has to be chosen.
+  const openItems = useOpenItems(String(activeFrame._extensions.uiKey), [0])
   const patchLayer = (layerIndex: number, patch: (layer: LayerConfig) => LayerConfig) =>
     patchActiveFrame((f) => ({ ...f, layers: f.layers.map((x, i) => (i === layerIndex ? patch(x) : x)) }))
   const lastLayer = activeFrame.layers[activeFrame.layers.length - 1]

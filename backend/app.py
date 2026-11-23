@@ -35,12 +35,12 @@ if __package__ in (None, ''):
     from backend import import_data as import_data_module
     from backend.import_data import teable as teable_api
     from backend.plot_renderer import PlotRenderError, RenderQueueFull, RequestDataSource, describe_exception, get_render_status, render_plot_image
-    from backend.security import ATTRIBUTION_KEY_HEADER, MAX_JSON_BYTES, MAX_PLOTS_PER_DOWNLOAD, MAX_REQUEST_BYTES, MAX_UPLOAD_FILES, attribution_key_valid, check_row_count, check_xlsx_bytes, redact_paths
+    from backend.security import ATTRIBUTION_KEY_HEADER, MAX_JSON_BYTES, MAX_PLOTS_PER_DOWNLOAD, MAX_REQUEST_BYTES, MAX_UPLOAD_FILES, attribution_key_valid, check_logo_bytes, check_row_count, check_xlsx_bytes, redact_paths
 else:
     from . import import_data as import_data_module
     from .import_data import teable as teable_api
     from .plot_renderer import PlotRenderError, RenderQueueFull, RequestDataSource, describe_exception, get_render_status, render_plot_image
-    from .security import ATTRIBUTION_KEY_HEADER, MAX_JSON_BYTES, MAX_PLOTS_PER_DOWNLOAD, MAX_REQUEST_BYTES, MAX_UPLOAD_FILES, attribution_key_valid, check_row_count, check_xlsx_bytes, redact_paths
+    from .security import ATTRIBUTION_KEY_HEADER, MAX_JSON_BYTES, MAX_PLOTS_PER_DOWNLOAD, MAX_REQUEST_BYTES, MAX_UPLOAD_FILES, attribution_key_valid, check_logo_bytes, check_row_count, check_xlsx_bytes, redact_paths
 
 ENABLE_API_DOCS = os.environ.get('ASHBY_ENABLE_API_DOCS', '').lower() in ('1', 'true', 'yes')
 
@@ -320,7 +320,8 @@ def _config_entry(entries: Any, index: int) -> dict[str, Any]:
     return {}
 
 
-async def _parse_plot_request(request: Request) -> tuple[dict[str, Any], dict[int, RequestDataSource]]:
+async def _parse_plot_request(request: Request) -> tuple[dict[str, Any], dict[int, RequestDataSource], bytes | None]:
+    '''the render config, the uploaded workbooks, and the watermark logo of an attribution key holder (None: standard logo)'''
     content_type = request.headers.get('content-type', '')
     if content_type.startswith('multipart/form-data'):
         form = await request.form(max_files=MAX_UPLOAD_FILES, max_fields=MAX_UPLOAD_FILES + 10)
@@ -358,11 +359,17 @@ async def _parse_plot_request(request: Request) -> tuple[dict[str, Any], dict[in
                 filename=upload.filename or (descriptor_filename if isinstance(descriptor_filename, str) else None),
             )
 
-        return payload, data_sources
+        logo = None
+        logo_upload = form.get('watermark_logo')
+        if isinstance(logo_upload, StarletteUploadFile) and _attribution_unlocked(request):     # without the key it is ignored
+            logo = await logo_upload.read()
+            check_logo_bytes(logo)
+
+        return payload, data_sources, logo
 
     # text/plain etc. would let a plain HTML form on another site post a JSON body
     if content_type.startswith('application/json'):
-        return await request.json(), {}
+        return await request.json(), {}, None
     raise ValueError('Content-Type must be application/json or multipart/form-data.')
 
 
@@ -401,7 +408,7 @@ def render_status(request_id: str) -> JSONResponse:
 @app.post('/api/render-plot')
 async def render_plot(request: Request) -> Response:
     try:
-        payload_data, data_sources = await _parse_plot_request(request)
+        payload_data, data_sources, logo = await _parse_plot_request(request)
         payload = RenderPlotRequest(**payload_data)
         # In a worker thread, so the server keeps answering (status, health) while a plot renders.
         rendered_plot = await run_in_threadpool(
@@ -412,6 +419,7 @@ async def render_plot(request: Request) -> Response:
             data_sources=data_sources,
             request_id=payload.request_id,
             attribution_unlocked=_attribution_unlocked(request),
+            watermark_logo=logo,
         )
     except RenderQueueFull as exc:
         return _busy_response(exc)
@@ -438,7 +446,7 @@ async def render_plot(request: Request) -> Response:
 @app.post('/api/download-plots')
 async def download_plots(request: Request) -> Response:
     try:
-        payload_data, data_sources = await _parse_plot_request(request)
+        payload_data, data_sources, logo = await _parse_plot_request(request)
         payload = DownloadPlotsRequest(**payload_data)
         if len(payload.plots) > MAX_PLOTS_PER_DOWNLOAD:
             raise ValueError(f'At most {MAX_PLOTS_PER_DOWNLOAD} plots can be downloaded at once.')
@@ -457,6 +465,7 @@ async def download_plots(request: Request) -> Response:
                     frame_index=plot.frame_index,
                     data_sources=data_sources,
                     attribution_unlocked=_attribution_unlocked(request),
+                    watermark_logo=logo,
                 )
             except RenderQueueFull as exc:
                 return _busy_response(exc)

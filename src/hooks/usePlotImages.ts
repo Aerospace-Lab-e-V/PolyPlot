@@ -14,9 +14,9 @@ export const plotId = (dataframe: DataframeConfig, frame: FrameConfig) => `${Str
  * Everything a plot's image depends on: its dataframe's settings except the other plots, its own
  * settings, the data file and whether the attribution key is entered (see apply_attribution).
  */
-export const renderKey = (dataframe: DataframeConfig, frame: FrameConfig, file: File | undefined, unlocked: boolean) =>
+export const renderKey = (dataframe: DataframeConfig, frame: FrameConfig, file: File | undefined, unlocked: boolean, logoId: number | null = null) =>
   // JSON leaves out the undefined entries: the other plots and which plots "Generate all" includes
-  JSON.stringify([unlocked, file ? [file.name, file.size, file.lastModified] : null, { ...dataframe, frames: undefined, createAllFrames: undefined }, frame])
+  JSON.stringify([unlocked, logoId, file ? [file.name, file.size, file.lastModified] : null, { ...dataframe, frames: undefined, createAllFrames: undefined }, frame])
 
 /**
  * The last image of every plot, shared by the preview and the list of all plots: a plot that is

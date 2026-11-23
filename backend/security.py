@@ -20,6 +20,7 @@ from typing import Any
 from urllib.parse import urlsplit
 
 import requests
+from PIL import Image
 
 
 def _env_int(name: str, default: int) -> int:
@@ -141,7 +142,7 @@ def check_row_count(row_count: int) -> None:
 
 
 # : server side media (watermarks) :
-MEDIA_SUFFIXES = {'.png', '.jpg', '.jpeg'}
+MEDIA_SUFFIXES = {'.png', '.jpg', '.jpeg', '.svg'}
 
 
 def resolve_watermark_file(name: str) -> Path:
@@ -151,6 +152,27 @@ def resolve_watermark_file(name: str) -> Path:
     if root not in candidate.parents or candidate.suffix.lower() not in MEDIA_SUFFIXES or not candidate.is_file():
         raise FileNotFoundError(f"Watermark '{name}' not found in backend/media/watermarks.")
     return candidate
+
+
+# : uploaded logo (attribution key holders) :
+MAX_LOGO_BYTES  = 1_000_000
+MAX_LOGO_PIXELS = 25_000_000
+
+
+def check_logo_bytes(content: bytes) -> None:
+    '''rejects an uploaded watermark logo that is too large or neither PNG, JPEG nor SVG, before anything decodes it'''
+    if len(content) > MAX_LOGO_BYTES:
+        raise ValueError(f'The logo is larger than {MAX_LOGO_BYTES // 1000} kB.')
+    if content.startswith((b'\x89PNG\r\n\x1a\n', b'\xff\xd8\xff')):
+        try:
+            with Image.open(io.BytesIO(content)) as image:      # reads the header only
+                width, height = image.size
+        except Exception as error:
+            raise ValueError('The logo is not a valid PNG or JPEG image.') from error
+        if width * height > MAX_LOGO_PIXELS:
+            raise ValueError('The logo image has too many pixels.')
+    elif b'<svg' not in content[:4096]:
+        raise ValueError('The logo must be a PNG, JPEG or SVG file.')
 
 
 # : attribution :

@@ -7,13 +7,13 @@ const shift = (open: ReadonlySet<number>, from: number, by: number) =>
 /**
  * Which items of a list (axes, layers, areas, …) are expanded. New and duplicated items open,
  * indices follow inserts and removals, and everything closes when `resetKey` changes (another
- * dataframe or frame is shown).
+ * dataframe or frame is shown) except for `initiallyOpen`, the indices that are expanded from the start.
  */
-export function useOpenItems(resetKey: string) {
-  const [state, setState] = useState<{ key: string; open: ReadonlySet<number> }>({ key: resetKey, open: new Set() })
-  const open = state.key === resetKey ? state.open : new Set<number>()
+export function useOpenItems(resetKey: string, initiallyOpen: readonly number[] = []) {
+  const [state, setState] = useState<{ key: string; open: ReadonlySet<number> }>({ key: resetKey, open: new Set(initiallyOpen) })
+  const open = state.key === resetKey ? state.open : new Set(initiallyOpen)
   const update = (change: (current: ReadonlySet<number>) => ReadonlySet<number>) =>
-    setState((current) => ({ key: resetKey, open: change(current.key === resetKey ? current.open : new Set()) }))
+    setState((current) => ({ key: resetKey, open: change(current.key === resetKey ? current.open : new Set(initiallyOpen)) }))
 
   return {
     isOpen: (index: number) => open.has(index),
