@@ -191,7 +191,7 @@ def _plot_frames(dataframe:dict, interactive:bool, frontend:bool=False, xlsx_fil
         if dataframe.get('copyright', False) != False:          # & ❗ ⇒  ui
             copyright(ax, text=dataframe.get('copyright', True), font_color=font_color)
         if dataframe.get('watermark', False) != False:           # & ❗ ⇒  ui
-            watermark(fig, dataframe.get('watermark',True), alpha=0.6, dark_mode=bool(dark_mode), pos=[0.72, 0.13], size=.13)
+            watermark(fig, dataframe.get('watermark',True), alpha=0.6, dark_mode=bool(dark_mode), pos=[0.72, 0.13], size=.13, logo_bytes=dataframe.get('watermark_logo'))
 
 
         # ~ add grid lines 

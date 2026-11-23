@@ -1,3 +1,4 @@
+import io
 import matplotlib.pyplot as plt
 from matplotlib import patches
 from PIL import Image
@@ -7,8 +8,10 @@ from termcolor import cprint
 
 try:
     from ..security import resolve_watermark_file
+    from . import svg_logo
 except ImportError:     # plot.py started as a script from backend/
     from security import resolve_watermark_file
+    from plotting import svg_logo
 
 
 class format_storage():
@@ -134,24 +137,33 @@ def axe_label(sorted_data:object, axe:int) -> str:
     return label
 
 
-def watermark(fig:plt.subplot, file:str|bool, alpha:float, dark_mode:bool, pos:[float, float], size:float) -> None:
+def watermark(fig:plt.subplot, file:str|bool, alpha:float, dark_mode:bool, pos:[float, float], size:float, logo_bytes:bytes|None=None) -> None:
+    '''`logo_bytes`: an uploaded PNG, JPEG or SVG instead of the standard logos'''
     if file == True:
         if dark_mode == False:
-            file = 'RPS_lightmode.png'
+            file = 'RPS-Logo-reg.svg'
         if dark_mode == True:
-            file = 'RPS_darkmode.png'
+            file = 'RPS-Logo-reg INV.svg'
     if not isinstance(file, str): return
 
-    logo = resolve_watermark_file(file)     # only images inside backend/media/watermarks
-    # change alpha value
-    img = Image.open(logo).convert("RGBA")
-    r, g, b, a = img.split()
-    a = a.point(lambda x: int(x * alpha))
-    img = Image.merge("RGBA", (r, g, b, a))
-    img_array = np.array(img)
-
+    if logo_bytes:
+        source, is_svg = io.BytesIO(logo_bytes), b'<svg' in logo_bytes[:4096]
+    else:
+        source = resolve_watermark_file(file)     # only images inside backend/media/watermarks
+        is_svg = source.suffix.lower() == '.svg'
     logo_ax = fig.add_axes([pos[0], pos[1], size, size], anchor='SE', zorder=101, )
-    logo_ax.imshow(img_array)
+    if is_svg:
+        svg_logo.draw(logo_ax, source, alpha)       # vector shapes: sharp at any size, and no memory for a big image
+    else:
+        img = Image.open(source).convert("RGBA")
+        # Shrink to the pixels the logo covers in the figure (at most 300 dpi). matplotlib would otherwise
+        # resample a big image as float masked arrays: ~1.5 GB for a 6804 × 3402 px logo.
+        fig_width, fig_height = fig.get_size_inches()
+        img.thumbnail((max(1, round(size * fig_width * 300)), max(1, round(size * fig_height * 300))), Image.LANCZOS)
+        r, g, b, a = img.split()
+        a = a.point(lambda x: int(x * alpha))
+        img = Image.merge("RGBA", (r, g, b, a))
+        logo_ax.imshow(np.array(img))
     logo_ax.axis('off')
 
 

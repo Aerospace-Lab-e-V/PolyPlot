@@ -97,7 +97,7 @@ npm run dev
 
 ### Backend (FastAPI)
 
-The backend is a web server and must be started with Uvicorn (running `backend/app.py` directly
+The backend is a w corn (running `backend/app.py` directly
 will exit immediately after import). Start it in a second terminal:
 
 ```powershell

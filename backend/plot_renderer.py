@@ -202,9 +202,11 @@ def render_plot_image(
     data_sources: dict[int, RequestDataSource] | None = None,
     request_id: str | None = None,
     attribution_unlocked: bool = False,
+    watermark_logo: bytes | None = None,
 ) -> RenderedPlot:
     """Renders one frame. With a `request_id`, get_render_status() reports its progress. Without
-    `attribution_unlocked` (a valid attribution key), the plot carries the attribution (security.apply_attribution)."""
+    `attribution_unlocked` (a valid attribution key), the plot carries the attribution (security.apply_attribution).
+    With it, `watermark_logo` (checked by security.check_logo_bytes) replaces the standard logo."""
     global _pending_renders
     with _PENDING_LOCK:     # renders run one at a time: refuse instead of queueing without bound
         if _pending_renders >= MAX_QUEUED_RENDERS:
@@ -218,7 +220,7 @@ def render_plot_image(
         with _RENDER_LOCK:
             progress.thread_id = threading.get_ident()
             try:
-                return _render_plot_image(config, dataframe_index, frame_index, data_sources, progress.output, attribution_unlocked)
+                return _render_plot_image(config, dataframe_index, frame_index, data_sources, progress.output, attribution_unlocked, watermark_logo)
             finally:
                 plt.close('all')    # a failed render must not leave its figure in memory
                 _free_render_memory()
@@ -252,10 +254,13 @@ def _render_plot_image(
     data_sources: dict[int, RequestDataSource] | None,
     plot_output: StringIO,
     attribution_unlocked: bool = False,
+    watermark_logo: bytes | None = None,
 ) -> RenderedPlot:
     dataframe, frame = _select_frame_config(config, dataframe_index, frame_index)
     dataframe, frame = sanitize_render_config(dataframe, frame)
     dataframe = apply_attribution(dataframe, attribution_unlocked)
+    if attribution_unlocked and dataframe['watermark'] and watermark_logo:
+        dataframe['watermark_logo'] = watermark_logo
 
     resolution = dataframe.get('resolution', None)
     file_format = 'svg' if resolution in (None, 'svg') else 'png'
